@@ -127,46 +127,48 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
 
     // Portal to body to avoid clipping or stacking context issues
     return ReactDOM.createPortal(
-        <div 
-            className="modal show" 
-            style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                justifyContent: 'center', 
-                backgroundColor: 'rgba(0,0,0,0.6)', 
-                zIndex: 1050, 
-                position: 'fixed', 
-                inset: 0, 
-                padding: '24px' 
-            }} 
+        <div
+    className="position-fixed top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
+    style={{
+        background: 'rgba(0,0,0,0.55)',
+        backdropFilter: 'blur(6px)',
+        WebkitBackdropFilter: 'blur(6px)',
+        zIndex: 2000
+    }}
             tabIndex="-1" 
             onClick={onClose}
         >
-            <div 
-                className="modal-dialog m-0 p-0" 
-                style={{ 
-                    maxWidth: '1000px', 
-                    width: '100%', 
-                    maxHeight: '100%', 
-                    display: 'flex', 
-                    flexDirection: 'column' 
-                }} 
+            <div
+    className="w-100"
+    style={{
+        maxWidth: '1100px',
+        width: '92%',
+        maxHeight: '92vh'
+    }}
                 onClick={e => e.stopPropagation()}
             >
-                <div 
-                    className={`modal-content border-0 shadow-lg ${isDark ? 'bg-dark text-light' : 'bg-white text-dark'}`} 
-                    style={{ 
-                        borderRadius: '1rem', 
-                        overflow: 'hidden', 
-                        maxHeight: '100%', 
-                        display: 'flex', 
-                        flexDirection: 'column', 
-                        flex: 1 
-                    }}
-                >
+               <div
+    className={`shadow-lg overflow-hidden ${isDark ? 'text-light' : 'text-dark'}`}
+    style={{
+        borderRadius: '20px',
+        background: isDark
+            ? 'linear-gradient(145deg, #111827, #1f2937)'
+            : 'linear-gradient(145deg, #ffffff, #f8fafc)',
+        border: isDark
+            ? '1px solid rgba(255,255,255,0.05)'
+            : '1px solid rgba(0,0,0,0.05)'
+    }}
+>
                     
                     {/* Header */}
-                    <div className={`modal-header px-4 px-lg-4 py-3 ${isDark ? 'border-secondary' : 'bg-white border-bottom'}`} style={{ backgroundColor: isDark ? '#1a1a1a' : '' }}>
+                    <div
+    className="px-4 py-3 d-flex justify-content-between align-items-center"
+    style={{
+        borderBottom: isDark
+            ? '1px solid rgba(255,255,255,0.05)'
+            : '1px solid rgba(0,0,0,0.06)'
+    }}
+>
                         <div className="modal-title d-flex align-items-center gap-3">
                             <div className="bg-primary bg-opacity-10 p-2 rounded-2 text-primary">
                                 <Calendar size={20} />
@@ -179,10 +181,18 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                         <button onClick={onClose} className={`btn-close shadow-none opacity-50 transition-all ${isDark ? 'btn-close-white' : ''}`} style={{ fontSize: '12px' }}></button>
                     </div>
 
-                    <div className="modal-body p-0" style={{ overflowY: 'auto', flex: 1, display: 'flex' }}>
-                        <div className="row m-0 w-100 flex-grow-1">
+                    <div className="modal-body p-0">
+                        <div className="row m-0">
                             {/* Left: Time Builder */}
-                            <div className={`col-12 col-md-5 col-lg-4 p-4 ${isDark ? 'border-secondary' : 'bg-white border-end'}`} style={{ backgroundColor: isDark ? '#1a1a1a' : '', zIndex: 10 }}>
+                            <div
+    className="col-12 col-md-5 col-lg-4 p-4"
+    style={{
+        borderRight: isDark
+            ? '1px solid rgba(255,255,255,0.05)'
+            : '1px solid rgba(0,0,0,0.06)',
+        background: 'transparent'
+    }}
+>
                                 <h6 className={`fw-bold mb-4 text-uppercase small ${isDark ? 'text-secondary' : 'text-muted'}`} style={{ letterSpacing: '0.8px' }}>Build Time Slot</h6>
                                 
                                 <div className="mb-4">
@@ -252,21 +262,31 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                             </div>
 
                             {/* Right: Calendar Grid */}
-                            <div className={`col-12 col-md-7 col-lg-8 p-4 py-lg-5 ${isDark ? 'bg-dark' : 'bg-light'}`} style={{ backgroundColor: isDark ? '#111' : '#f8f9fa' }}>
+                            <div className="col-12 col-md-7 col-lg-8 p-4 py-lg-5" style={{ 
+                                background: isDark ? 'linear-gradient(145deg, #111827 0%, #1f2937 100%)' : 'linear-gradient(145deg, #e0e7ff 0%, #bfdbfe 100%)',
+                                position: 'relative'
+                            }}>
+                                {/* Inner Title matching the reference aesthetic */}
+                                <div className="mb-4 ps-2">
+                                    <h3 className={`fw-bolder mb-1 ${isDark ? 'text-white' : 'text-dark'}`} style={{ letterSpacing: '-0.5px' }}>Class Schedule</h3>
+                                    <p className={`fst-italic small ${isDark ? 'text-light opacity-75' : 'text-dark opacity-75'}`}>MMLS 1-1 ; 2nd Semester</p>
+                                </div>
+
                                 <div className="position-relative py-2 ps-3">
                                     {/* Continuous vertical timeline line */}
-                                    <div 
-                                        className="position-absolute" 
-                                        style={{ 
-                                            left: '49px', 
-                                            top: '24px', 
-                                            bottom: '24px', 
-                                            width: '3px', 
-                                            backgroundColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
-                                            zIndex: 1,
-                                            borderRadius: '2px'
-                                        }} 
-                                    />
+                                    <div
+    className="position-absolute"
+    style={{
+        left: '32px',
+        top: '20px',
+        bottom: '20px',
+        width: '2px',
+        backgroundColor: isDark
+            ? 'rgba(255,255,255,0.08)'
+            : 'rgba(0,0,0,0.08)',
+        borderRadius: '2px'
+    }}
+/>
                                     
                                     <div className="d-flex flex-column gap-3 position-relative" style={{ zIndex: 2 }}>
                                         {days.map(d => {
@@ -276,15 +296,15 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                                             return (
                                                 <div key={d} className="d-flex align-items-stretch">
                                                     {/* Timeline Node & Day Label */}
-                                                    <div className="d-flex align-items-start justify-content-between position-relative pt-3" style={{ width: '56px', flexShrink: 0 }}>
+                                                    <div className="d-flex align-items-start justify-content-between position-relative pt-3" style={{ width: '64px', flexShrink: 0 }}>
                                                         <div className={`fw-bold text-uppercase ${hasSlots ? (isDark ? 'text-white' : 'text-dark') : 'text-secondary opacity-50'}`} style={{ fontSize: '0.85rem', letterSpacing: '0.5px' }}>
                                                             {d.substring(0, 3)}
                                                         </div>
                                                         <div 
                                                             className={`rounded-circle position-absolute ${hasSlots ? 'bg-primary shadow-sm' : (isDark ? 'bg-secondary' : 'bg-white border')}`} 
                                                             style={{ 
-                                                                right: '-1px', // exact alignment on the line
-                                                                top: '21px', // align beautifully with the card
+                                                                right: '10px', // exact alignment on the line
+                                                                top: '22px', // align beautifully with the card
                                                                 width: '14px', 
                                                                 height: '14px',
                                                                 border: hasSlots ? `3px solid ${isDark ? '#111' : '#f8f9fa'}` : 'none',
@@ -294,7 +314,14 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                                                     </div>
 
                                                     {/* Right side translucent card */}
-                                                    <div className={`flex-grow-1 ms-4 p-3 rounded-4 transition-all ${hasSlots ? (isDark ? 'border border-light border-opacity-10' : 'bg-white shadow-sm border border-light') : 'opacity-75'}`} style={{ backgroundColor: isDark && hasSlots ? 'rgba(255,255,255,0.03)' : (!hasSlots ? 'transparent' : ''), border: !hasSlots ? (isDark ? '1px dashed rgba(255,255,255,0.1)' : '1px dashed rgba(0,0,0,0.1)') : '' }}>
+                                                    <div className={`flex-grow-1 ms-4 p-3 rounded-4 mb-1 transition-all`} 
+                                                        style={{ 
+                                                            background: hasSlots ? (isDark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.45)') : 'transparent',
+                                                            backdropFilter: hasSlots ? 'blur(12px)' : 'none',
+                                                            border: hasSlots ? (isDark ? '1px solid rgba(255,255,255,0.05)' : '1px solid rgba(255,255,255,0.6)') : (isDark ? '1px dashed rgba(255,255,255,0.1)' : '1px dashed rgba(255,255,255,0.4)'),
+                                                            boxShadow: hasSlots ? '0 8px 32px 0 rgba(31, 38, 135, 0.05)' : 'none',
+                                                            WebkitBackdropFilter: hasSlots ? 'blur(12px)' : 'none'
+                                                        }}>
                                                         {!hasSlots ? (
                                                             <div className="d-flex align-items-center h-100 px-2 py-1">
                                                                 <span className={`small fw-medium ${isDark ? 'text-secondary' : 'text-muted'}`}>No availability set</span>
@@ -303,12 +330,12 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                                                             <div className="d-flex flex-column gap-2">
                                                                 {slots.map(slot => (
                                                                     <div key={slot.id} className="d-flex align-items-center gap-3 py-1 position-relative" style={{ transition: 'all 0.2s' }}>
-                                                                        <span className={`fw-medium font-monospace opacity-75 ${isDark ? 'text-light' : 'text-dark'}`} style={{ fontSize: '0.8rem', minWidth: '130px' }}>
+                                                                        <span className={`fw-medium font-monospace opacity-75 ${isDark ? 'text-light' : 'text-dark'}`} style={{ fontSize: '0.8rem', minWidth: '130px', fontStyle: 'italic' }}>
                                                                             {formatTimeCompact(slot.start_time)} - {formatTimeCompact(slot.end_time)}
                                                                         </span>
                                                                         <div className="d-flex align-items-center flex-grow-1 gap-2">
-                                                                            <span className={`fw-bold px-2 py-1 rounded-pill ${isDark ? 'bg-light bg-opacity-10 text-white' : 'bg-primary bg-opacity-10 text-primary'}`} style={{ fontSize: '0.75rem' }}>
-                                                                                Available
+                                                                            <span className={`fw-bold text-truncate ${isDark ? 'text-white' : 'text-dark'}`} style={{ fontSize: '0.85rem' }}>
+                                                                                Available Block
                                                                             </span>
                                                                         </div>
                                                                         <button 
