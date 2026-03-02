@@ -182,16 +182,17 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                         <button onClick={onClose} className={`btn-close shadow-none opacity-50 transition-all ${isDark ? 'btn-close-white' : ''}`} style={{ fontSize: '12px' }}></button>
                     </div>
 
-                    <div className="modal-body p-0" style={{ overflowY: 'auto', flex: 1 }}>
-                        <div className="row m-0 w-100" style={{ minHeight: '100%' }}>
+                    <div className="modal-body p-0" style={{ flex: 1, overflow: 'hidden' }}>
+                        <div className="row m-0 w-100 h-100">
                             {/* Left: Time Builder */}
                             <div
-    className="col-12 col-md-5 col-lg-4 p-4"
+    className="col-12 col-md-5 col-lg-4 p-4 h-100"
     style={{
         borderRight: isDark
             ? '1px solid rgba(255,255,255,0.05)'
             : '1px solid rgba(0,0,0,0.06)',
-        background: 'transparent'
+        background: 'transparent',
+        overflowY: 'auto'
     }}
 >
                                 <h6 className={`fw-bold mb-4 text-uppercase small ${isDark ? 'text-secondary' : 'text-muted'}`} style={{ letterSpacing: '0.8px' }}>Build Time Slot</h6>
@@ -263,7 +264,10 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                             </div>
 
                             {/* Right: Calendar Grid */}
-                            <div className="col-12 col-md-7 col-lg-8 p-3 p-md-4 py-lg-4 d-flex flex-column" style={{ backgroundColor: isDark ? '#111' : '#f8f9fa' }}>
+                            <div className="col-12 col-md-7 col-lg-8 p-3 p-md-4 py-lg-4 d-flex flex-column h-100" style={{ 
+                                backgroundColor: isDark ? '#111' : '#f8f9fa',
+                                overflowY: 'auto'
+                            }}>
                                 {/* Fully enclosed glass container */}
                                 <div 
                                     className="p-4 p-xl-5 d-flex flex-column flex-grow-1"
