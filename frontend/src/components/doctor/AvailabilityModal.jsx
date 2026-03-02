@@ -186,15 +186,15 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                         <div className="row m-0 w-100 h-100">
                             {/* Left: Time Builder */}
                             <div
-    className="col-12 col-md-5 col-lg-4 p-4 h-100"
-    style={{
-        borderRight: isDark
-            ? '1px solid rgba(255,255,255,0.05)'
-            : '1px solid rgba(0,0,0,0.06)',
-        background: 'transparent',
-        overflowY: 'auto'
-    }}
->
+                                className="col-12 col-md-5 col-lg-4 p-4 h-100"
+                                style={{
+                                    borderRight: isDark
+                                        ? '1px solid rgba(255,255,255,0.05)'
+                                        : '1px solid rgba(0,0,0,0.06)',
+                                    background: 'transparent',
+                                    overflowY: 'hidden'
+                                }}
+                            >
                                 <h6 className={`fw-bold mb-4 text-uppercase small ${isDark ? 'text-secondary' : 'text-muted'}`} style={{ letterSpacing: '0.8px' }}>Build Time Slot</h6>
                                 
                                 <div className="mb-4">
