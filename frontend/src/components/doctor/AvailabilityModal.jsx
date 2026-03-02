@@ -51,7 +51,6 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
             : '';
     const totalMinutes = hasInvalidRange ? 0 : (endMins - startMins);
     const estimatedSlots = Math.floor(totalMinutes / 40);
-    const totalHours = (totalMinutes / 60).toFixed(totalMinutes % 60 === 0 ? 0 : 1);
 
     const handleAdd = async () => {
         // Basic validation
@@ -128,9 +127,43 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
 
     // Portal to body to avoid clipping or stacking context issues
     return ReactDOM.createPortal(
-        <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.6)', zIndex: 1050 }} tabIndex="-1" onClick={onClose}>
-            <div className="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable" style={{ maxWidth: '1000px', width: '95%' }} onClick={e => e.stopPropagation()}>
-                <div className={`modal-content border-0 shadow-lg overflow-hidden ${isDark ? 'bg-dark text-light' : 'bg-white text-dark'}`} style={{ borderRadius: '1rem' }}>
+        <div 
+            className="modal show" 
+            style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center', 
+                backgroundColor: 'rgba(0,0,0,0.6)', 
+                zIndex: 1050, 
+                position: 'fixed', 
+                inset: 0, 
+                padding: '24px' 
+            }} 
+            tabIndex="-1" 
+            onClick={onClose}
+        >
+            <div 
+                className="modal-dialog m-0 p-0" 
+                style={{ 
+                    maxWidth: '1000px', 
+                    width: '100%', 
+                    maxHeight: '100%', 
+                    display: 'flex', 
+                    flexDirection: 'column' 
+                }} 
+                onClick={e => e.stopPropagation()}
+            >
+                <div 
+                    className={`modal-content border-0 shadow-lg ${isDark ? 'bg-dark text-light' : 'bg-white text-dark'}`} 
+                    style={{ 
+                        borderRadius: '1rem', 
+                        overflow: 'hidden', 
+                        maxHeight: '100%', 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        flex: 1 
+                    }}
+                >
                     
                     {/* Header */}
                     <div className={`modal-header px-4 px-lg-4 py-3 ${isDark ? 'border-secondary' : 'bg-white border-bottom'}`} style={{ backgroundColor: isDark ? '#1a1a1a' : '' }}>
@@ -146,8 +179,8 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                         <button onClick={onClose} className={`btn-close shadow-none opacity-50 transition-all ${isDark ? 'btn-close-white' : ''}`} style={{ fontSize: '12px' }}></button>
                     </div>
 
-                    <div className="modal-body p-0">
-                        <div className="row m-0">
+                    <div className="modal-body p-0" style={{ overflowY: 'auto', flex: 1, display: 'flex' }}>
+                        <div className="row m-0 w-100 flex-grow-1">
                             {/* Left: Time Builder */}
                             <div className={`col-12 col-md-5 col-lg-4 p-4 ${isDark ? 'border-secondary' : 'bg-white border-end'}`} style={{ backgroundColor: isDark ? '#1a1a1a' : '', zIndex: 10 }}>
                                 <h6 className={`fw-bold mb-4 text-uppercase small ${isDark ? 'text-secondary' : 'text-muted'}`} style={{ letterSpacing: '0.8px' }}>Build Time Slot</h6>
