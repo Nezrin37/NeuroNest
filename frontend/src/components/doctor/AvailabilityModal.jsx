@@ -269,7 +269,6 @@ const AvailabilityModal = ({ isOpen, onClose, availability, onUpdate }) => {
                                 {/* Inner Title matching the reference aesthetic */}
                                 <div className="mb-4 ps-2">
                                     <h3 className={`fw-bolder mb-1 ${isDark ? 'text-white' : 'text-dark'}`} style={{ letterSpacing: '-0.5px' }}>Consultation Schedule</h3>
-                                    <p className={`fst-italic small ${isDark ? 'text-light opacity-75' : 'text-dark opacity-75'}`}>Active clinical engagement blocks</p>
                                 </div>
 
                                 <div className="position-relative py-2 ps-3">
