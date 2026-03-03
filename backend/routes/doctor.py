@@ -51,13 +51,25 @@ def get_appointment_requests():
         return jsonify({"message": "Doctor access required"}), 403
     
     current_user_id = int(get_jwt_identity())
-    # Get pending appointments for this doctor
+    
+    # Get pending appointments for this doctor, joining with patient profile for depth
     requests = Appointment.query.filter(
         Appointment.doctor_id == current_user_id,
         Appointment.status.in_(["pending"])
     ).order_by(Appointment.appointment_date.asc(), Appointment.appointment_time.asc()).all()
+
+    enriched_requests = []
+    for req in requests:
+        data = req.to_dict()
+        # Add profile data if available
+        if req.patient and req.patient.patient_profile:
+            p = req.patient.patient_profile
+            data["gender"] = p.gender
+            data["dob"] = str(p.date_of_birth) if p.date_of_birth else None
+            data["phone"] = p.phone
+        enriched_requests.append(data)
     
-    return jsonify([req.to_dict() for req in requests]), 200
+    return jsonify(enriched_requests), 200
 
 @doctor_bp.route("/appointments/<int:appointment_id>/approve", methods=["PATCH"])
 @jwt_required()
