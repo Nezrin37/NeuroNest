@@ -418,6 +418,18 @@ const Profile = () => {
                                             <option value="Both">Dual Stack</option>
                                         </select>
                                     </div>
+
+                                    <div className="col-12 dark-input-group">
+                                        <label className="dark-label">Professional Summary / Bio</label>
+                                        <textarea 
+                                            name="bio" 
+                                            className="dark-input" 
+                                            value={formData.bio || ''} 
+                                            onChange={handleChange} 
+                                            rows={4}
+                                            placeholder="Describe your clinical focus and professional summary..."
+                                        />
+                                    </div>
                                 </div>
 
                                 <div className="col-12"><hr style={{borderColor:'#333', margin:'35px 0 25px 0'}}/></div>
