@@ -96,12 +96,15 @@ function StatusBadge({ status }) {
 function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory }) {
   const isHighPriority = useMemo(() => {
     const reason = (req.reason || "").toLowerCase();
-    return reason.includes("urgent") || 
+    const priority = (req.priority_level || "").toLowerCase();
+    return priority === "urgent" || 
+           priority === "emergency" ||
+           reason.includes("urgent") || 
            reason.includes("emergency") || 
            reason.includes("severe") || 
            reason.includes("pain") || 
            isCloseDate(req.appointment_date);
-  }, [req.reason, req.appointment_date]);
+  }, [req.reason, req.appointment_date, req.priority_level]);
 
   return (
     <div className={`ar-triage-row ${isHighPriority ? 'ar-priority-row' : ''}`}>
@@ -122,8 +125,8 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
           <span className="ar-reason-text">{req.reason || "Patient seeking assessment."}</span>
           <div className="ar-clinical-tags">
              {isHighPriority && (
-               <span className="ar-clin-badge ar-priority-badge">
-                  Priority Case
+               <span className={`ar-clin-badge ar-priority-badge ${req.priority_level === 'emergency' ? 'bg-danger' : ''}`}>
+                  {req.priority_level === 'emergency' ? 'EMERGENCY' : req.priority_level === 'urgent' ? 'URGENT' : 'Priority Case'}
                </span>
              )}
              <span className="ar-clin-badge">{req.consultation_type || 'OPD'}</span>
@@ -486,7 +489,8 @@ const AppointmentRequests = () => {
   const stats = useMemo(() => {
     const highP = processedRequests.filter(req => {
       const reason = (req.reason || "").toLowerCase();
-      return reason.includes("urgent") || reason.includes("emergency") || isCloseDate(req.appointment_date);
+      const priority = (req.priority_level || "").toLowerCase();
+      return priority === "urgent" || priority === "emergency" || reason.includes("urgent") || reason.includes("emergency") || isCloseDate(req.appointment_date);
     }).length;
 
     return {
@@ -511,7 +515,8 @@ const AppointmentRequests = () => {
       id: "High Priority",
       count: processedRequests.filter(req => {
         const reason = (req.reason || "").toLowerCase();
-        return reason.includes("urgent") || reason.includes("emergency") || reason.includes("severe") || reason.includes("pain") || isCloseDate(req.appointment_date);
+        const priority = (req.priority_level || "").toLowerCase();
+        return priority === "urgent" || priority === "emergency" || reason.includes("urgent") || reason.includes("emergency") || reason.includes("severe") || reason.includes("pain") || isCloseDate(req.appointment_date);
       }).length
     },
     { 

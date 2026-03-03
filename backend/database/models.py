@@ -200,6 +200,10 @@ class Appointment(db.Model):
         db.ForeignKey("appointments.id"),
         nullable=True
     )
+    priority_level = db.Column(
+        db.String(50),
+        default="routine"  # routine / urgent / emergency
+    )
 
     created_at = db.Column(
         db.DateTime,
@@ -236,6 +240,7 @@ class Appointment(db.Model):
             "slot_id": self.slot_id,
             "reason": self.reason,
             "notes": self.notes,
+            "priority_level": self.priority_level,
             "status": self.status,
             "booking_mode": self.booking_mode,
             "delay_reason": self.delay_reason,

@@ -456,10 +456,28 @@
   animation: ar-pulse 2s infinite;
 }
 
+.ar-priority-badge.bg-danger {
+  background: #f87171 !important;
+  color: white !important;
+  border-color: #f87171 !important;
+  animation: ar-emergency-pulse 1s infinite;
+  box-shadow: 0 0 15px rgba(248, 113, 113, 0.4);
+}
+
 @keyframes ar-pulse {
   0% { opacity: 1; }
   50% { opacity: 0.6; }
   100% { opacity: 1; }
+}
+
+@keyframes ar-emergency-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.bg-danger {
+  background-color: #f87171 !important;
 }
 
 .ar-btn-view {

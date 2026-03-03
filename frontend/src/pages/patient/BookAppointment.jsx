@@ -20,9 +20,13 @@ const BookAppointment = () => {
           slot_id: formData.slot_id,
           reason: formData.reason,
           notes: formData.notes,
+          priority_level: formData.priority_level,
         });
       } else {
-        await bookAppointment(formData);
+        await bookAppointment({
+          ...formData,
+          priority_level: formData.priority_level,
+        });
       }
       alert("Appointment booked successfully!");
       navigate("/patient/appointments");

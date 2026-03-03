@@ -47,7 +47,7 @@ def _lock_slot(slot_id: int):
     )
 
 
-def _book_slot_atomic(*, current_user_id: int, doctor_id: int, slot_id: int, reason: str, notes: str):
+def _book_slot_atomic(*, current_user_id: int, doctor_id: int, slot_id: int, reason: str, notes: str, priority_level: str = "routine"):
     now_utc = _utc_now()
     setting = get_or_create_schedule_setting(doctor_id)
     if not setting.accepting_new_bookings:
@@ -77,6 +77,7 @@ def _book_slot_atomic(*, current_user_id: int, doctor_id: int, slot_id: int, rea
         slot_id=slot.id,
         reason=reason,
         notes=notes,
+        priority_level=priority_level,
         status=_appointment_status_for_mode(booking_mode),
         booking_mode=booking_mode,
     )
@@ -198,10 +199,10 @@ def book_by_slot():
         current_user_id = int(get_jwt_identity())
         data = request.get_json() or {}
 
-        doctor_id = data.get("doctor_id")
         slot_id = data.get("slot_id")
         reason = data.get("reason")
         notes = data.get("notes", "")
+        priority_level = data.get("priority_level", "routine")
 
         if not doctor_id or not slot_id or not reason:
             return jsonify({"error": "doctor_id, slot_id and reason are required"}), 400
@@ -212,6 +213,7 @@ def book_by_slot():
             slot_id=int(slot_id),
             reason=reason,
             notes=notes,
+            priority_level=priority_level,
         )
         if err_msg:
             db.session.rollback()
@@ -256,6 +258,7 @@ def book_appointment():
                 slot_id=slot.id,
                 reason=data["reason"],
                 notes=data.get("notes", ""),
+                priority_level=data.get("priority_level", "routine"),
             )
             if err_msg:
                 db.session.rollback()
@@ -285,6 +288,7 @@ def book_appointment():
             appointment_time=appointment_time,
             reason=data["reason"],
             notes=data.get("notes", ""),
+            priority_level=data.get("priority_level", "routine"),
             status="pending",
             booking_mode="doctor_approval",
         )

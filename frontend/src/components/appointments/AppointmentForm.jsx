@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, Calendar, Clock, FileText } from "lucide-react";
+import { User, Calendar, Clock, FileText, Activity } from "lucide-react";
 import { getDoctors, getAvailableSlots } from "../../api/appointments";
 import "../../styles/appointments.css";
 
@@ -13,6 +13,7 @@ const AppointmentForm = ({ onSubmit, loading }) => {
     slot_id: "",
     reason: "",
     notes: "",
+    priority_level: "routine",
   });
 
   const [doctorsList, setDoctorsList] = useState([]);
@@ -266,6 +267,24 @@ const AppointmentForm = ({ onSubmit, loading }) => {
                   </div>
                 </div>
 
+
+                <span className="form-section-title" style={{ marginTop: '20px' }}>Clinical Priority</span>
+                <div className="form-grid">
+                  <div className="form-group full-width">
+                    <label>Urgency Level</label>
+                    <select
+                      name="priority_level"
+                      value={formData.priority_level}
+                      onChange={handleChange}
+                      className="priority-select"
+                    >
+                      <option value="routine">Routine Checkup</option>
+                      <option value="urgent">Urgent Attention (e.g. Fever, Pain)</option>
+                      <option value="emergency">Emergency (Severe Condition)</option>
+                    </select>
+                  </div>
+                </div>
+
                 <span className="form-section-title" style={{ marginTop: '20px' }}>Consultation Details</span>
                 <div className="form-grid">
                   <div className="form-group full-width">
@@ -331,6 +350,14 @@ const AppointmentForm = ({ onSubmit, loading }) => {
                   <span className="label"><FileText size={16} /> Reason</span>
                   <span className="value">{formData.reason || "—"}</span>
                 </div>
+                <div className="summary-row">
+                  <span className="label"><Activity size={16} /> Urgency</span>
+                  <span className="value" style={{ 
+                    color: formData.priority_level === 'routine' ? '#10b981' : formData.priority_level === 'urgent' ? '#f59e0b' : '#ef4444',
+                    fontWeight: 800,
+                    textTransform: 'uppercase'
+                  }}>{formData.priority_level}</span>
+                </div>
               </div>
 
               <button 
@@ -393,6 +420,17 @@ const AppointmentForm = ({ onSubmit, loading }) => {
               </div>
 
               <div className="reason-box" style={{ background: '#f8fafc', padding: '16px', borderRadius: '12px', border: '1px solid #e2e8f0', marginBottom: '24px' }}>
+                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+                    <span className="pm-slot-label">Priority</span>
+                    <span style={{ 
+                      fontSize: '11px', 
+                      fontWeight: 900, 
+                      padding: '2px 8px', 
+                      borderRadius: '6px',
+                      background: formData.priority_level === 'routine' ? '#10b98120' : formData.priority_level === 'urgent' ? '#f59e0b20' : '#ef444420',
+                      color: formData.priority_level === 'routine' ? '#10b981' : formData.priority_level === 'urgent' ? '#f59e0b' : '#ef4444'
+                    }}>{formData.priority_level.toUpperCase()}</span>
+                 </div>
                  <span className="pm-slot-label" style={{ display: 'block', marginBottom: '6px' }}>Reason for Visit</span>
                  <p style={{ color: '#334155', fontSize: '14px', margin: 0 }}>{formData.reason}</p>
               </div>
