@@ -9,7 +9,16 @@ import {
   confirmReschedule
 } from "../../api/appointments";
 import "../../styles/appointments.css"; 
-import { CheckCircle, X, Calendar, Clock, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
+import { CheckCircle, X, Calendar, Clock, RefreshCw, ChevronLeft, ChevronRight, AlertCircle } from "lucide-react";
+
+// --- Clinical Utilities ---
+function isCloseDate(dateStr) {
+  if (!dateStr) return false;
+  const d = new Date(dateStr);
+  const today = new Date();
+  const diff = (d - today) / (1000 * 60 * 60 * 24);
+  return diff >= 0 && diff <= 2;
+}
 
 const MyAppointments = () => {
   const navigate = useNavigate();
@@ -260,7 +269,14 @@ const MyAppointments = () => {
                       return (
                         <tr key={appt.id}>
                             <td>
-                                 <StatusBadge status={appt.status} />
+                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    <StatusBadge status={appt.status} />
+                                    {isUpcoming && (reason.includes("urgent") || reason.includes("emergency") || reason.includes("severe") || isCloseDate(appt.appointment_date)) && (
+                                       <span className="priority-tag-mini">
+                                          <AlertCircle size={10} /> Priority
+                                       </span>
+                                    )}
+                                 </div>
                             </td>
                             <td>
                                 <div className="doctor-info">
@@ -463,6 +479,20 @@ const MyAppointments = () => {
         .feedback-pill-btn:hover {
           transform: translateY(-1px);
           box-shadow: 0 4px 12px rgba(245,158,11,0.4);
+        }
+        .priority-tag-mini {
+          display: inline-flex;
+          align-items: center;
+          gap: 2px;
+          color: #f87171;
+          background: #f8717115;
+          padding: 2px 6px;
+          border-radius: 4px;
+          font-size: 0.65rem;
+          font-weight: 800;
+          text-transform: uppercase;
+          border: 1px solid #f8717130;
+          width: fit-content;
         }
       `}</style>
     </div>

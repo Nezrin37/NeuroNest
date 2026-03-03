@@ -72,7 +72,28 @@ function TriageKPI({ title, value, trend, color, percent }) {
   );
 }
 
-function TriageRow({ req, onAction, actionLoading, onRescheduleClick }) {
+function StatusBadge({ status }) {
+  const s = (status || "").toLowerCase();
+  let color = "#666";
+  let bg = "#232327";
+  
+  if (s === "approved") { color = "#4ade80"; bg = "#4ade8020"; }
+  else if (s === "rejected") { color = "#f87171"; bg = "#f8717120"; }
+  else if (s === "completed") { color = "#2b70ff"; bg = "#2b70ff20"; }
+  else if (s === "cancelled") { color = "#fbbf24"; bg = "#fbbf2420"; }
+
+  return (
+    <span style={{ 
+      padding: '4px 10px', borderRadius: '8px', fontSize: '0.72rem', 
+      fontWeight: 800, textTransform: 'uppercase', color, backgroundColor: bg,
+      border: `1px solid ${color}40`
+    }}>
+      {status}
+    </span>
+  );
+}
+
+function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory }) {
   const isHighPriority = useMemo(() => {
     const reason = (req.reason || "").toLowerCase();
     return reason.includes("urgent") || 
@@ -83,7 +104,7 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick }) {
   }, [req.reason, req.appointment_date]);
 
   return (
-    <div className="ar-triage-row">
+    <div className={`ar-triage-row ${isHighPriority ? 'ar-priority-row' : ''}`}>
        <div className="ar-patient-cell">
           <div className="ar-avatar-container">
              <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${req.patient_name}`} className="ar-avatar-img" alt="" />
@@ -100,10 +121,13 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick }) {
        <div className="ar-clinical-cell">
           <span className="ar-reason-text">{req.reason || "Patient seeking assessment."}</span>
           <div className="ar-clinical-tags">
-             <span className="ar-clin-badge" style={{ borderColor: isHighPriority ? '#f8717140' : '#2a2a2f', color: isHighPriority ? '#f87171' : '#888' }}>
-                {isHighPriority ? "Priority Case" : "Standard"}
-             </span>
+             {isHighPriority && (
+               <span className="ar-clin-badge ar-priority-badge">
+                  Priority Case
+               </span>
+             )}
              <span className="ar-clin-badge">{req.consultation_type || 'OPD'}</span>
+             {isHistory && <StatusBadge status={req.status} />}
           </div>
        </div>
 
@@ -113,34 +137,61 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick }) {
        </div>
 
        <div className="ar-conflict-cell">
-          <div className="ar-conflict-flag" style={{ backgroundColor: req.hasConflict ? '#fbbf24' : '#4ade80' }}></div>
-          <span className="ar-conflict-text" style={{ color: req.hasConflict ? '#fbbf24' : '#4ade80' }}>
-             {req.hasConflict ? "Schedule Conflict" : "Slot Available"}
-          </span>
+          {!isHistory && (
+            <>
+              <div className="ar-conflict-flag" style={{ backgroundColor: req.hasConflict ? '#fbbf24' : '#4ade80' }}></div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <span className="ar-conflict-text" style={{ color: req.hasConflict ? '#fbbf24' : '#4ade80' }}>
+                   {req.hasConflict ? "Schedule Conflict" : "Slot Available"}
+                </span>
+                {req.hasConflict && req.conflictDetails && (
+                  <span style={{ fontSize: '0.65rem', color: '#fbbf2490' }}>
+                    {req.conflictDetails}
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+          {isHistory && (
+            <span className="ar-date-secondary" style={{ color: '#4ade8080' }}>
+              {req.status === 'completed' ? 'Session closed' : 'Processed'}
+            </span>
+          )}
        </div>
 
        <div className="ar-decision-cell">
-          <button 
-            className="ar-triage-btn ar-btn-reject" 
-            onClick={() => onAction(req.id, "reject")}
-            disabled={actionLoading === req.id + "reject"}
-          >
-             {actionLoading === req.id + "reject" ? <RefreshCw className="ar-spin" size={16} /> : <X size={20} />}
-          </button>
-          <button 
-            className="ar-triage-btn ar-btn-suggest" 
-            onClick={() => onRescheduleClick(req)}
-            style={{ color: '#8b5cf6', borderColor: '#8b5cf620' }}
-          >
-             <Clock size={18} />
-          </button>
-          <button 
-            className="ar-triage-btn ar-btn-approve" 
-            onClick={() => onAction(req.id, "approve")}
-            disabled={actionLoading === req.id + "approve"}
-          >
-             {actionLoading === req.id + "approve" ? <RefreshCw className="ar-spin" size={16} /> : <CheckCircle2 size={20} />}
-          </button>
+          {!isHistory ? (
+            <>
+              <button 
+                className="ar-triage-btn ar-btn-reject" 
+                onClick={() => onAction(req.id, "reject")}
+                disabled={actionLoading === req.id + "reject"}
+                title="Reject Request"
+              >
+                 {actionLoading === req.id + "reject" ? <RefreshCw className="ar-spin" size={16} /> : <X size={20} />}
+              </button>
+              <button 
+                className="ar-triage-btn ar-btn-suggest" 
+                onClick={() => onRescheduleClick(req)}
+                style={{ color: '#8b5cf6', borderColor: '#8b5cf620' }}
+                title="Suggest Alternate Time"
+              >
+                 <Clock size={18} />
+              </button>
+              <button 
+                className="ar-triage-btn ar-btn-approve" 
+                onClick={() => onAction(req.id, "approve")}
+                disabled={actionLoading === req.id + "approve"}
+                title="Approve Request"
+              >
+                 {actionLoading === req.id + "approve" ? <RefreshCw className="ar-spin" size={16} /> : <CheckCircle2 size={20} />}
+              </button>
+            </>
+          ) : (
+            <button className="ar-triage-btn ar-btn-view" onClick={() => alert("Details for history item")}>
+              <ChevronRight size={20} />
+            </button>
+          )}
        </div>
     </div>
   );
@@ -303,6 +354,8 @@ const RescheduleModal = ({ isOpen, onClose, onSubmit, appointment, loading }) =>
 
 const AppointmentRequests = () => {
   const [requests, setRequests]       = useState([]);
+  const [history, setHistory]         = useState([]);
+  const [approvedSchedule, setApprovedSchedule] = useState([]);
   const [historyCount, setHistoryCount] = useState(0);
   const [loading, setLoading]         = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -316,6 +369,8 @@ const AppointmentRequests = () => {
     fetchRequests(); 
   }, []);
 
+  // To enhance conflict detection, we should ideally fetch the doctor's approved schedule
+  // For now, we'll fetch a list of all non-pending appointments to check against
   const fetchRequests = async () => {
     try {
       setLoading(true);
@@ -324,7 +379,16 @@ const AppointmentRequests = () => {
         getAppointmentHistory()
       ]);
       setRequests(reqData || []);
+      setHistory(histData || []);
       setHistoryCount(histData?.length || 0);
+
+      // Extract only approved appointments for conflict checking
+      const approved = (histData || []).filter(a => 
+        String(a.status).toLowerCase() === 'approved' || 
+        String(a.status).toLowerCase() === 'confirmed'
+      );
+      setApprovedSchedule(approved);
+
     } catch (err) {
       console.error("Error fetching requests:", err);
     } finally {
@@ -363,17 +427,40 @@ const AppointmentRequests = () => {
 
   const processedRequests = useMemo(() => {
     return (requests || []).map(req => {
-      const hasConflict = requests.some(other => 
+      let conflictDetails = null;
+
+      // Conflict if another pending request has same date/time
+      const pendingConflict = requests.find(other => 
         other.id !== req.id && 
         other.appointment_date === req.appointment_date && 
         other.appointment_time === req.appointment_time
       );
-      return { ...req, hasConflict };
+      if (pendingConflict) {
+        conflictDetails = `Overlaps with ${pendingConflict.patient_name}'s request`;
+      }
+
+      // OR if an approved appointment exists at that time
+      const approvedConflict = approvedSchedule.find(approved => 
+        approved.appointment_date === req.appointment_date && 
+        approved.appointment_time === req.appointment_time
+      );
+      if (approvedConflict) {
+        conflictDetails = `Overlaps with ${approvedConflict.patient_name}'s session`;
+      }
+
+      return { 
+        ...req, 
+        hasConflict: !!(pendingConflict || approvedConflict),
+        conflictDetails 
+      };
     });
-  }, [requests]);
+  }, [requests, approvedSchedule]);
 
   const filteredRequests = useMemo(() => {
-    let list = processedRequests.filter(req => {
+    const isHistoryTab = activeTriage === "History";
+    const sourceList = isHistoryTab ? history : processedRequests;
+
+    let list = sourceList.filter(req => {
       const name = (req.patient_name || "").toLowerCase();
       const reason = (req.reason || "").toLowerCase();
       const search = searchTerm.toLowerCase();
@@ -383,13 +470,18 @@ const AppointmentRequests = () => {
     if (activeTriage === "High Priority") {
       return list.filter(req => {
         const reason = (req.reason || "").toLowerCase();
-        return reason.includes("urgent") || reason.includes("emergency") || isCloseDate(req.appointment_date);
+        return reason.includes("urgent") || 
+               reason.includes("emergency") || 
+               reason.includes("severe") || 
+               reason.includes("pain") || 
+               isCloseDate(req.appointment_date);
       });
     }
+    
     if (activeTriage === "Conflict Detected") return list.filter(r => r.hasConflict);
     
     return list;
-  }, [processedRequests, searchTerm, activeTriage]);
+  }, [processedRequests, history, searchTerm, activeTriage]);
 
   const stats = useMemo(() => {
     const highP = processedRequests.filter(req => {
@@ -409,23 +501,57 @@ const AppointmentRequests = () => {
   }, [processedRequests]);
 
   const triageTabs = [
-    { name: "Needs Review", count: stats.total },
-    { name: "High Priority", count: stats.highPriority },
-    { name: "Conflict Detected", count: stats.conflicts },
-    { name: "History", count: historyCount }
+    { 
+      name: "Needs Review", 
+      id: "Needs Review",
+      count: processedRequests.length 
+    },
+    { 
+      name: "High Priority", 
+      id: "High Priority",
+      count: processedRequests.filter(req => {
+        const reason = (req.reason || "").toLowerCase();
+        return reason.includes("urgent") || reason.includes("emergency") || reason.includes("severe") || reason.includes("pain") || isCloseDate(req.appointment_date);
+      }).length
+    },
+    { 
+      name: "Conflict Detected", 
+      id: "Conflict Detected",
+      count: processedRequests.filter(req => req.hasConflict).length
+    },
+    { 
+      name: "History", 
+      id: "History",
+      count: (history || []).length 
+    }
   ];
 
   const groupedRequestsByDate = useMemo(() => {
-    const sorted = [...filteredRequests].sort((a,b) => new Date(a.appointment_date) - new Date(b.appointment_date));
+    const isHistoryTab = activeTriage === "History";
+    // For history, we want reverse chronological (newest first). For triage, chronological (closest first).
+    const sorted = [...filteredRequests].sort((a,b) => {
+      const dA = new Date(a.appointment_date + 'T' + a.appointment_time);
+      const dB = new Date(b.appointment_date + 'T' + b.appointment_time);
+      return isHistoryTab ? dB - dA : dA - dB;
+    });
+
     return sorted.reduce((acc, req) => {
-      const date = req.appointment_date;
-      if (!acc[date]) acc[date] = [];
-      acc[date].push(req);
+      const dateKey = req.appointment_date;
+      if (!acc[dateKey]) acc[dateKey] = [];
+      acc[dateKey].push(req);
       return acc;
     }, {});
-  }, [filteredRequests]);
+  }, [filteredRequests, activeTriage]);
 
-  const sortedDates = Object.keys(groupedRequestsByDate);
+  const sortedDates = useMemo(() => {
+    const dates = Object.keys(groupedRequestsByDate);
+    const isHistoryTab = activeTriage === "History";
+    return dates.sort((a, b) => {
+        const dA = new Date(a);
+        const dB = new Date(b);
+        return isHistoryTab ? dB - dA : dA - dB;
+    });
+  }, [groupedRequestsByDate, activeTriage]);
 
   if (loading) {
      return (
@@ -513,8 +639,9 @@ const AppointmentRequests = () => {
                       onAction={handleAction}
                       actionLoading={actionLoading}
                       onRescheduleClick={setRescheduleTarget}
+                      isHistory={activeTriage === "History"}
                     />
-                 ))}
+                  ))}
               </div>
            ))}
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Activity, Calendar, Bell, Heart, TrendingUp, ShieldCheck, Clock, CheckCircle, X } from "lucide-react";
+import { Activity, Calendar, Bell, Heart, TrendingUp, ShieldCheck, Clock, X } from "lucide-react";
 import { getMyNotifications, markNotificationRead } from "../../api/profileApi";
 import { Link } from "react-router-dom";
 
@@ -104,21 +104,29 @@ const DashboardHome = () => {
                             <h2 className="h5 fw-black text-dark mb-4">Reminders & Alerts</h2>
                             <div className="d-flex flex-column gap-3">
                                 {notifications.length > 0 ? (
-                                    notifications.map(n => (
-                                        <div key={n.id} className={`d-flex gap-3 align-items-start p-3 rounded-4 border-start border-4 ${n.type === 'appointment_rescheduled' ? 'bg-warning bg-opacity-10 border-warning' : 'bg-primary bg-opacity-10 border-primary'}`}>
-                                            {n.type === 'appointment_rescheduled' ? <Clock size={20} className="text-warning mt-1" /> : <Bell size={20} className="text-primary mt-1" />}
-                                            <div className="flex-grow-1">
-                                                <div className="d-flex justify-content-between">
-                                                    <div className="fw-bold small text-dark">{n.title}</div>
-                                                    <button onClick={() => handleMarkRead(n.id)} className="btn btn-link p-0 text-muted" title="Dismiss"><X size={14}/></button>
+                                    notifications.map(n => {
+                                        const isUrgent = n.message.toLowerCase().includes("urgent") || n.message.toLowerCase().includes("priority");
+                                        const isActionRequired = n.type === 'appointment_rescheduled';
+                                        
+                                        return (
+                                            <div key={n.id} className={`d-flex gap-3 align-items-start p-3 rounded-4 border-start border-4 ${isUrgent ? 'bg-danger bg-opacity-10 border-danger' : isActionRequired ? 'bg-warning bg-opacity-10 border-warning' : 'bg-primary bg-opacity-10 border-primary'}`}>
+                                                {isUrgent ? <ShieldCheck size={20} className="text-danger mt-1" /> : isActionRequired ? <Clock size={20} className="text-warning mt-1" /> : <Bell size={20} className="text-primary mt-1" />}
+                                                <div className="flex-grow-1">
+                                                    <div className="d-flex justify-content-between">
+                                                        <div className="fw-bold small text-dark d-flex align-items-center gap-2">
+                                                            {n.title}
+                                                            {isUrgent && <span className="badge bg-danger rounded-pill" style={{fontSize: '0.6rem'}}>PRIORITY</span>}
+                                                        </div>
+                                                        <button onClick={() => handleMarkRead(n.id)} className="btn btn-link p-0 text-muted" title="Dismiss"><X size={14}/></button>
+                                                    </div>
+                                                    <p className="small text-secondary mb-2 lh-sm">{n.message}</p>
+                                                    {isActionRequired && (
+                                                        <Link to="/patient/appointments" className="btn btn-warning btn-sm py-0 px-2 rounded-pill fw-bold" style={{fontSize: '0.7rem'}}>Review New Time</Link>
+                                                    )}
                                                 </div>
-                                                <p className="small text-secondary mb-2 lh-sm">{n.message}</p>
-                                                {n.type === 'appointment_rescheduled' && (
-                                                    <Link to="/patient/appointments" className="btn btn-warning btn-sm py-0 px-2 rounded-pill fw-bold" style={{fontSize: '0.7rem'}}>Review New Time</Link>
-                                                )}
                                             </div>
-                                        </div>
-                                    ))
+                                        );
+                                    })
                                 ) : (
                                     <>
                                         <div className="d-flex gap-3 align-items-start p-3 rounded-4 bg-primary bg-opacity-10 border-start border-4 border-primary">

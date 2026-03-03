@@ -222,6 +222,20 @@
   color: #444;
 }
 
+.ar-logic-strip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #2b70ff10;
+  border: 1px solid #2b70ff20;
+  padding: 8px 16px;
+  border-radius: 12px;
+  color: #2b70ff;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-left: 12px;
+}
+
 /* --- TIER 4: APPOINTMENT TRIAGE TABLE --- */
 .ar-triage-list {
   display: flex;
@@ -427,6 +441,35 @@
   background: #f87171;
   color: white;
   box-shadow: 0 4px 12px rgba(248, 113, 113, 0.3);
+}
+
+/* --- PRIORITY & STATUS STYLES --- */
+.ar-priority-row {
+  border-left: 4px solid #f87171 !important;
+  background: linear-gradient(to right, #f871710a, #111114) !important;
+}
+
+.ar-priority-badge {
+  background: #f8717120 !important;
+  color: #f87171 !important;
+  border-color: #f8717140 !important;
+  animation: ar-pulse 2s infinite;
+}
+
+@keyframes ar-pulse {
+  0% { opacity: 1; }
+  50% { opacity: 0.6; }
+  100% { opacity: 1; }
+}
+
+.ar-btn-view {
+  color: #2b70ff;
+  border-color: #2b70ff20;
+}
+
+.ar-btn-view:hover {
+  background: #2b70ff10;
+  border-color: #2b70ff40;
 }
 
 /* DATE HEADERS */
