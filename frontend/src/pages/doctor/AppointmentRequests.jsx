@@ -4,7 +4,8 @@ import {
   approveAppointment, 
   rejectAppointment, 
   getAppointmentHistory,
-  rescheduleAppointment
+  rescheduleAppointment,
+  getScheduleSlots
 } from "../../api/doctor";
 import {
   X, RefreshCw, ChevronRight, Search,
@@ -148,20 +149,59 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick }) {
 const RescheduleModal = ({ isOpen, onClose, onSubmit, appointment, loading }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [useManualTime, setUseManualTime] = useState(false);
+  const [fetchingSlots, setFetchingSlots] = useState(false);
+  const [errorStatus, setErrorStatus] = useState("");
 
   useEffect(() => {
-    if (appointment) {
+    if (appointment && isOpen) {
       setDate(appointment.appointment_date || "");
       const timeStr = appointment.appointment_time;
       setTime(timeStr ? timeStr.substring(0, 5) : "");
+      setErrorStatus("");
+      setAvailableSlots([]);
+      setUseManualTime(false);
     }
-  }, [appointment]);
+  }, [appointment, isOpen]);
+
+  useEffect(() => {
+    if (date && isOpen && !useManualTime) {
+      fetchAvailableSlots(date);
+    }
+  }, [date, isOpen, useManualTime]);
+
+  const fetchAvailableSlots = async (targetDate) => {
+    setFetchingSlots(true);
+    setErrorStatus("");
+    try {
+      const data = await getScheduleSlots(targetDate);
+      const available = data.slots?.filter(s => s.status === 'available') || [];
+      setAvailableSlots(available);
+      
+      // If slots are available and the current time matches one, pre-select it
+      // Otherwise, if no slots available, maybe suggest manual?
+      if (available.length === 0) {
+        // setUseManualTime(true); // Don't auto-switch, let doctor decide
+      }
+    } catch (err) {
+      console.error("Error fetching slots:", err);
+      setErrorStatus("Failed to load available slots.");
+    } finally {
+      setFetchingSlots(false);
+    }
+  };
+
+  const handleTimeSelect = (slotTime) => {
+    setTime(slotTime.substring(0, 5));
+    setUseManualTime(false);
+  };
 
   if (!isOpen) return null;
 
   return (
-    <div className="ar-modal-overlay">
-       <div className="ar-modal-content">
+    <div className="ar-modal-overlay" onClick={onClose}>
+       <div className="ar-modal-content" onClick={(e) => e.stopPropagation()}>
           <div className="ar-modal-header">
              <h3>Propose Alternate Schedule</h3>
              <button onClick={onClose} className="ar-modal-close"><X size={20} /></button>
@@ -171,18 +211,85 @@ const RescheduleModal = ({ isOpen, onClose, onSubmit, appointment, loading }) =>
              
              <div className="ar-modal-field">
                 <label>Proposed Date</label>
-                <input type="date" value={date} onChange={(e) => setDate(e.target.value)} />
+                <div style={{ position: 'relative' }}>
+                   <input 
+                    type="date" 
+                    value={date} 
+                    onChange={(e) => setDate(e.target.value)} 
+                    min={new Date().toISOString().split('T')[0]}
+                   />
+                   <Calendar className="ar-field-icon" size={16} />
+                </div>
+             </div>
+
+             <div className="ar-manual-toggle">
+                <span>Select Available Slot</span>
+                <button 
+                  className={`ar-toggle-switch ${useManualTime ? '' : 'active'}`}
+                  onClick={() => setUseManualTime(!useManualTime)}
+                >
+                  <div className="ar-toggle-knob"></div>
+                </button>
              </div>
              
-             <div className="ar-modal-field">
-                <label>Proposed Time</label>
-                <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
-             </div>
+             {!useManualTime ? (
+               <div className="ar-modal-field">
+                  <label>Available Slots for {formatDateSmall(date)}</label>
+                  {fetchingSlots ? (
+                    <div className="ar-slots-loading">
+                       <RefreshCw className="ar-spin" size={20} />
+                       <span>Checking schedule...</span>
+                    </div>
+                  ) : availableSlots.length > 0 ? (
+                    <div className="ar-slot-grid">
+                       {availableSlots.map((slot) => {
+                         const slotTime = slot.slot_start_utc ? new Date(slot.slot_start_utc).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false }) : "";
+                         // Wait, backend might have slot_start_local?
+                         // Let's use slot_time string if available
+                         const displayTime = slot.slot_time || formatTime(slot.appointment_time); // Fallbacks
+                         
+                         // Actually, let's use the local time from slot object
+                         const t = slot.slot_time || (slot.slot_start_local ? slot.slot_start_local.split('T')[1].substring(0, 5) : "");
+                         
+                         return (
+                           <button 
+                             key={slot.id}
+                             className={`ar-slot-btn ${time === t ? 'active' : ''}`}
+                             onClick={() => handleTimeSelect(t)}
+                           >
+                             {formatTime(t)}
+                           </button>
+                         );
+                       })}
+                    </div>
+                  ) : (
+                    <div className="ar-slots-empty">
+                       <ShieldAlert size={20} />
+                       <span>No available slots found for this date.</span>
+                       <button className="ar-link-btn" onClick={() => setUseManualTime(true)}>Enter time manually</button>
+                    </div>
+                  )}
+                  {errorStatus && <p className="ar-field-error">{errorStatus}</p>}
+               </div>
+             ) : (
+               <div className="ar-modal-field">
+                  <label>Manual Time Entry</label>
+                  <div style={{ position: 'relative' }}>
+                    <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
+                    <Clock className="ar-field-icon" size={16} />
+                  </div>
+                  <p className="ar-field-hint">Enter any time you'd like to propose to the patient.</p>
+               </div>
+             )}
           </div>
           <div className="ar-modal-footer">
              <button onClick={onClose} className="ar-btn-secondary">Cancel</button>
              <button 
-                onClick={() => onSubmit(appointment.id, date, time)} 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  console.log("Reschedule proposal click:", { id: appointment.id, date, time });
+                  onSubmit(appointment.id, date, time);
+                }} 
                 className="ar-btn-primary"
                 disabled={loading || !date || !time}
              >
@@ -239,13 +346,16 @@ const AppointmentRequests = () => {
   };
 
   const handleRescheduleSubmit = async (id, date, time) => {
+    console.log("Submitting reschedule:", { id, date, time });
     setActionLoading(id + "reschedule");
     try {
       await rescheduleAppointment(id, date, time);
       setRequests(prev => prev.filter(r => r.id !== id));
       setRescheduleTarget(null);
+      // Optional: Add a small success state/toast here
     } catch (err) {
       console.error("Error rescheduling:", err);
+      alert(err.response?.data?.message || "Failed to send reschedule proposal. Please try again.");
     } finally {
       setActionLoading(null);
     }
