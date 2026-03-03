@@ -151,234 +151,225 @@ const AppointmentRequests = () => {
     return matchesSearch;
   });
 
-  const queue = filteredRequests.filter(r => !isUrgent(r.appointment_date));
-  const prioritized = filteredRequests.filter(r => isUrgent(r.appointment_date));
+  const pendingRequests = filteredRequests.filter(r => !isUrgent(r.appointment_date));
+  const urgentCases     = filteredRequests.filter(r => isUrgent(r.appointment_date));
 
   return (
     <div className={`ar-page ${isDark ? 'dark' : ''}`}>
       
-      {/* ── Main Content Area ── */}
-      <div className="ar-main-content">
-        
-        {/* ── Dashboard Banner ── */}
-        <div className="ar-banner">
-          <div className="ar-banner-shape"></div>
-          <div className="ar-banner-content">
-             <div className="d-flex justify-content-between align-items-start">
-                <div>
-                  <h1 className="ar-banner-title">Patient Intake Dashboard</h1>
-                  <p className="ar-subtitle mb-0">Reviewing clinical loads and authorization queues for today.</p>
-                </div>
-                <button className="ar-refresh-btn" onClick={handleRefresh} style={{ border: 'none', background: 'rgba(255,255,255,0.8)', borderRadius: '12px', padding: '10px 16px', fontWeight: '700' }}>
-                   <RefreshCw size={14} className={refreshing ? "ar-spin" : ""} /> Sync Engine
-                </button>
-             </div>
-
-             <div className="ar-banner-stats">
-                <div className="ar-banner-stat">
-                   <span className="ar-banner-stat-label">Active Queue</span>
-                   <span className="ar-banner-stat-val">{requests.length} Requests</span>
-                </div>
-                <div className="ar-banner-stat">
-                   <span className="ar-banner-stat-label">Critical Wait</span>
-                   <span className="ar-banner-stat-val text-danger">{prioritized.length} Urgent</span>
-                </div>
-                <div className="ar-banner-stat">
-                   <span className="ar-banner-stat-label">Efficiency</span>
-                   <span className="ar-banner-stat-val text-success">98% Autoprocess</span>
-                </div>
-             </div>
-          </div>
-        </div>
-
-        {/* ── Kanban Board ── */}
-        <div className="ar-kanban-board">
-          
-          {/* Column 1: Intake Queue */}
-          <div className="ar-kanban-col">
-            <div className="ar-kanban-header">
-               <div className="ar-kanban-title">
-                  <Layers size={18} className="text-primary" />
-                  Intake Queue
-               </div>
-               <span className="ar-kanban-count">{queue.length}</span>
-            </div>
-            
-            {queue.map(req => (
-              <RequestCard key={req.id} req={req} onApprove={handleAction} actionLoading={actionLoading} />
-            ))}
-            
-            {queue.length === 0 && (
-               <div className="ar-empty-state py-4 p-2" style={{ borderStyle: 'dotted' }}>
-                  <p className="small">No pending steady-state requests.</p>
-               </div>
-            )}
-          </div>
-
-          {/* Column 2: Prioritized */}
-          <div className="ar-kanban-col">
-            <div className="ar-kanban-header">
-               <div className="ar-kanban-title">
-                  <TrendingUp size={18} className="text-danger" />
-                  Prioritized
-               </div>
-               <span className="ar-kanban-count">{prioritized.length}</span>
-            </div>
-
-            {prioritized.map(req => (
-              <RequestCard key={req.id} req={req} onApprove={handleAction} actionLoading={actionLoading} />
-            ))}
-
-            {prioritized.length === 0 && (
-               <div className="ar-empty-state py-4 p-2" style={{ borderStyle: 'dotted' }}>
-                  <p className="small">All critical requests cleared.</p>
-               </div>
-            )}
-          </div>
-
-          {/* Column 3: Follow-ups / Discussion */}
-          <div className="ar-kanban-col">
-            <div className="ar-kanban-header">
-               <div className="ar-kanban-title">
-                  <MessageCircle size={18} className="text-purple-600" />
-                  Follow-ups
-               </div>
-               <span className="ar-kanban-count">0</span>
-            </div>
-            <div className="ar-empty-state py-5" style={{ background: 'transparent', border: '1.5px dashed #e2e8f0' }}>
-               <span className="text-muted small">Clinical discussions empty.</span>
-            </div>
-          </div>
-
-        </div>
+      {/* ── Top Analytics Row (Clean Cards) ── */}
+      <div className="ar-stats-row">
+         <StatCard title="Active Requests" value={requests.length} icon={<Layers size={20} />} color="#3b82f6" bg="#eff6ff" />
+         <StatCard title="Critical Cases" value={urgentCases.length} icon={<AlertCircle size={20} />} color="#ef4444" bg="#fef2f2" />
+         <StatCard title="Auto-Scheduled" value="98%" icon={<CheckCircle2 size={20} />} color="#10b981" bg="#ecfdf5" />
+         <StatCard title="Today's Load" value="6" icon={<Calendar size={20} />} color="#8b5cf6" bg="#f5f3ff" />
       </div>
 
-      {/* ── Right Panel ── */}
-      <div className="ar-right-panel d-none d-xl-flex">
+      <div className="ar-layout-grid">
          
-         <section>
-            <h3 className="ar-panel-section-title">Clinical Load Insight</h3>
-            <div className="ar-project-card mb-3">
-               <div className="ar-project-info">
-                  <div className="ar-project-icon"><Activity size={16} /></div>
-                  <span className="fw-bold small">Current Capacity</span>
-                  <span className="ar-progress-ring">71%</span>
+         {/* ── Main Content (70%) ── */}
+         <div className="ar-main-col">
+            
+            {/* Urgent Cases Section */}
+            <div className="ar-section">
+               <div className="ar-section-header">
+                  <h2 className="ar-section-title">
+                     <TrendingUp size={20} className="text-danger" />
+                     Urgent Cases
+                  </h2>
+                  <span className="ar-section-count">{urgentCases.length}</span>
+               </div>
+               
+               <div className="ar-list-stack">
+                  {urgentCases.map(req => (
+                     <RequestCard key={req.id} req={req} onAction={handleAction} actionLoading={actionLoading} />
+                  ))}
+                  {urgentCases.length === 0 && (
+                     <div className="ar-empty-state py-4" style={{ background: 'transparent', borderStyle: 'dashed' }}>
+                        <p className="small text-muted">All critical requests cleared.</p>
+                     </div>
+                  )}
                </div>
             </div>
-            <div className="ar-chart-placeholder">
-               <div className="ar-chart-line"></div>
-               <div className="p-3">
-                  <BarChart3 size={20} className="text-primary mb-2" />
-                  <div className="fw-bold small">Peak Hours (Est)</div>
-                  <div className="text-muted" style={{ fontSize: '0.7rem' }}>2:00 PM - 5:00 PM</div>
-               </div>
-            </div>
-         </section>
 
-         <section>
-            <h3 className="ar-panel-section-title">Peer Discussion</h3>
-            <div className="ar-chat-msg">
-               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Doc1" alt="Avatar" className="ar-chat-avatar" />
-               <div className="ar-chat-bubble">
-                  Can you check the labs for patient #392? They requested an urgent slot.
+            {/* Pending Requests Section */}
+            <div className="ar-section">
+               <div className="ar-section-header">
+                  <h2 className="ar-section-title">
+                     <Inbox size={20} className="text-primary" />
+                     Pending Requests
+                  </h2>
+                  <span className="ar-section-count">{pendingRequests.length}</span>
                </div>
-            </div>
-            <div className="ar-chat-msg">
-               <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Doc2" alt="Avatar" className="ar-chat-avatar" />
-               <div className="ar-chat-bubble">
-                  Scheduled them for 4 PM. Capacity is at 71%.
-               </div>
-            </div>
-         </section>
 
-         <section className="mt-auto">
-            <div className="ar-project-card" style={{ background: '#eff6ff' }}>
-               <div className="d-flex align-items-center gap-2 mb-2">
-                  <Star size={16} className="text-primary" />
-                  <span className="fw-bold small">Pro Support</span>
+               <div className="ar-list-stack">
+                  {pendingRequests.map(req => (
+                     <RequestCard key={req.id} req={req} onAction={handleAction} actionLoading={actionLoading} />
+                  ))}
+                  {pendingRequests.length === 0 && (
+                     <div className="ar-empty-state py-4" style={{ background: 'transparent', borderStyle: 'dashed' }}>
+                        <p className="small text-muted">No pending intake requests.</p>
+                     </div>
+                  )}
                </div>
-               <p className="text-muted mb-0" style={{ fontSize: '0.75rem' }}>Need assistance with complex scheduling? Contact the admin team.</p>
             </div>
-         </section>
+
+            {/* Scheduled Follow-ups (Mock Section) */}
+            <div className="ar-section">
+               <div className="ar-section-header">
+                  <h2 className="ar-section-title">
+                     <MessageCircle size={20} className="text-purple-500" />
+                     Scheduled Follow-ups
+                  </h2>
+                  <span className="ar-section-count">0</span>
+               </div>
+               <div className="ar-empty-state py-5" style={{ background: 'transparent', border: '1.5px dashed #e2e8f0' }}>
+                  <span className="text-muted small">No follow-ups requiring immediate triage.</span>
+               </div>
+            </div>
+
+         </div>
+
+         {/* ── Right Panel (30%) ── */}
+         <div className="ar-sidebar-col">
+            
+            <div className="ar-insight-card">
+               <div className="ar-ai-header">
+                  <Activity size={16} />
+                  AI Clinical Insights
+               </div>
+               
+               <div className="ar-insight-body">
+                  <div className="d-flex justify-content-between mb-1">
+                     <span className="small fw-bold">Current Capacity</span>
+                     <span className="small fw-bold text-primary">71%</span>
+                  </div>
+                  <div className="ar-cap-meter">
+                     <div className="ar-cap-fill" style={{ width: '71%' }}></div>
+                  </div>
+               </div>
+
+               <div className="ar-insight-msg">
+                  <Star size={14} className="text-warning me-1" />
+                  Capacity peak estimated at <strong>3:00 PM</strong>. Suggest move Patient #219 to morning slot for better clinical workflow.
+               </div>
+
+               <div className="ar-chart-placeholder" style={{ height: '80px', background: 'transparent' }}>
+                  <BarChart3 size={24} className="text-muted opacity-25" />
+               </div>
+            </div>
+
+            <div className="ar-widget">
+               <h3 className="ar-widget-title">Burnout Alert</h3>
+               <div className="d-flex align-items-center gap-3">
+                  <div className="bg-success-subtle rounded-circle p-2">
+                     <Activity size={20} className="text-success" />
+                  </div>
+                  <div className="small text-muted">Clinical load is optimal. Risk of burnout: Low.</div>
+               </div>
+            </div>
+
+            <div className="ar-widget">
+               <h3 className="ar-widget-title">Peer Discussion</h3>
+               <div className="d-flex flex-column gap-3">
+                  <div className="d-flex gap-2">
+                     <img src="https://api.dicebear.com/7.x/initials/svg?seed=JD" className="rounded-circle" style={{ width: 24, height: 24 }} alt="" />
+                     <div className="p-2 bg-light rounded small">Can you check Labs for #392?</div>
+                  </div>
+                  <div className="d-flex gap-2 justify-content-end">
+                     <div className="p-2 bg-primary text-white rounded small">Checking now.</div>
+                  </div>
+               </div>
+            </div>
+
+         </div>
+
       </div>
 
     </div>
   );
 };
 
-// ── Sub-component for Kanban Card ──
-const RequestCard = ({ req, onApprove, actionLoading }) => {
-  const [bg, fg] = getAvatarColor(req.patient_name);
-  const urgent = isUrgent(req.appointment_date);
-  
-  return (
-    <div className={`ar-card ${urgent ? 'ar-card-urgent' : 'ar-card-active'}`} style={{ minHeight: 'auto', gap: '16px', padding: '18px' }}>
-      <div className="ar-card-header mb-0">
-        <span className="ar-request-id">#{req.id.toString().substring(0, 3)}</span>
-        <button className="border-0 bg-transparent text-muted"><Search size={14}/></button>
+// ── Sub-components ───────────────────────────────────────
+
+const StatCard = ({ title, value, icon, color, bg }) => (
+   <div className="ar-stat-card">
+      <div className="ar-stat-header">
+         <div className="ar-stat-icon-box" style={{ backgroundColor: bg, color: color }}>
+            {icon}
+         </div>
+         <span className="ar-stat-title">{title}</span>
       </div>
+      <div className="ar-stat-value">{value}</div>
+   </div>
+);
 
-      <h3 className="ar-reason-title mb-2" style={{ fontSize: '0.95rem' }}>
-        {req.reason || "General Consultation"}
-      </h3>
-      
-      <p className="text-muted small mb-3" style={{ fontSize: '0.8rem' }}>
-         Duration: 30 minutes • Initial Consult
-      </p>
-
-      <div className="ar-card-footer">
-        <div className="ar-patient-brief">
-            <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${req.patient_name}`} alt="Avatar" className="ar-patient-avatar-sm" />
-            <div className="ar-patient-meta">
-                <h4 className="ar-patient-name-btn" style={{ fontSize: '0.85rem' }}>{req.patient_name}</h4>
+const RequestCard = ({ req, onAction, actionLoading }) => {
+   const urgent = isUrgent(req.appointment_date);
+   const dateStr = new Date(req.appointment_date).toLocaleDateString("en-US", { month: 'short', day: 'numeric' });
+   
+   return (
+      <div className={`ar-card ${urgent ? 'ar-card-urgent' : 'ar-card-active'} mb-3`}>
+         <div className="ar-card-header">
+            <div className="ar-patient-badge">
+               <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${req.patient_name}`} alt="" className="ar-p-avatar" />
+               <div className="ar-p-info">
+                  <div className="ar-p-name">{req.patient_name}</div>
+                  <div className="ar-requested-on small text-muted">Request ID: #{req.id.toString().substring(0, 5)}</div>
+               </div>
             </div>
-        </div>
-        
-        <button 
-          className="ar-action-arrow" 
-          style={{ width: '32px', height: '32px' }}
-          onClick={() => onApprove(req.id, "approve")}
-          disabled={!!actionLoading}
-        >
-          {actionLoading ? <RefreshCw size={14} className="ar-spin" /> : <ChevronRight size={16} />}
-        </button>
+            <div className="ar-time-tag">
+               <Clock size={12} className="me-1" />
+               {dateStr} • {formatTime(req.appointment_time)}
+            </div>
+         </div>
+
+         <div className="ar-card-body">
+            <h4 className="ar-complaint">
+               {req.reason || "General Consultation"}
+               {urgent && <span className="ms-2 badge bg-danger-subtle text-danger" style={{ fontSize: '0.65rem' }}>URGENT</span>}
+            </h4>
+            <div className="ar-meta-info">
+               <span>Initial Consult</span>
+               <span>•</span>
+               <span>Duration: 30m</span>
+               <span>•</span>
+               <span className="text-primary fw-bold">Online</span>
+            </div>
+         </div>
+
+         <div className="ar-card-actions">
+            <button className="ar-btn-action ar-btn-primary" onClick={() => onAction(req.id, "approve")} disabled={!!actionLoading}>
+               {actionLoading === req.id + "approve" ? <RefreshCw className="ar-spin" size={14} /> : <Check size={14} />}
+               Accept
+            </button>
+            <button className="ar-btn-action ar-btn-outline">
+               <RefreshCw size={14} />
+               Reschedule
+            </button>
+            <button className="ar-btn-action ar-btn-danger" onClick={() => onAction(req.id, "reject")} disabled={!!actionLoading}>
+               <X size={14} />
+               Reject
+            </button>
+         </div>
       </div>
-    </div>
-  );
+   );
 };
 
 // ── Utilites ───────────────────────────────────────────────
-const getAvatarColor = (name) => {
-  const colors = [
-    ["#e0f2fe", "#0369a1"], ["#fef2f2", "#b91c1c"],
-    ["#f0fdf4", "#15803d"], ["#fdf2f8", "#be185d"],
-    ["#fff7ed", "#c2410c"], ["#f5f3ff", "#6d28d9"]
-  ];
-  const idx = (name || "").charCodeAt(0) % colors.length;
-  return colors[idx];
-};
-
-const getInitials = (name) => {
-  return name ? name.split(" ").map(n => n[0]).join("").toUpperCase().substring(0, 2) : "P";
+const formatTime = (time) => {
+   if (!time) return "N/A";
+   const [h, m] = time.split(":");
+   const hh = parseInt(h);
+   const suffix = hh >= 12 ? "PM" : "AM";
+   return `${((hh + 11) % 12 + 1)}:${m} ${suffix}`;
 };
 
 const isUrgent = (date) => {
-  if (!date) return false;
-  const d = new Date(date);
-  const diffDays = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
-  return diffDays <= 2;
-};
-
-const formatDate = (date) => {
-    return new Date(date).toLocaleDateString("en-US", { weekday: 'short', month: 'short', day: 'numeric' });
-};
-
-const formatTime = (time) => {
-    if (!time) return "N/A";
-    const [h, m] = time.split(":");
-    const hh = parseInt(h);
-    const suffix = hh >= 12 ? "PM" : "AM";
-    return `${((hh + 11) % 12 + 1)}:${m} ${suffix}`;
+   if (!date) return false;
+   const d = new Date(date);
+   const diffDays = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
+   return diffDays >= 0 && diffDays <= 2;
 };
 
 export default AppointmentRequests;
