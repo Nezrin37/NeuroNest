@@ -251,22 +251,7 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        <div className="dark-section-title">About Career</div>
-                        {isEditing ? (
-                            <textarea 
-                                name="bio" 
-                                className="dark-input mt-2" 
-                                value={formData.bio || ''} 
-                                onChange={handleChange} 
-                                rows={6}
-                                placeholder="Write your professional bio here..."
-                            />
-                        ) : (
-                            <p className="dark-sidebar-bio">
-                                {profile.bio || "No professional summary added yet. Focuses on creating scalable clinical experiences and elevating patient journeys."}
-                            </p>
-                        )}
-                        
+                        {/* Removed About Career from here to expand timeline */}
                     </div>
 
                     {/* MAIN RIGHT COLUMN */}
@@ -281,7 +266,6 @@ const Profile = () => {
 
                         {/* VIEW MODE */}
                         {!isEditing && activeTab === 'overview' && (
-                            <>
                             <div className="dark-card-grid">
                                 {/* Card 1: Senior credentials */}
                                 <div className="dark-card">
@@ -364,60 +348,6 @@ const Profile = () => {
                                 </div>
                             </div>
 
-                            {/* Experience Timeline */}
-                            <div className="dark-card mt-4">
-                                <div className="dark-card-header mb-2">
-                                    <div className="dark-card-icon"><Award size={20} color="#0055ff"/></div>
-                                    <div className="dark-card-title-wrap">
-                                        <span className="dark-card-title">Clinical Experience Timeline</span>
-                                        <span className="dark-card-sub">Career Progression & Roles</span>
-                                    </div>
-                                </div>
-                                <div className="position-relative py-2 mt-4" style={{ paddingLeft: '32px' }}>
-                                    {/* Timeline Line */}
-                                    <div 
-                                        className="position-absolute" 
-                                        style={{ 
-                                            left: '11px', 
-                                            top: '8px', 
-                                            bottom: '20px', 
-                                            width: '2px', 
-                                            backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'
-                                        }}
-                                    />
-
-                                    {/* Timeline Items */}
-                                    {profile.experience && profile.experience.length > 0 ? profile.experience.map((exp, idx) => (
-                                        <div key={idx} className="position-relative mb-4 pb-2">
-                                            {/* Node Marker */}
-                                            <div 
-                                                className="position-absolute rounded-circle" 
-                                                style={{ 
-                                                    left: '-27px', 
-                                                    top: '4px', 
-                                                    width: '14px', 
-                                                    height: '14px', 
-                                                    backgroundColor: idx === 0 ? '#0055ff' : (isDark ? '#333' : '#e0e0e0'),
-                                                    border: `3px solid ${isDark ? '#1a1a1a' : '#ffffff'}`,
-                                                    zIndex: 2,
-                                                    boxShadow: idx === 0 ? '0 0 0 3px rgba(0, 85, 255, 0.2)' : 'none'
-                                                }}
-                                            />
-                                            <h5 className={`fw-bold mb-1 ${isDark ? 'text-white' : 'text-dark'}`} style={{ fontSize: '1.05rem', letterSpacing: '0.3px' }}>{exp.title}</h5>
-                                            <div className="d-flex align-items-center mb-2 gap-2">
-                                                <h6 className="mb-0" style={{ color: '#0055ff', fontSize: '0.9rem', fontWeight: '600' }}>{exp.hospital}</h6>
-                                                <span className="px-2 py-1 rounded-pill" style={{ fontSize: '0.7rem', fontWeight: '600', backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', color: isDark ? '#a0a0a0' : '#666' }}>{exp.period}</span>
-                                            </div>
-                                            <p className="mb-0 mt-2" style={{ color: isDark ? '#a0a0a0' : '#555', fontSize: '0.85rem', lineHeight: '1.6', maxWidth: '800px' }}>{exp.description}</p>
-                                        </div>
-                                    )) : (
-                                        <div className="text-center py-4">
-                                            <p className="mb-0" style={{ color: isDark ? '#666' : '#999', fontSize: '0.9rem' }}>No clinical experience records mapped to this profile module.</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                            </>
                         )}
 
                         {/* EDIT MODE (Configuration Tab or Editing triggered) */}
@@ -585,6 +515,79 @@ const Profile = () => {
 
                     </div>
                 </div>
+
+                {/* FULL WIDTH SECTIONS BELOW SIDEBAR/CARDS GRID */}
+                {!isEditing && activeTab === 'overview' && (
+                    <div className="mt-4">
+                        {/* Professional Summary Card(moved from sidebar) */}
+                        <div className="dark-card mb-4">
+                            <div className="dark-card-header mb-2">
+                                <div className="dark-card-icon"><Briefcase size={20} color="#0055ff"/></div>
+                                <div className="dark-card-title-wrap">
+                                    <span className="dark-card-title">Professional Summary</span>
+                                    <span className="dark-card-sub">Clinical Philosophy & Focus</span>
+                                </div>
+                            </div>
+                            <p className="mb-0 mt-2" style={{ color: isDark ? '#a0a0a0' : '#555', fontSize: '0.9rem', lineHeight: '1.7' }}>
+                                {profile.bio || "No professional summary added yet. Focuses on creating scalable clinical experiences and elevating patient journeys."}
+                            </p>
+                        </div>
+
+                        {/* Expanded Clinical Experience Timeline */}
+                        <div className="dark-card">
+                            <div className="dark-card-header mb-2">
+                                <div className="dark-card-icon"><Award size={20} color="#0055ff"/></div>
+                                <div className="dark-card-title-wrap">
+                                    <span className="dark-card-title">Clinical Experience Timeline</span>
+                                    <span className="dark-card-sub">Career Progression & Roles</span>
+                                </div>
+                            </div>
+                            <div className="position-relative py-2 mt-4" style={{ paddingLeft: '32px' }}>
+                                {/* Timeline Line */}
+                                <div 
+                                    className="position-absolute" 
+                                    style={{ 
+                                        left: '11px', 
+                                        top: '8px', 
+                                        bottom: '20px', 
+                                        width: '2px', 
+                                        backgroundColor: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)'
+                                    }}
+                                />
+
+                                {/* Timeline Items */}
+                                {profile.experience && profile.experience.length > 0 ? profile.experience.map((exp, idx) => (
+                                    <div key={idx} className="position-relative mb-4 pb-2">
+                                        {/* Node Marker */}
+                                        <div 
+                                            className="position-absolute rounded-circle" 
+                                            style={{ 
+                                                left: '-27px', 
+                                                top: '4px', 
+                                                width: '14px', 
+                                                height: '14px', 
+                                                backgroundColor: idx === 0 ? '#0055ff' : (isDark ? '#333' : '#e0e0e0'),
+                                                border: `3px solid ${isDark ? '#1a1a1a' : '#ffffff'}`,
+                                                zIndex: 2,
+                                                boxShadow: idx === 0 ? '0 0 0 3px rgba(0, 85, 255, 0.2)' : 'none'
+                                            }}
+                                        />
+                                        <h5 className={`fw-bold mb-1 ${isDark ? 'text-white' : 'text-dark'}`} style={{ fontSize: '1.05rem', letterSpacing: '0.3px' }}>{exp.title}</h5>
+                                        <div className="d-flex align-items-center mb-2 gap-2">
+                                            <h6 className="mb-0" style={{ color: '#0055ff', fontSize: '0.9rem', fontWeight: '600' }}>{exp.hospital}</h6>
+                                            <span className="px-2 py-1 rounded-pill" style={{ fontSize: '0.7rem', fontWeight: '600', backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', color: isDark ? '#a0a0a0' : '#666' }}>{exp.period}</span>
+                                        </div>
+                                        <p className="mb-0 mt-2" style={{ color: isDark ? '#a0a0a0' : '#555', fontSize: '0.85rem', lineHeight: '1.6', maxWidth: '1000px' }}>{exp.description}</p>
+                                    </div>
+                                )) : (
+                                    <div className="text-center py-4">
+                                        <p className="mb-0" style={{ color: isDark ? '#666' : '#999', fontSize: '0.9rem' }}>No clinical experience records mapped to this profile module.</p>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
 
             <AvailabilityModal 
