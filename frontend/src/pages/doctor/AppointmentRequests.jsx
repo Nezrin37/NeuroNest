@@ -14,12 +14,15 @@ const AppointmentRequests = () => {
   const [requests, setRequests]       = useState([]);
   const [loading, setLoading]         = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
-  const [approved, setApproved]       = useState([]);
-  const [rejected, setRejected]       = useState([]);
   const [refreshing, setRefreshing]   = useState(false);
   const [searchTerm, setSearchTerm]   = useState("");
-  const [filterMode, setFilterMode]   = useState("All"); // All, Urgent, Recent
   const { isDark }                    = useTheme();
+
+  const [selectedRequest, setSelectedRequest] = useState(null);
+  const [showReschedule, setShowReschedule] = useState(false);
+  const [filterType, setFilterType] = useState("All"); // All, Online, In-person
+  const [filterTime, setFilterTime] = useState("All"); // All, Today, This Week
+  const [sortBy, setSortBy] = useState("Time"); // Time, Priority
 
   useEffect(() => { fetchRequests(); }, []);
 
@@ -46,16 +49,10 @@ const AppointmentRequests = () => {
     try {
       if (action === "approve") {
         await approveAppointment(id);
-        setApproved(prev => [...prev, id]);
-      } else {
+      } else if (action === "reject") {
         await rejectAppointment(id);
-        setRejected(prev => [...prev, id]);
       }
-      setTimeout(() => {
-        setRequests(prev => prev.filter(r => r.id !== id));
-        setApproved(prev => prev.filter(a => a !== id));
-        setRejected(prev => prev.filter(r => r !== id));
-      }, 700);
+      setRequests(prev => prev.filter(r => r.id !== id));
     } catch (err) {
       console.error(`Error ${action}ing:`, err);
     } finally {
@@ -63,229 +60,156 @@ const AppointmentRequests = () => {
     }
   };
 
-  const formatTime = (t) => {
-    if (!t) return "—";
-    const [h, m] = t.split(":");
-    const hn = Number(h);
-    if (isNaN(hn)) return t.substring(0, 5);
-    return `${hn % 12 || 12}:${m} ${hn >= 12 ? "PM" : "AM"}`;
+  const handleRescheduleSubmit = async (e) => {
+     e.preventDefault();
+     // API call would go here
+     console.log("Rescheduling", selectedRequest.id);
+     setShowReschedule(false);
+     setRequests(prev => prev.filter(r => r.id !== selectedRequest.id));
   };
 
-  const formatDate = (d) =>
-    new Date(d).toLocaleDateString("en-US", {
-      weekday: "short", month: "short", day: "numeric", year: "numeric"
-    });
-
-  const getInitials = (name = "") =>
-    name.split(" ").map(w => w[0]).join("").toUpperCase().slice(0, 2) || "?";
-
-  const avatarColors = [
-    ["#dbeafe", "#1d4ed8"], ["#fce7f3", "#be185d"], ["#dcfce7", "#15803d"],
-    ["#fef3c7", "#b45309"], ["#ede9fe", "#7c3aed"], ["#ffedd5", "#c2410c"],
-  ];
-
-  const getAvatarColor = (name = "") => {
-    const idx = (name.charCodeAt(0) || 0) % avatarColors.length;
-    return avatarColors[idx];
-  };
-
-  const isUrgent = (dateStr) => {
-    const diff = (new Date(dateStr) - new Date()) / (1000 * 60 * 60 * 24);
-    return diff >= 0 && diff <= 2;
-  };
-
-  // ── Loading ──────────────────────────────────────────────
-  if (loading) {
-    return (
-      <div className={`ar-page container-fluid py-4 min-vh-100 ${isDark ? 'dark' : ''}`}>
-         <div className="ar-main-content">
-            <div className="ar-skeleton-header mb-4" style={{ height: '200px' }}></div>
-            <div className="row g-4">
-              {[1, 2, 3].map(i => (
-                <div key={i} className="col-4">
-                  <div className="ar-skeleton-row mb-3" style={{ height: '30px', width: '40%' }}></div>
-                  <div className="ar-skeleton-card mb-3" style={{ height: '150px' }}></div>
-                  <div className="ar-skeleton-card" style={{ height: '150px' }}></div>
-                </div>
-              ))}
-            </div>
-         </div>
-      </div>
-    );
-  }
-
-  // ── Empty ────────────────────────────────────────────────
-  if (requests.length === 0) {
-    return (
-      <div className={`ar-page container-fluid py-4 min-vh-100 ${isDark ? 'dark' : ''}`}>
-        <div className="ar-topbar mb-5">
-          <div>
-            <h1 className="ar-title">Appointment Requests</h1>
-            <p className="ar-subtitle">Manage your patient consultation queue</p>
-          </div>
-          <button className="ar-refresh-btn" onClick={handleRefresh} disabled={refreshing}>
-            <RefreshCw size={16} className={refreshing ? "ar-spin" : ""} />
-            Refresh Queue
-          </button>
-        </div>
-
-        <div className="ar-empty-state">
-          <div className="ar-empty-icon-ring">
-            <Inbox size={40} strokeWidth={1.5} />
-          </div>
-          <h3>Dashboard Synced</h3>
-          <p>No new appointment requests at the moment. We'll alert you when a patient initiates a booking.</p>
-          <button className="ar-btn-approve shadow-none mt-3" style={{ maxWidth: '200px' }} onClick={handleRefresh}>
-            <RefreshCw size={16} /> Check for Updates
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // ── Main ─────────────────────────────────────────────────
+  // ── Logic ────────────────────────────────────────────────
   const filteredRequests = requests.filter(req => {
     const matchesSearch = req.patient_name.toLowerCase().includes(searchTerm.toLowerCase()) || 
                          (req.reason && req.reason.toLowerCase().includes(searchTerm.toLowerCase()));
-    if (filterMode === "Urgent") return matchesSearch && isUrgent(req.appointment_date);
-    return matchesSearch;
+    
+    const matchesType = filterType === "All" || req.consultation_type === filterType;
+    
+    let matchesTime = true;
+    if (filterTime === "Today") {
+       const today = new Date().toISOString().split('T')[0];
+       matchesTime = req.appointment_date === today;
+    } else if (filterTime === "This Week") {
+       const diff = (new Date(req.appointment_date) - new Date()) / (1000 * 60 * 60 * 24);
+       matchesTime = diff >= 0 && diff <= 7;
+    }
+
+    return matchesSearch && matchesType && matchesTime;
+  }).sort((a, b) => {
+     if (sortBy === "Priority") {
+        const aU = isUrgent(a.appointment_date) ? 1 : 0;
+        const bU = isUrgent(b.appointment_date) ? 1 : 0;
+        return bU - aU;
+     }
+     const timeA = new Date(a.appointment_date + 'T' + (a.appointment_time || "00:00"));
+     const timeB = new Date(b.appointment_date + 'T' + (b.appointment_time || "00:00"));
+     return timeA - timeB;
   });
 
-  const pendingRequests = filteredRequests.filter(r => !isUrgent(r.appointment_date));
-  const urgentCases     = filteredRequests.filter(r => isUrgent(r.appointment_date));
+  const urgentCasesCount = requests.filter(r => isUrgent(r.appointment_date)).length;
+  const capacity = Math.min(Math.round((requests.length / 15) * 100), 100);
+
+  if (loading) {
+    return (
+      <div className={`ar-page ${isDark ? 'dark' : ''} text-center py-5`}>
+        <RefreshCw className="ar-spin text-primary" size={40} />
+        <p className="mt-3 text-muted fw-bold">Synchronizing Clinical Triage...</p>
+      </div>
+    );
+  }
 
   return (
     <div className={`ar-page ${isDark ? 'dark' : ''}`}>
       
-      {/* ── Page Header & Search ── */}
-      <div className="d-flex justify-content-between align-items-center mb-4">
-         <div>
-            <h1 className="ar-title mb-0" style={{ fontSize: '1.6rem', fontWeight: 800, color: '#1e293b' }}>
-               Appointment Control Center
-            </h1>
-            <p className="text-muted small mb-0">NeuroNest Doctor Experience • Intake & Triage</p>
-         </div>
-         <div className="ar-search-input-wrap" style={{ maxWidth: '300px' }}>
+      {/* ── KPI Row ── */}
+      <div className="ar-stats-row">
+         <StatCard title="Pending Requests" value={requests.length} icon={<Layers size={18} />} color="#3b82f6" bg="#eff6ff" />
+         <StatCard title="Urgent Cases" value={urgentCasesCount} icon={<AlertCircle size={18} />} color="#ef4444" bg="#fef2f2" />
+         <StatCard title="Auto-Scheduled %" value="98%" icon={<CheckCircle2 size={18} />} color="#10b981" bg="#ecfdf5" />
+         <StatCard title="Today's Load" value="6" icon={<Calendar size={18} />} color="#8b5cf6" bg="#f5f3ff" />
+      </div>
+
+      {/* ── Filter Bar ── */}
+      <div className="ar-filter-row">
+         <div className="ar-search-box">
             <Search className="ar-search-icon" size={18} />
             <input 
                type="text" 
                className="ar-search-input" 
-               placeholder="Search clinical queue..." 
+               placeholder="Find patient case by name or ID..."
                value={searchTerm}
                onChange={(e) => setSearchTerm(e.target.value)}
             />
          </div>
-      </div>
-
-      {/* ── Top Analytics Row (Clean Cards) ── */}
-      <div className="ar-stats-row">
-         <StatCard title="Pending Intake" value={pendingRequests.length} icon={<Layers size={20} />} color="#3b82f6" bg="#eff6ff" />
-         <StatCard title="Critical Cases" value={urgentCases.length} icon={<AlertCircle size={20} />} color="#ef4444" bg="#fef2f2" />
-         <StatCard title="Success Rate" value="98%" icon={<CheckCircle2 size={20} />} color="#10b981" bg="#ecfdf5" />
-         <StatCard title="Daily Load" value="6" icon={<Calendar size={20} />} color="#8b5cf6" bg="#f5f3ff" />
+         <div className="ar-filter-group">
+            <select className="ar-select-pill" value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+               <option value="All">All Types</option>
+               <option value="Online">Online Only</option>
+               <option value="In-person">In-person</option>
+            </select>
+            <select className="ar-select-pill" value={filterTime} onChange={(e) => setFilterTime(e.target.value)}>
+               <option value="All">Any Time</option>
+               <option value="Today">Today</option>
+               <option value="This Week">This Week</option>
+            </select>
+            <select className="ar-select-pill" value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+               <option value="Time">Sort by Time</option>
+               <option value="Priority">Sort by Priority</option>
+            </select>
+            <button className="ar-select-pill bg-light d-flex align-items-center justify-content-center" onClick={handleRefresh} style={{ width: 42, padding: 0 }}>
+               <RefreshCw size={16} className={refreshing ? "ar-spin" : ""} />
+            </button>
+         </div>
       </div>
 
       <div className="ar-layout-grid">
          
-         {/* ── Main Content (70%) ── */}
          <div className="ar-main-col">
-            
-            {/* Urgent Cases Section */}
-            <div className="ar-section">
-               <div className="ar-section-header">
-                  <h2 className="ar-section-title">
-                     <TrendingUp size={20} className="text-danger" />
-                     Urgent Cases
-                  </h2>
-                  <span className="ar-section-count">{urgentCases.length}</span>
-               </div>
-               
-               <div className="ar-list-stack">
-                  {urgentCases.map(req => (
-                     <RequestCard key={req.id} req={req} onAction={handleAction} actionLoading={actionLoading} />
-                  ))}
-                  {urgentCases.length === 0 && (
-                     <div className="ar-empty-state py-4" style={{ background: 'transparent', borderStyle: 'dashed' }}>
-                        <p className="small text-muted">All critical requests cleared.</p>
-                     </div>
-                  )}
-               </div>
+            <div className="ar-list-stack">
+               {filteredRequests.length > 0 ? (
+                  filteredRequests.map(req => (
+                     <RequestCard 
+                        key={req.id} 
+                        req={req} 
+                        onAction={handleAction} 
+                        onReschedule={() => { setSelectedRequest(req); setShowReschedule(true); }}
+                        actionLoading={actionLoading} 
+                     />
+                  ))
+               ) : (
+                  <div className="ar-empty-state">
+                     <Inbox size={40} className="text-muted mb-2" />
+                     <h3>No matching requests</h3>
+                     <p>Adjust your filters or sync the dashboard.</p>
+                  </div>
+               )}
             </div>
-
-            {/* Pending Requests Section */}
-            <div className="ar-section">
-               <div className="ar-section-header">
-                  <h2 className="ar-section-title">
-                     <Inbox size={20} className="text-primary" />
-                     Pending Requests
-                  </h2>
-                  <span className="ar-section-count">{pendingRequests.length}</span>
-               </div>
-
-               <div className="ar-list-stack">
-                  {pendingRequests.map(req => (
-                     <RequestCard key={req.id} req={req} onAction={handleAction} actionLoading={actionLoading} />
-                  ))}
-                  {pendingRequests.length === 0 && (
-                     <div className="ar-empty-state py-4" style={{ background: 'transparent', borderStyle: 'dashed' }}>
-                        <p className="small text-muted">No pending intake requests.</p>
-                     </div>
-                  )}
-               </div>
-            </div>
-
-            {/* Scheduled Follow-ups (Mock Section) */}
-            <div className="ar-section">
-               <div className="ar-section-header">
-                  <h2 className="ar-section-title">
-                     <MessageCircle size={20} className="text-purple-500" />
-                     Scheduled Follow-ups
-                  </h2>
-                  <span className="ar-section-count">0</span>
-               </div>
-               <div className="ar-empty-state py-5" style={{ background: 'transparent', border: '1.5px dashed #e2e8f0' }}>
-                  <span className="text-muted small">No follow-ups requiring immediate triage.</span>
-               </div>
-            </div>
-
          </div>
 
-         {/* ── Right Panel (30%) ── */}
          <div className="ar-sidebar-col">
-            
             <div className="ar-insight-card">
                <div className="ar-ai-header">
-                  <Activity size={16} />
-                  AI Clinical Insights
+                  <Activity size={16} /> AI Clinical Insights
                </div>
-               
-               <div className="ar-insight-body">
+               <div className="mt-2">
                   <div className="d-flex justify-content-between mb-1">
                      <span className="small fw-bold">Daily Capacity</span>
-                     <span className="small fw-bold text-primary">71%</span>
+                     <span className={`small fw-bold ${capacity > 85 ? 'text-danger' : 'text-primary'}`}>{capacity}%</span>
                   </div>
                   <div className="ar-cap-meter">
-                     <div className="ar-cap-fill" style={{ width: '71%' }}></div>
+                     <div className="ar-cap-fill" style={{ width: `${capacity}%`, background: capacity > 85 ? '#ef4444' : '#3b82f6' }}></div>
                   </div>
                </div>
-
-               <div className="ar-insight-msg">
+               {capacity > 85 && (
+                  <div className="ar-alert-overload mt-2">
+                     <AlertCircle size={14} /> Critical overload risk detected.
+                  </div>
+               )}
+               <div className="ar-insight-msg mt-3">
                   <Star size={14} className="text-warning me-1" />
-                  <strong>Optimization Alert:</strong> Peak hours (2-4 PM) are approaching capacity limit. AI suggests prioritizing Patient #219 now to avoid clinical bottleneck.
-               </div>
-
-               <div className="ar-chart-placeholder" style={{ height: '60px', background: 'transparent', border: 'none' }}>
-                  <BarChart3 size={32} className="text-primary opacity-50" />
+                  <strong>Peak Alert:</strong> Expected bottleneck at <strong>3:00 PM</strong>. Suggest prioritizing online consults for efficiency.
                </div>
             </div>
 
             <div className="ar-widget">
-               <h3 className="ar-widget-title">Burnout Alert</h3>
+               <h3 className="ar-widget-title">Burnout Meter</h3>
                <div className="d-flex align-items-center gap-3">
-                  <div className="bg-success-subtle rounded-circle p-2">
-                     <Activity size={20} className="text-success" />
+                  <div className={`p-2 rounded-circle ${capacity > 80 ? 'bg-danger-subtle' : 'bg-success-subtle'}`}>
+                     <Activity size={18} className={capacity > 80 ? 'text-danger' : 'text-success'} />
                   </div>
-                  <div className="small text-muted">Clinical load is optimal. Risk of burnout: Low.</div>
+                  <div className="small fw-bold text-muted">
+                     {capacity > 80 ? "High Risk: Take a break." : "Optimal Load: You're doing great!"}
+                  </div>
                </div>
             </div>
 
@@ -299,97 +223,140 @@ const AppointmentRequests = () => {
                   <div className="d-flex gap-2 justify-content-end">
                      <div className="p-2 bg-primary text-white rounded small">Checking now.</div>
                   </div>
+                  <button className="btn btn-sm btn-outline-primary w-100 py-1" style={{ fontSize: '0.75rem' }}>Open Chat</button>
                </div>
             </div>
-
          </div>
-
       </div>
+
+      {/* ── Reschedule Modal ── */}
+      {showReschedule && (
+         <div className="ar-modal-overlay">
+            <div className="ar-modal-content">
+               <div className="ar-modal-header">
+                  <h3 className="ar-modal-title">Reschedule Proposal</h3>
+                  <button className="btn-close shadow-none" onClick={() => setShowReschedule(false)}></button>
+               </div>
+               <div className="ar-modal-body">
+                  <div className="ar-current-info">
+                     Current: <strong>{formatDate(selectedRequest.appointment_date)}</strong> at <strong>{formatTime(selectedRequest.appointment_time)}</strong>
+                  </div>
+                  <form onSubmit={handleRescheduleSubmit} className="ar-modal-body p-0">
+                     <div className="ar-form-group">
+                        <label className="ar-form-label">New Consultation Date</label>
+                        <input type="date" className="ar-input-field" defaultValue={selectedRequest.appointment_date} required />
+                     </div>
+                     <div className="ar-form-group">
+                        <label className="ar-form-label">Available Slots</label>
+                        <div className="ar-quick-slots">
+                           <button type="button" className="ar-slot-btn">Next Available</button>
+                           <button type="button" className="ar-slot-btn">Tomorrow Morning</button>
+                           <button type="button" className="ar-slot-btn">Same Time tomorrow</button>
+                           <button type="button" className="ar-slot-btn">Move to Evening</button>
+                        </div>
+                     </div>
+                     <div className="ar-form-group">
+                        <label className="ar-form-label">Reason for Reschedule</label>
+                        <select className="ar-input-field">
+                           <option>Clinic Overbooked</option>
+                           <option>Emergency Case</option>
+                           <option>Doctor Unavailable</option>
+                        </select>
+                     </div>
+                     <div className="d-flex align-items-center gap-2 mt-2">
+                        <input type="checkbox" id="notify" defaultChecked />
+                        <label htmlFor="notify" className="small fw-bold text-muted">Automatically notify patient via SMS/Email</label>
+                     </div>
+                     <div className="ar-modal-footer">
+                        <button type="button" className="ar-btn-outline w-100" onClick={() => setShowReschedule(false)}>Cancel</button>
+                        <button type="submit" className="ar-btn-primary w-100">Send Proposal</button>
+                     </div>
+                  </form>
+               </div>
+            </div>
+         </div>
+      )}
 
     </div>
   );
 };
 
 // ── Sub-components ───────────────────────────────────────
-
 const StatCard = ({ title, value, icon, color, bg }) => (
    <div className="ar-stat-card">
       <div className="ar-stat-header">
-         <div className="ar-stat-icon-box" style={{ backgroundColor: bg, color: color }}>
-            {icon}
-         </div>
+         <div className="ar-stat-icon-box" style={{ backgroundColor: bg, color: color }}>{icon}</div>
          <span className="ar-stat-title">{title}</span>
       </div>
       <div className="ar-stat-value">{value}</div>
    </div>
 );
 
-const RequestCard = ({ req, onAction, actionLoading }) => {
+const RequestCard = ({ req, onAction, onReschedule, actionLoading }) => {
    const urgent = isUrgent(req.appointment_date);
    const dateStr = new Date(req.appointment_date).toLocaleDateString("en-US", { month: 'short', day: 'numeric' });
    
    return (
-      <div className={`ar-card ${urgent ? 'ar-card-urgent' : 'ar-card-active'} mb-3`}>
+      <div className={`ar-card ${urgent ? 'ar-card-urgent' : 'ar-card-active'}`}>
          <div className="ar-card-header">
-            <div className="ar-patient-badge">
-               <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${req.patient_name}`} alt="" className="ar-p-avatar" />
-               <div className="ar-p-info">
-                  <div className="ar-p-name">{req.patient_name}</div>
-                  <div className="ar-requested-on small text-muted">Request ID: #{req.id.toString().substring(0, 5)}</div>
+            <div className="ar-patient-info-box">
+               <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${req.patient_name}`} alt="" className="ar-avatar-lg" />
+               <div className="ar-name-stack">
+                  <h4 className="ar-p-name">{req.patient_name}</h4>
+                  <span className="ar-p-id">ID: #{req.id.toString().substring(0, 8)}</span>
                </div>
             </div>
-            <div className="ar-time-tag">
-               <Clock size={12} className="me-1" />
+            <div className="ar-time-badge">
+               <Clock size={16} className="text-primary" />
                {dateStr} • {formatTime(req.appointment_time)}
             </div>
          </div>
 
-         <div className="ar-card-body">
-            <h4 className="ar-complaint">
-               {req.reason || "General Consultation"}
-               {urgent && <span className="ms-2 badge bg-danger-subtle text-danger" style={{ fontSize: '0.65rem' }}>URGENT</span>}
-            </h4>
-            <div className="ar-meta-info">
-               <span>Initial Consult</span>
-               <span>•</span>
-               <span>Duration: 30m</span>
-               <span>•</span>
-               <span className="text-primary fw-bold">Online</span>
+         <div className="ar-card-metadata">
+            <div className="ar-meta-item">
+               <Stethoscope size={14} /> {req.consultation_type || 'General'}
             </div>
+            <div className="ar-meta-item">
+               <Clock size={14} /> 30 Min
+            </div>
+            {urgent && (
+               <div className="ar-meta-item text-danger">
+                  <AlertCircle size={14} /> URGENT
+               </div>
+            )}
          </div>
 
+         <p className="ar-symptoms-preview">
+            <strong>Reason:</strong> {req.reason || "Patient requested initial consultation regarding neurological baseline."}
+         </p>
+
          <div className="ar-card-actions">
-            <button className="ar-btn-action ar-btn-primary" onClick={() => onAction(req.id, "approve")} disabled={!!actionLoading}>
-               {actionLoading === req.id + "approve" ? <RefreshCw className="ar-spin" size={14} /> : <Check size={14} />}
-               Accept
+            <button className="ar-btn-primary" onClick={() => onAction(req.id, "approve")} disabled={!!actionLoading}>
+               {actionLoading === req.id + "approve" ? <RefreshCw className="ar-spin" size={16} /> : "Accept Request"}
             </button>
-            <button className="ar-btn-action ar-btn-outline">
-               <RefreshCw size={14} />
-               Reschedule
-            </button>
-            <button className="ar-btn-action ar-btn-danger" onClick={() => onAction(req.id, "reject")} disabled={!!actionLoading}>
-               <X size={14} />
-               Reject
+            <button className="ar-btn-outline" onClick={onReschedule}>Reschedule</button>
+            <button className="ar-btn-danger-soft" onClick={() => onAction(req.id, "reject")} disabled={!!actionLoading}>
+               <X size={20} />
             </button>
          </div>
       </div>
    );
 };
 
-// ── Utilites ───────────────────────────────────────────────
+// ── Utilities ─────────────────────────────────────────────
 const formatTime = (time) => {
    if (!time) return "N/A";
    const [h, m] = time.split(":");
    const hh = parseInt(h);
-   const suffix = hh >= 12 ? "PM" : "AM";
-   return `${((hh + 11) % 12 + 1)}:${m} ${suffix}`;
+   return `${((hh + 11) % 12 + 1)}:${m} ${hh >= 12 ? "PM" : "AM"}`;
 };
+
+const formatDate = (date) => new Date(date).toLocaleDateString("en-US", { weekday: 'long', month: 'long', day: 'numeric' });
 
 const isUrgent = (date) => {
    if (!date) return false;
-   const d = new Date(date);
-   const diffDays = Math.ceil((d - new Date()) / (1000 * 60 * 60 * 24));
-   return diffDays >= 0 && diffDays <= 2;
+   const diff = (new Date(date) - new Date()) / (1000 * 60 * 60 * 24);
+   return diff >= 0 && diff <= 2;
 };
 
 export default AppointmentRequests;
