@@ -27,7 +27,8 @@ const Profile = () => {
     const [newExp, setNewExp] = useState({
         title: '',
         hospital: '',
-        period: '',
+        startYear: new Date().getFullYear().toString(),
+        endYear: 'Present',
         description: ''
     });
 
@@ -127,16 +128,29 @@ const Profile = () => {
 
     // --- Experience Handlers ---
     const handleAddExp = async () => {
-        if (!newExp.title || !newExp.hospital || !newExp.period) {
-            alert("Title, Hospital/Clinic, and Period are required.");
+        if (!newExp.title || !newExp.hospital || !newExp.startYear || !newExp.endYear) {
+            alert("Title, Hospital/Clinic, and Time Range are required.");
             return;
         }
         setIsExperienceLoading(true);
         try {
-            const updatedProfile = await addExperience(newExp);
+            const period = `${newExp.startYear} - ${newExp.endYear}`;
+            const experienceToAdd = {
+                title: newExp.title,
+                hospital: newExp.hospital,
+                period: period,
+                description: newExp.description
+            };
+            const updatedProfile = await addExperience(experienceToAdd);
             setProfile(updatedProfile);
             setFormData(updatedProfile);
-            setNewExp({ title: '', hospital: '', period: '', description: '' });
+            setNewExp({ 
+                title: '', 
+                hospital: '', 
+                startYear: new Date().getFullYear().toString(), 
+                endYear: 'Present', 
+                description: '' 
+            });
         } catch (err) {
             console.error("Failed to add experience", err);
             alert("Failed to add experience.");
@@ -486,13 +500,30 @@ const Profile = () => {
                                             </div>
                                             <div className="col-12 col-md-4">
                                                 <label className="dark-label" style={{ fontSize: '0.75rem' }}>Timeline Range</label>
-                                                <input 
-                                                    className="dark-input" 
-                                                    style={{ height: '42px', fontSize: '0.85rem' }} 
-                                                    placeholder="e.g. 2018 - 2022"
-                                                    value={newExp.period}
-                                                    onChange={e => setNewExp(prev => ({ ...prev, period: e.target.value }))}
-                                                />
+                                                <div className="d-flex align-items-center gap-2">
+                                                    <select 
+                                                        className="dark-input" 
+                                                        style={{ height: '42px', fontSize: '0.85rem' }}
+                                                        value={newExp.startYear}
+                                                        onChange={e => setNewExp(prev => ({ ...prev, startYear: e.target.value }))}
+                                                    >
+                                                        {Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                                                            <option key={year} value={year}>{year}</option>
+                                                        ))}
+                                                    </select>
+                                                    <span className="text-secondary">to</span>
+                                                    <select 
+                                                        className="dark-input" 
+                                                        style={{ height: '42px', fontSize: '0.85rem' }}
+                                                        value={newExp.endYear}
+                                                        onChange={e => setNewExp(prev => ({ ...prev, endYear: e.target.value }))}
+                                                    >
+                                                        <option value="Present">Present</option>
+                                                        {Array.from({ length: 50 }, (_, i) => new Date().getFullYear() - i).map(year => (
+                                                            <option key={year} value={year}>{year}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
                                             </div>
                                             <div className="col-12 col-md-8">
                                                 <label className="dark-label" style={{ fontSize: '0.75rem' }}>Role Logic Description</label>
