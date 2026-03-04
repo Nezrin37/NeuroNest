@@ -83,7 +83,7 @@ const MyPatients = () => {
         <div className={`roster-page-wrapper ${isDark ? 'dark' : ''}`}>
             <div className="roster-main-card">
             
-            <div className="mb-5">
+            <div className="mb-4">
                  <h1 className="roster-title">Clinical Roster</h1>
                  <p className="roster-subtitle">Manage and access all your patient dossiers and history</p>
             </div>
