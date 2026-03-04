@@ -1,0 +1,399 @@
+/* =========================================================
+   NEURONEST — CLINICAL AGENDA (TODAY'S SCHEDULE)
+   Taskly-Inspired Premium Healthcare Dashboard
+   ========================================================= */
+
+.ts-page {
+  padding: 24px;
+  min-height: 100vh;
+  background-color: var(--nn-bg); /* Use theme token or fallback to taskly light */
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  justify-content: center;
+}
+
+.ts-main-container {
+  width: 100%;
+  max-width: 1560px;
+  display: grid;
+  grid-template-columns: 320px 1fr 340px;
+  gap: 30px;
+  background-color: transparent;
+}
+
+/* --- LEFT SIDEBAR (WEEKLY PINNED) --- */
+.ts-left-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.ts-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ts-section-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--nn-text-main);
+  letter-spacing: -0.02em;
+}
+
+.ts-view-all {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #facc15;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.ts-pinned-card {
+  background: var(--nn-surface);
+  border-radius: 28px;
+  padding: 20px;
+  border: 1px solid var(--nn-border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: relative;
+}
+
+.ts-pinned-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.06);
+}
+
+.ts-pinned-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ts-pinned-icon {
+  width: 40px;
+  height: 40px;
+  background: #fef9c3;
+  color: #ca8a04;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ts-pinned-title {
+  font-size: 0.95rem;
+  font-weight: 750;
+  color: var(--nn-text-main);
+  margin: 0;
+}
+
+.ts-pinned-time {
+  font-size: 0.75rem;
+  color: var(--nn-text-secondary);
+  font-weight: 600;
+}
+
+.ts-pinned-desc {
+  font-size: 0.8rem;
+  color: var(--nn-text-muted);
+  line-height: 1.5;
+  margin: 4px 0 0 0;
+}
+
+.ts-add-pinned {
+  background: transparent;
+  border: 2px dashed var(--nn-border);
+  border-radius: 24px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ts-add-pinned:hover {
+  border-color: #facc15;
+  background: #fef9c330;
+}
+
+.ts-add-icon {
+  width: 32px;
+  height: 32px;
+  background: #facc15;
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* --- CENTER PANEL (SCHEDULE) --- */
+.ts-center-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ts-schedule-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+
+.ts-today-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--nn-text-main);
+  letter-spacing: -0.04em;
+  margin: 0;
+}
+
+.ts-date-sub {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #facc15;
+  margin: 0;
+}
+
+.ts-nav-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.ts-nav-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  border: 1px solid var(--nn-border);
+  background: var(--nn-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.ts-nav-btn:hover {
+  background: var(--nn-surface-secondary);
+  border-color: #facc15;
+}
+
+.ts-schedule-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-bottom: 100px;
+}
+
+.ts-appointment-row {
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.ts-time-marker {
+  width: 80px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--nn-text-muted);
+  text-align: right;
+  padding-top: 15px;
+}
+
+.ts-appointment-card {
+  flex: 1;
+  background: var(--nn-surface);
+  border-radius: 28px;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid transparent;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.ts-appointment-card:hover {
+  transform: translateX(8px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.06);
+  border-color: #facc1530;
+}
+
+.ts-appointment-card.ongoing {
+  background: #fef9c3; /* Yellow-ish ongoing */
+  border-color: #facc1540;
+}
+
+.ts-card-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.ts-patient-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 16px;
+  background: #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: var(--nn-primary);
+  overflow: hidden;
+  border: 2px solid white;
+}
+
+.ts-patient-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.ts-patient-name {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--nn-text-main);
+  margin-bottom: 2px;
+}
+
+.ts-reason-pill {
+  font-size: 0.78rem;
+  color: var(--nn-text-secondary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ts-slot-badge {
+  background: rgba(255, 255, 255, 0.8);
+  padding: 8px 16px;
+  border-radius: 14px;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--nn-text-main);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+/* --- RIGHT PANEL (WIDGETS) --- */
+.ts-right-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.ts-widget-row {
+  display: flex;
+  gap: 16px;
+}
+
+.ts-widget-square {
+  flex: 1;
+  background: var(--nn-surface);
+  border-radius: 32px;
+  aspect-ratio: 1/1;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid var(--nn-border);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+}
+
+.ts-widget-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ts-clock-widget {
+  background: var(--nn-surface);
+  border-radius: 32px;
+  padding: 30px;
+  text-align: center;
+  border: 1px solid var(--nn-border);
+}
+
+.ts-clock-time {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--nn-text-main);
+  margin-bottom: 4px;
+}
+
+.ts-promo-card {
+  background: var(--nn-surface);
+  border-radius: 36px;
+  padding: 30px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--nn-border);
+  margin-top: auto;
+}
+
+.ts-promo-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--nn-text-main);
+  margin-bottom: 15px;
+  line-height: 1.2;
+}
+
+.ts-promo-illus {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.ts-promo-illus img {
+  width: 140px;
+  height: auto;
+}
+
+.ts-promo-btn {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  width: 48px;
+  height: 48px;
+  background: #facc15;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+}
+
+/* --- ADAPTIVE (MOBILE) --- */
+@media (max-width: 1200px) {
+  .ts-main-container {
+    grid-template-columns: 1fr;
+  }
+  .ts-left-panel, .ts-right-panel {
+    display: none; /* Hide side panels on smaller screens for now or stack them */
+  }
+}
+
+/* --- THEME OVERRIDES --- */
+.ts-page.dark {
+  --nn-bg: #0d0d0f;
+  --nn-surface: #16161a;
+  --nn-surface-secondary: #111114;
+  --nn-border: #232327;
+}
+
+.ts-page.dark .ts-pinned-desc { color: #888; }
+.ts-page.dark .ts-nav-btn { color: white; }
+.ts-page.dark .ts-slot-badge { background: #232327; color: white; }
