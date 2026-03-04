@@ -824,8 +824,20 @@ def get_patient_clinical_dossier(patient_id):
         Appointment.status.notin_(["pending"])
     ).order_by(Appointment.appointment_date.desc(), Appointment.appointment_time.desc()).all()
 
+    # 3. Fetch Clinical Profile Details
     profile = patient_user.patient_profile
     
+    # 4. Fetch Clinical Data
+    allergies = PatientAllergy.query.filter_by(patient_id=patient_id).all()
+    conditions = PatientCondition.query.filter_by(patient_id=patient_id).all()
+    medications = PatientMedication.query.filter_by(patient_id=patient_id).all()
+
+    # Calculate BMI if possible
+    bmi = None
+    if profile and profile.height_cm and profile.weight_kg:
+        height_m = profile.height_cm / 100
+        bmi = round(profile.weight_kg / (height_m * height_m), 1)
+
     dossier = {
         "identity": {
             "id": patient_user.id,
@@ -836,15 +848,16 @@ def get_patient_clinical_dossier(patient_id):
             "dob": str(profile.date_of_birth) if profile and profile.date_of_birth else "N/A",
             "profile_image": profile.profile_image if profile else None,
             "blood_group": profile.blood_group if profile else "N/A",
-            "height": profile.height_cm if profile else None,
-            "weight": profile.weight_kg if profile else None,
-            "allergies_text": profile.allergies if profile else "None",
-            "chronic_conditions_text": profile.chronic_conditions if profile else "None"
+            "height_cm": profile.height_cm if profile else None,
+            "weight_kg": profile.weight_kg if profile else None,
+            "bmi": bmi,
+            "allergies_summary": profile.allergies if profile else "None",
+            "chronic_conditions_summary": profile.chronic_conditions if profile else "None"
         },
-        "timeline": [appt.to_dict() for appt in history],
-        "medications": [m.to_dict() for m in PatientMedication.query.filter_by(patient_id=patient_id, status='active').all()],
-        "conditions": [c.to_dict() for c in PatientCondition.query.filter_by(patient_id=patient_id, status='active').all()],
-        "allergies": [a.to_dict() for a in PatientAllergy.query.filter_by(patient_id=patient_id, status='active').all()]
+        "allergies": [a.to_dict() for a in allergies],
+        "conditions": [c.to_dict() for c in conditions],
+        "medications": [m.to_dict() for m in medications],
+        "timeline": [appt.to_dict() for appt in history]
     }
     
     return jsonify(dossier), 200
