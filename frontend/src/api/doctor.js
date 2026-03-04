@@ -157,3 +157,27 @@ export const changeDoctorPassword = async (payload) => {
   const response = await axios.post("/doctor/settings/change-password", payload);
   return response.data;
 };
+
+// ============================================
+// CLINICAL PINS API
+// ============================================
+
+export const getClinicalPins = async () => {
+  const response = await axios.get("/doctor/pins");
+  return response.data;
+};
+
+export const createClinicalPin = async (payload) => {
+  const response = await axios.post("/doctor/pins", payload);
+  return response.data;
+};
+
+export const updateClinicalPin = async (id, payload) => {
+  const response = await axios.patch(`/doctor/pins/${id}`, payload);
+  return response.data;
+};
+
+export const deleteClinicalPin = async (id) => {
+  const response = await axios.delete(`/doctor/pins/${id}`);
+  return response.data;
+};

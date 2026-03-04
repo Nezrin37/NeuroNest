@@ -1237,3 +1237,34 @@ class DoctorAuditLog(db.Model):
     user_agent = db.Column(db.String(255))
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+# =========================================
+# CLINICAL PINS (DOCTOR TASKS)
+# =========================================
+class ClinicalPin(db.Model):
+    __tablename__ = "clinical_pins"
+    id = db.Column(db.Integer, primary_key=True)
+    doctor_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    title = db.Column(db.String(255), nullable=False)
+    date = db.Column(db.String(100))
+    time = db.Column(db.String(100))
+    description = db.Column(db.Text)
+    category = db.Column(db.String(100), default="General")
+    completed = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    doctor = db.relationship("User", foreign_keys=[doctor_id], backref="clinical_pins")
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "doctor_id": self.doctor_id,
+            "title": self.title,
+            "date": self.date,
+            "time": self.time,
+            "description": self.description,
+            "category": self.category,
+            "completed": self.completed,
+            "created_at": self.created_at.isoformat() if self.created_at else None
+        }

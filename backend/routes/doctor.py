@@ -12,6 +12,7 @@ from database.models import (
     User,
     ClinicalRemark,
     MedicalRecord,
+    ClinicalPin,
 )
 from utils.slot_engine import (
     apply_override_to_existing_slots,
@@ -881,3 +882,78 @@ def get_clinical_remarks(patient_id):
     ).order_by(ClinicalRemark.created_at.desc()).all()
     
     return jsonify([r.to_dict() for r in remarks]), 200
+
+
+# =========================================
+# CLINICAL PINS (DOCTOR TASKS)
+# =========================================
+
+@doctor_bp.route("/pins", methods=["GET"])
+@jwt_required()
+def get_clinical_pins():
+    check_doctor_role()
+    current_user_id = get_jwt_identity()
+    
+    # Sort completed pins to the bottom, then by created_at desc
+    pins = ClinicalPin.query.filter_by(
+        doctor_id=current_user_id
+    ).order_by(ClinicalPin.completed.asc(), ClinicalPin.created_at.desc()).all()
+    
+    return jsonify([p.to_dict() for p in pins]), 200
+
+@doctor_bp.route("/pins", methods=["POST"])
+@jwt_required()
+def create_clinical_pin():
+    check_doctor_role()
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    if not data or not data.get("title"):
+        return jsonify({"error": "Title is required"}), 400
+        
+    new_pin = ClinicalPin(
+        doctor_id=current_user_id,
+        title=data.get("title"),
+        date=data.get("date"),
+        time=data.get("time"),
+        description=data.get("description"),
+        category=data.get("category", "General"),
+        completed=False
+    )
+    
+    db.session.add(new_pin)
+    db.session.commit()
+    
+    return jsonify(new_pin.to_dict()), 201
+
+@doctor_bp.route("/pins/<int:pin_id>", methods=["PATCH"])
+@jwt_required()
+def update_clinical_pin(pin_id):
+    check_doctor_role()
+    current_user_id = get_jwt_identity()
+    data = request.get_json()
+    
+    pin = ClinicalPin.query.filter_by(id=pin_id, doctor_id=current_user_id).first_or_404()
+    
+    if "completed" in data:
+        pin.completed = data["completed"]
+    if "title" in data:
+        pin.title = data["title"]
+    if "description" in data:
+        pin.description = data["description"]
+        
+    db.session.commit()
+    return jsonify(pin.to_dict()), 200
+
+@doctor_bp.route("/pins/<int:pin_id>", methods=["DELETE"])
+@jwt_required()
+def delete_clinical_pin(pin_id):
+    check_doctor_role()
+    current_user_id = get_jwt_identity()
+    
+    pin = ClinicalPin.query.filter_by(id=pin_id, doctor_id=current_user_id).first_or_404()
+    
+    db.session.delete(pin)
+    db.session.commit()
+    
+    return jsonify({"message": "Pin deleted"}), 200

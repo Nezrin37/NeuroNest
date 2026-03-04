@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSchedule, completeAppointment, cancelAppointment, markNoShow } from "../../api/doctor";
+import { 
+    getSchedule, completeAppointment, cancelAppointment, markNoShow,
+    getClinicalPins, createClinicalPin, updateClinicalPin, deleteClinicalPin
+} from "../../api/doctor";
 import { 
     Clock, Calendar, ChevronRight, FileText,
     ChevronLeft, Check, X, Filter, Bookmark, Plus, 
@@ -19,17 +22,18 @@ const TodaySchedule = () => {
     const [imageErrors, setImageErrors] = useState({});
     const [isAddingPin, setIsAddingPin] = useState(false);
     const [newPinData, setNewPinData] = useState({ title: "", date: "", time: "", desc: "" });
-    const [pinnedItems, setPinnedItems] = useState([
-        { id: 1, title: "Call neurology lab for tests", time: "15 Mar 2026 • 9:00 AM", category: "Priority", desc: "Ask for follow-up blood tests results for Nezrin.", completed: false },
-        { id: 2, title: "Patient Review: Nezrin", time: "Every Thursday", category: "Case Review", desc: "Weekly synthesis of progress reports.", completed: false }
-    ]);
+    const [pinnedItems, setPinnedItems] = useState([]);
     const navigate = useNavigate();
 
     const fetchSchedule = useCallback(async () => {
         try {
             setLoading(true);
-            const data = await getSchedule(selectedDate, statusFilter);
-            setSchedule(data);
+            const [scheduleData, pinsData] = await Promise.all([
+                getSchedule(selectedDate, statusFilter),
+                getClinicalPins()
+            ]);
+            setSchedule(scheduleData);
+            setPinnedItems(pinsData);
         } catch (err) {
             console.error("Error fetching schedule:", err);
         } finally {
@@ -76,25 +80,39 @@ const TodaySchedule = () => {
         };
     }, [selectedDate]);
 
-    const handleAddPin = () => {
+    const handleAddPin = async () => {
         if (!newPinData.title) return;
-        const newPin = {
-            id: Date.now(),
-            title: newPinData.title,
-            time: `${newPinData.date} • ${newPinData.time}`.replace(' • ', ''),
-            category: "General",
-            desc: newPinData.desc,
-            completed: false
-        };
-        setPinnedItems(prev => [newPin, ...prev]);
-        setIsAddingPin(false);
-        setNewPinData({ title: "", date: "", time: "", desc: "" });
+        try {
+            const payload = {
+                title: newPinData.title,
+                date: newPinData.date,
+                time: newPinData.time,
+                description: newPinData.desc,
+                category: "General"
+            };
+            const savedPin = await createClinicalPin(payload);
+            
+            // Re-fetch to get sorted list
+            const updatedPins = await getClinicalPins();
+            setPinnedItems(updatedPins);
+            
+            setIsAddingPin(false);
+            setNewPinData({ title: "", date: "", time: "", desc: "" });
+        } catch (err) {
+            console.error("Error adding pin:", err);
+        }
     };
 
-    const togglePinCompletion = (id) => {
-        setPinnedItems(prev => prev.map(item => 
-            item.id === id ? { ...item, completed: !item.completed } : item
-        ));
+    const togglePinCompletion = async (id, currentStatus) => {
+        try {
+            await updateClinicalPin(id, { completed: !currentStatus });
+            
+            // Re-fetch to maintain correct sorting (completed at bottom)
+            const updatedPins = await getClinicalPins();
+            setPinnedItems(updatedPins);
+        } catch (err) {
+            console.error("Error toggling pin:", err);
+        }
     };
 
     const currentTime = new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
@@ -123,20 +141,22 @@ const TodaySchedule = () => {
                             {pinnedItems.map(item => (
                                 <div key={item.id} className={`ts-pin-item ${item.completed ? 'completed' : ''}`}>
                                     <div className="ts-pin-header">
-                                        <div className="ts-pin-check-wrapper" onClick={() => togglePinCompletion(item.id)}>
+                                        <div className="ts-pin-check-wrapper" onClick={() => togglePinCompletion(item.id, item.completed)}>
                                             <div className={`ts-pin-checkbox ${item.completed ? 'checked' : ''}`}>
                                                 {item.completed && <Check size={12} strokeWidth={4} />}
                                             </div>
                                         </div>
                                         <div className="ts-pin-meta">
                                             <h4 className="ts-pin-title">{item.title}</h4>
-                                            <span className="ts-pin-time">{item.time}</span>
+                                            <span className="ts-pin-time">{item.date} {item.time ? `• ${item.time}` : ""}</span>
                                         </div>
                                     </div>
-                                    <span className={`badge ${isDark ? 'bg-secondary' : 'bg-warning'} bg-opacity-10 text-warning px-2 py-1 rounded-pill`} style={{ fontSize: '0.6rem', width: 'fit-content', marginLeft: '34px' }}>
-                                        {item.category}
-                                    </span>
-                                    <p className="ts-pin-desc" style={{ marginLeft: '34px' }}>{item.desc}</p>
+                                    {item.category && (
+                                        <span className={`badge ${isDark ? 'bg-secondary' : 'bg-warning'} bg-opacity-10 text-warning px-2 py-1 rounded-pill`} style={{ fontSize: '0.6rem', width: 'fit-content', marginLeft: '34px' }}>
+                                            {item.category}
+                                        </span>
+                                    )}
+                                    <p className="ts-pin-desc" style={{ marginLeft: '34px' }}>{item.description}</p>
                                 </div>
                             ))}
                         </div>
