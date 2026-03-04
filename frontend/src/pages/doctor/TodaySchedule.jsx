@@ -120,47 +120,70 @@ const TodaySchedule = () => {
                             ))}
                         </div>
 
-                        {isAddingPin ? (
-                            <div className="p-3 border-top bg-light bg-opacity-5">
-                                <div className="d-flex flex-column gap-2 mb-3">
-                                    <input 
-                                        autoFocus
-                                        className="form-control form-control-sm border-0 bg-transparent text-white fw-bold shadow-none p-1"
-                                        placeholder="Pin Title (e.g. Lab Follow-up)"
-                                        value={newPinData.title}
-                                        onChange={(e) => setNewPinData(prev => ({...prev, title: e.target.value}))}
-                                        style={{ fontSize: '0.85rem' }}
-                                    />
-                                    <input 
-                                        className="form-control form-control-sm border-0 bg-transparent text-muted fw-bold shadow-none p-1"
-                                        placeholder="Time/Date (e.g. Tomorrow 9:00 AM)"
-                                        value={newPinData.time}
-                                        onChange={(e) => setNewPinData(prev => ({...prev, time: e.target.value}))}
-                                        style={{ fontSize: '0.75rem' }}
-                                    />
-                                    <textarea 
-                                        className="form-control form-control-sm border-0 bg-transparent text-muted shadow-none p-1"
-                                        placeholder="Clinical notes or description..."
-                                        rows="2"
-                                        value={newPinData.desc}
-                                        onChange={(e) => setNewPinData(prev => ({...prev, desc: e.target.value}))}
-                                        style={{ fontSize: '0.75rem', resize: 'none' }}
-                                    />
-                                </div>
-                                <div className="d-flex gap-2 justify-content-end pt-2 border-top border-secondary border-opacity-10">
-                                    <button className="btn btn-sm btn-link text-muted text-decoration-none fw-bold" onClick={() => setIsAddingPin(false)} style={{ fontSize: '0.7rem' }}>Cancel</button>
-                                    <button className="btn btn-sm btn-warning text-white rounded-pill px-3 fw-bold shadow-sm" onClick={() => { setIsAddingPin(false); setNewPinData({ title: "", time: "", desc: "" }); }} style={{ fontSize: '0.7rem' }}>Save Clinical Pin</button>
-                                </div>
+                        <div className="ts-add-pin-btn" onClick={() => setIsAddingPin(true)}>
+                            <div className="ts-add-pin-icon">
+                                <Plus size={18} />
                             </div>
-                        ) : (
-                            <div className="ts-add-pin-btn" onClick={() => setIsAddingPin(true)}>
-                                <div className="ts-add-pin-icon">
-                                    <Plus size={18} />
-                                </div>
-                                <span>Add new clinical pin</span>
-                            </div>
-                        )}
+                            <span>Add new clinical pin</span>
+                        </div>
                     </div>
+
+                    {/* --- POP-UP MODAL CARD --- */}
+                    {isAddingPin && (
+                        <div className="ts-modal-overlay">
+                            <div className="ts-modal-card">
+                                <div className="ts-modal-header">
+                                    <h3 className="ts-modal-title">New Clinical Pin</h3>
+                                    <div className="ts-modal-close" onClick={() => setIsAddingPin(false)}>
+                                        <X size={20} />
+                                    </div>
+                                </div>
+
+                                <div className="ts-modal-body">
+                                    <div className="ts-input-group">
+                                        <label className="ts-input-label">Pin Title</label>
+                                        <input 
+                                            autoFocus
+                                            className="ts-modal-input"
+                                            placeholder="e.g. Lab Report Review"
+                                            value={newPinData.title}
+                                            onChange={(e) => setNewPinData(p => ({...p, title: e.target.value}))}
+                                        />
+                                    </div>
+
+                                    <div className="ts-input-group">
+                                        <label className="ts-input-label">Time & Date</label>
+                                        <input 
+                                            className="ts-modal-input"
+                                            placeholder="e.g. Tomorrow 9:00 AM"
+                                            value={newPinData.time}
+                                            onChange={(e) => setNewPinData(p => ({...p, time: e.target.value}))}
+                                        />
+                                    </div>
+
+                                    <div className="ts-input-group">
+                                        <label className="ts-input-label">Clinical Description</label>
+                                        <textarea 
+                                            className="ts-modal-input"
+                                            rows="3"
+                                            placeholder="Detailed follow-up clinical notes..."
+                                            value={newPinData.desc}
+                                            onChange={(e) => setNewPinData(p => ({...p, desc: e.target.value}))}
+                                            style={{ resize: 'none' }}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="ts-modal-footer">
+                                    <button className="ts-modal-btn cancel" onClick={() => setIsAddingPin(false)}>Cancel</button>
+                                    <button className="ts-modal-btn save" onClick={() => { setIsAddingPin(false); setNewPinData({title:'', time:'', desc:''}); }}>
+                                        <Check size={18} /> Save Pin
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
 
                     {/* Minimal Calendar Mini-Widget */}
                     <div className="ts-pinned-card mt-4 p-4">

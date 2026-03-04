@@ -434,24 +434,151 @@
   }
 }
 
-/* --- THEME OVERRIDES --- */
-.ts-page.dark {
-  --nn-bg: #030303;
-  --nn-surface: #0a0a0c;
-  --nn-surface-secondary: #0f0f12;
-  --nn-border: #1e1e22;
+/* --- MODAL SYSTEM --- */
+.ts-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(12px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
 }
 
-.ts-page.dark .ts-pinned-desc { color: #888; }
-.ts-page.dark .ts-nav-btn { color: white; }
-.ts-page.dark .ts-slot-badge { background: #232327; color: white; }
-.ts-page.dark .ts-appointment-card.ongoing {
-  background: rgba(250, 204, 21, 0.15);
-  border-color: rgba(250, 204, 21, 0.4);
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
-.ts-page.dark .ts-appointment-card.ongoing .ts-patient-name {
-  color: #facc15;
+
+.ts-modal-card {
+  background: var(--nn-surface);
+  width: 100%;
+  max-width: 460px;
+  border-radius: 40px;
+  padding: 40px;
+  border: 1px solid var(--nn-border);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.ts-page.dark .ts-widget-square {
-  background: #111114;
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.ts-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.ts-modal-title {
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--nn-text-main);
+  letter-spacing: -0.02em;
+}
+
+.ts-modal-close {
+  cursor: pointer;
+  color: var(--nn-text-muted);
+  transition: color 0.2s;
+}
+
+.ts-modal-close:hover {
+  color: var(--nn-text-main);
+}
+
+.ts-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ts-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ts-input-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--nn-text-muted);
+  letter-spacing: 0.05em;
+  padding-left: 4px;
+}
+
+.ts-modal-input {
+  background: var(--nn-surface-secondary);
+  border: 1px solid var(--nn-border);
+  border-radius: 18px;
+  padding: 14px 20px;
+  color: var(--nn-text-main);
+  font-weight: 650;
+  font-size: 0.9rem;
+  width: 100%;
+  outline: none;
+  transition: all 0.2s;
+}
+
+.ts-modal-input:focus {
+  border-color: #facc15;
+  box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.1);
+}
+
+.ts-modal-footer {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.ts-modal-btn {
+  flex: 1;
+  padding: 14px;
+  border-radius: 20px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ts-modal-btn.cancel {
+  background: transparent;
+  border: 1px solid var(--nn-border);
+  color: var(--nn-text-secondary);
+}
+
+.ts-modal-btn.save {
+  background: #facc15;
+  border: none;
+  color: white;
+  box-shadow: 0 10px 20px rgba(250, 204, 21, 0.2);
+}
+
+.ts-modal-btn.save:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(250, 204, 21, 0.3);
+}
+
+.ts-page.dark .ts-modal-card {
+  background: #0d0d0f;
+  border-color: #1e1e22;
+}
+
+.ts-page.dark .ts-modal-input {
+  background: #16161a;
 }
