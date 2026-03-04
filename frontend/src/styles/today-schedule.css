@@ -359,6 +359,7 @@
   flex-direction: column;
   gap: 20px;
   margin-top: auto;
+  margin-bottom: 60px;
 }
 
 .ts-summary-item {
