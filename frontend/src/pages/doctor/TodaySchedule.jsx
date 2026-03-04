@@ -17,6 +17,8 @@ const TodaySchedule = () => {
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [statusFilter, setStatusFilter] = useState('all');
     const [imageErrors, setImageErrors] = useState({});
+    const [isAddingPin, setIsAddingPin] = useState(false);
+    const [newPinTitle, setNewPinTitle] = useState("");
     const navigate = useNavigate();
 
     const fetchSchedule = useCallback(async () => {
@@ -118,15 +120,29 @@ const TodaySchedule = () => {
                             ))}
                         </div>
 
-                        <div className="ts-add-pin-btn" onClick={() => {
-                            const title = prompt("Enter clinical pin title:");
-                            if(title) alert("Feature integration: This pin will be synchronized with your professional archives.");
-                        }}>
-                            <div className="ts-add-pin-icon">
-                                <Plus size={18} />
+                        {isAddingPin ? (
+                            <div className="p-3 border-top bg-light bg-opacity-10">
+                                <input 
+                                    autoFocus
+                                    className="form-control form-control-sm border-0 bg-transparent text-white fw-bold mb-2 shadow-none"
+                                    placeholder="Pin title..."
+                                    value={newPinTitle}
+                                    onChange={(e) => setNewPinTitle(e.target.value)}
+                                    style={{ fontSize: '0.85rem' }}
+                                />
+                                <div className="d-flex gap-2 justify-content-end">
+                                    <button className="btn btn-sm btn-link text-muted text-decoration-none fw-bold" onClick={() => setIsAddingPin(false)} style={{ fontSize: '0.7rem' }}>Cancel</button>
+                                    <button className="btn btn-sm btn-warning text-white rounded-pill px-3 fw-bold" onClick={() => { setIsAddingPin(false); setNewPinTitle(""); }} style={{ fontSize: '0.7rem' }}>Save Pin</button>
+                                </div>
                             </div>
-                            <span>Add new clinical pin</span>
-                        </div>
+                        ) : (
+                            <div className="ts-add-pin-btn" onClick={() => setIsAddingPin(true)}>
+                                <div className="ts-add-pin-icon">
+                                    <Plus size={18} />
+                                </div>
+                                <span>Add new clinical pin</span>
+                            </div>
+                        )}
                     </div>
 
                     {/* Minimal Calendar Mini-Widget */}
