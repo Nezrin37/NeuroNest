@@ -4,12 +4,17 @@
    ========================================================= */
 
 .ts-page {
-  padding: 24px;
+  padding: 48px;
   min-height: 100vh;
-  background-color: var(--nn-bg); /* Use theme token or fallback to taskly light */
+  background-color: var(--nn-surface);
+  border-radius: 48px;
+  border: 1px solid var(--nn-border);
+  margin: 0 24px 24px 24px;
   font-family: 'Inter', sans-serif;
   display: flex;
   justify-content: center;
+  position: relative;
+  overflow: visible; /* Prevent clipping */
 }
 
 .ts-main-container {
@@ -388,12 +393,22 @@
 
 /* --- THEME OVERRIDES --- */
 .ts-page.dark {
-  --nn-bg: #0d0d0f;
-  --nn-surface: #16161a;
-  --nn-surface-secondary: #111114;
-  --nn-border: #232327;
+  --nn-bg: #030303;
+  --nn-surface: #0a0a0c;
+  --nn-surface-secondary: #0f0f12;
+  --nn-border: #1e1e22;
 }
 
 .ts-page.dark .ts-pinned-desc { color: #888; }
 .ts-page.dark .ts-nav-btn { color: white; }
 .ts-page.dark .ts-slot-badge { background: #232327; color: white; }
+.ts-page.dark .ts-appointment-card.ongoing {
+  background: rgba(250, 204, 21, 0.15);
+  border-color: rgba(250, 204, 21, 0.4);
+}
+.ts-page.dark .ts-appointment-card.ongoing .ts-patient-name {
+  color: #facc15;
+}
+.ts-page.dark .ts-widget-square {
+  background: #111114;
+}
