@@ -19,3 +19,7 @@ export const markNotificationRead = async (id) => {
     const response = await axios.patch(`/profile/notifications/${id}/read`);
     return response.data;
 };
+export const getClinicalSummary = async () => {
+    const response = await axios.get("/profile/clinical-summary");
+    return response.data;
+};

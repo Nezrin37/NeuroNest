@@ -1,6 +1,9 @@
 from flask import Blueprint, request, jsonify
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
-from database.models import db, PatientProfile, User, EmergencyContact
+from database.models import (
+    db, PatientProfile, User, EmergencyContact, 
+    PatientMedication, PatientCondition, PatientAllergy, Appointment
+)
 from datetime import datetime
 from utils.cloudinary_upload import upload_file as cld_upload
 
@@ -256,3 +259,33 @@ def mark_notification_read(id):
     db.session.commit()
     
     return jsonify({"message": "Notification marked as read"}), 200
+@profile_bp.route("/clinical-summary", methods=["GET"])
+@jwt_required()
+def get_my_clinical_summary():
+    claims = get_jwt()
+    if claims.get("role") != "patient":
+        return jsonify({"message": "Patient access required"}), 403
+
+    user_id = int(get_jwt_identity())
+    profile = PatientProfile.query.filter_by(user_id=user_id).first()
+
+    if not profile:
+        return jsonify({"message": "Profile not found"}), 404
+
+    # Fetch Clinical History
+    medications = PatientMedication.query.filter_by(patient_id=user_id, status='active').all()
+    conditions = PatientCondition.query.filter_by(patient_id=user_id, status='active').all()
+    allergies = PatientAllergy.query.filter_by(patient_id=user_id, status='active').all()
+    
+    # Fetch Recent appointments
+    appointments = Appointment.query.filter_by(patient_id=user_id).order_by(Appointment.appointment_date.desc()).limit(10).all()
+
+    summary = {
+        "identity": profile.to_dict(),
+        "medications": [m.to_dict() for m in medications],
+        "conditions": [c.to_dict() for c in conditions],
+        "allergies": [a.to_dict() for a in allergies],
+        "timeline": [appt.to_dict() for appt in appointments]
+    }
+
+    return jsonify(summary), 200
