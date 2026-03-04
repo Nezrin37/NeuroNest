@@ -228,131 +228,245 @@ const Profile = () => {
         </div>
 
         {!editing ? (
-            <div className="profile-view-wrapper">
-                {/* IDENTITY BANNER CARD */}
-                <div className="profile-card-top mb-5">
-                    <div className="row align-items-center g-5">
-                        <div className="col-12 col-md-auto text-center">
-                            <div className="position-relative d-inline-block">
+            <div className="mx-auto" style={{ maxWidth: '1440px' }}>
+                {/* MATERIALLY MATCHED IDENTITY CARD */}
+                <div className="card clinical-panel mb-4 border-0">
+                    <div className="d-flex flex-wrap flex-lg-nowrap gap-4">
+                        {/* Avatar Col */}
+                        <div className="d-flex flex-column align-items-center gap-3 pe-lg-3">
+                            <div className="patient-img-large overflow-hidden">
                                 {profile.profile_image ? (
-                                    <img src={toAssetUrl(profile.profile_image)} alt={profile.full_name} className="patient-avatar-large shadow-lg" />
+                                    <img src={toAssetUrl(profile.profile_image)} alt={profile.full_name} className="w-100 h-100 object-fit-cover" />
                                 ) : (
-                                    <div className="patient-avatar-large d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary display-4 fw-bold shadow-sm">
-                                        {profile.full_name?.charAt(0)}
-                                    </div>
+                                    <div className="w-100 h-100 d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary"><User size={64} /></div>
                                 )}
+                            </div>
+                            <div className="d-flex gap-2">
+                                <div className="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 d-flex align-items-center fw-bold" style={{fontSize: '0.65rem', padding: '0.4rem 0.8rem'}}><span className="me-1">🚫</span> Alcohol</div>
+                                <div className="badge rounded-pill bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 d-flex align-items-center fw-bold" style={{fontSize: '0.65rem', padding: '0.4rem 0.8rem'}}><span className="me-1">🚬</span> Smoker</div>
                             </div>
                         </div>
 
-                        <div className="col-12 col-md">
-                            <h2 className="h2 fw-black text-dark mb-3 m-0" style={{ letterSpacing: '-0.03em' }}>{profile.full_name}</h2>
-                            <div className="d-flex flex-wrap gap-4 text-secondary mb-4 fw-bold" style={{ fontSize: '0.85rem' }}>
-                                <div className="d-flex align-items-center gap-2"><User size={16} /> {profile.gender}</div>
-                                <div className="d-flex align-items-center gap-2"><Calendar size={16} /> {profile.date_of_birth} ({age} years)</div>
-                                <div className="d-flex align-items-center gap-2"><Mail size={16} /> {profile.phone}</div>
+                        {/* Details Col */}
+                        <div className="flex-grow-1 d-flex flex-column justify-content-between gap-4">
+                            {/* Top row */}
+                            <div className="d-flex justify-content-between align-items-start w-100">
+                                <div>
+                                    <div className="d-flex align-items-center gap-3 mb-2">
+                                        <h2 className="fw-black text-dark mb-0" style={{fontSize: '1.4rem'}}>{profile.full_name}</h2>
+                                        <div className="d-flex gap-2">
+                                            <button className="btn btn-light btn-sm rounded-circle p-2 shadow-sm border border-light d-flex align-items-center justify-content-center"><Phone size={14} className="text-secondary"/></button>
+                                            <button className="btn btn-light btn-sm rounded-circle p-2 shadow-sm border border-light d-flex align-items-center justify-content-center"><Mail size={14} className="text-secondary"/></button>
+                                        </div>
+                                    </div>
+                                    <div className="d-flex flex-wrap gap-4 text-dark fw-bold" style={{fontSize: '0.8rem'}}>
+                                        <span className="d-flex align-items-center gap-2"><User size={14} className="text-secondary"/> {profile.gender || 'Not Specified'}</span>
+                                        <span className="d-flex align-items-center gap-2"><MapPin size={14} className="text-secondary"/> {profile.city || 'Elshiekh zayed, Giza'}</span>
+                                        <span className="d-flex align-items-center gap-2"><Calendar size={14} className="text-secondary"/> {profile.date_of_birth} ({age} years)</span>
+                                        <span className="d-flex align-items-center gap-2"><Phone size={14} className="text-secondary"/> {profile.phone}</span>
+                                    </div>
+                                </div>
+                                <button onClick={startEditing} className="btn btn-white border border-light rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2 text-dark">
+                                    <Edit2 size={14} /> Edit
+                                </button>
                             </div>
 
-                            <div className="vitals-grid">
-                                <div className="vital-item">
-                                    <div className="vital-label">Current BMI</div>
-                                    <div className="vital-value text-primary">{bmi} <span className="vital-unit">points</span></div>
+                            {/* Bottom row: Vitals + Tags */}
+                            <div className="d-flex flex-wrap flex-xl-nowrap justify-content-between align-items-center gap-4">
+                                {/* Vitals Box */}
+                                <div className="d-flex align-items-center p-3 px-4 rounded-4" style={{border: '1.5px dashed #e2e8f0', gap: '30px', backgroundColor: '#ffffff'}}>
+                                    <div className="text-center">
+                                        <div className="d-flex align-items-baseline justify-content-center gap-1">
+                                            <span className="fw-black text-dark lh-1" style={{fontSize: '1.25rem'}}>{bmi}</span>
+                                        </div>
+                                        <div className="text-muted fw-bold mt-1 d-flex align-items-center justify-content-center gap-1" style={{fontSize: '0.65rem'}}>
+                                            BMI <span className="text-success ms-1">▼ 10</span>
+                                        </div>
+                                    </div>
+                                    <div style={{width: '1px', height: '36px', backgroundColor: '#e2e8f0'}}></div>
+                                    <div className="text-center">
+                                        <div className="d-flex align-items-baseline justify-content-center gap-1">
+                                            <span className="fw-black text-dark lh-1" style={{fontSize: '1.25rem'}}>{profile.weight_kg || 'N/A'}</span>
+                                            <span className="fw-bold text-muted" style={{fontSize: '0.75rem'}}>kg</span>
+                                        </div>
+                                        <div className="text-muted fw-bold mt-1 d-flex align-items-center justify-content-center gap-1" style={{fontSize: '0.65rem'}}>
+                                            Weight
+                                        </div>
+                                    </div>
+                                    <div style={{width: '1px', height: '36px', backgroundColor: '#e2e8f0'}}></div>
+                                    <div className="text-center">
+                                        <div className="d-flex align-items-baseline justify-content-center gap-1">
+                                            <span className="fw-black text-dark lh-1" style={{fontSize: '1.25rem'}}>{profile.height_cm || 'N/A'}</span>
+                                            <span className="fw-bold text-muted" style={{fontSize: '0.75rem'}}>Cm</span>
+                                        </div>
+                                        <div className="text-muted fw-bold mt-1 d-flex align-items-center justify-content-center gap-1" style={{fontSize: '0.65rem'}}>
+                                            Height
+                                        </div>
+                                    </div>
+                                    <div style={{width: '1px', height: '36px', backgroundColor: '#e2e8f0'}}></div>
+                                    <div className="text-center">
+                                        <div className="d-flex align-items-baseline justify-content-center gap-1">
+                                            <span className="fw-black text-dark lh-1" style={{fontSize: '1.25rem'}}>{profile.blood_group || 'N/A'}</span>
+                                        </div>
+                                        <div className="text-muted fw-bold mt-1 d-flex align-items-center justify-content-center gap-1" style={{fontSize: '0.65rem'}}>
+                                            Blood Type
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="vital-item">
-                                    <div className="vital-label">Recent Weight</div>
-                                    <div className="vital-value">{profile.weight_kg || 'N/A'} <span className="vital-unit">kg</span></div>
-                                </div>
-                                <div className="vital-item">
-                                    <div className="vital-label">Height</div>
-                                    <div className="vital-value">{profile.height_cm || 'N/A'} <span className="vital-unit">cm</span></div>
-                                </div>
-                                <div className="vital-item">
-                                    <div className="vital-label">Blood Type</div>
-                                    <div className="vital-value text-danger">{profile.blood_group} <Droplet size={18} /></div>
+
+                                {/* Tags */}
+                                <div className="d-flex flex-column align-items-end gap-3 text-end">
+                                    <div className="d-flex flex-column align-items-end gap-1">
+                                        <span className="text-dark fw-bolder mb-1" style={{fontSize: '0.75rem'}}>Own diagnosis</span>
+                                        <div className="d-flex gap-2">
+                                            {clinicalData?.conditions?.filter(c => c.status === 'active').slice(0, 2).map((c, i) =>(
+                                               <span key={i} className={`badge bg-${i === 0 ? 'warning' : 'primary'} bg-opacity-10 text-${i === 0 ? 'warning' : 'primary'} rounded-pill px-3 py-2 fw-bold`} style={{fontSize: '0.65rem'}}>{c.condition_name}</span>
+                                            )) || <span className="text-muted small">None</span>}
+                                        </div>
+                                    </div>
+                                    <div className="d-flex flex-column align-items-end gap-1">
+                                        <span className="text-dark fw-bolder mb-1" style={{fontSize: '0.75rem'}}>Known Allergies</span>
+                                        <div className="d-flex gap-2">
+                                            {clinicalData?.allergies?.slice(0, 2).map((a, i) =>(
+                                               <span key={i} className="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-2 fw-bold" style={{fontSize: '0.65rem'}}>{a.allergy_name}</span>
+                                            )) || <span className="text-muted small">None</span>}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* BOTTOM GRIDS */}
-                <div className="row g-5">
-                    {/* LEFT: Timeline */}
-                    <div className="col-12 col-xl-4">
-                        <div className="section-title"><Clock size={18} className="text-primary" /> Recent Appointments</div>
-                        <div className="timeline-vertical">
-                            {clinicalData?.timeline?.length > 0 ? clinicalData.timeline.map((appt, i) => (
-                                <div key={i} className="timeline-item">
-                                    <div className="timeline-dot"></div>
-                                    <div className="timeline-date">{appt.appointment_date}</div>
-                                    <div className="timeline-content">
-                                        <div className="fw-bold text-dark">{appt.reason}</div>
-                                        <div className="text-secondary small">Dr. {appt.doctor_name || 'Medical Specialist'}</div>
+                {/* MIDDLE ROW Grid */}
+                <div className="row g-4 mb-4">
+                    {/* TIMELINE */}
+                    <div className="col-12 col-lg-4">
+                        <div className="clinical-panel h-100">
+                            <div className="panel-header">
+                                <div className="panel-title"><Calendar size={18} /> Timeline</div>
+                                <button className="panel-edit-btn">Edit</button>
+                            </div>
+                            <div className="pt-2">
+                                {clinicalData?.timeline?.slice(0, 5).map((appt, i) => {
+                                    const dateObj = new Date(appt.appointment_date);
+                                    const month = dateObj.toLocaleString('default', { month: 'short' });
+                                    const year = dateObj.getFullYear();
+                                    return (
+                                    <div key={i} className="timeline-row">
+                                        <div className="timeline-left"><span>{month}</span><span>{year}</span></div>
+                                        <div className="timeline-center"><div className="timeline-marker" style={i === clinicalData.timeline.length - 1 ? {borderColor: '#2b70ff'} : {}}></div></div>
+                                        <div className="timeline-right">
+                                            <div className="timeline-title">{appt.reason || 'General Appt'}</div>
+                                            <div className="timeline-subtitle">Dr. {appt.doctor_name || 'Specialist'}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            )) : <div className="text-muted fw-bold p-3">No recent appointments</div>}
+                                    );
+                                }) || <div className="text-muted text-center pt-4 fw-bold">No recent history</div>}
+                            </div>
                         </div>
                     </div>
 
-                    {/* CENTER: Clinical Summary */}
-                    <div className="col-12 col-xl-5">
-                        <div className="section-title"><Activity size={18} className="text-primary" /> Medical History</div>
-                        <div className="clinical-history-card">
-                            <div className="row g-4">
-                                <div className="col-12 col-md-6 mb-4">
-                                    <div className="text-secondary small fw-bold text-uppercase mb-2" style={{ fontSize: '0.65rem' }}>Active Conditions</div>
-                                    <div className="d-flex flex-wrap gap-2">
-                                        {clinicalData?.conditions?.length > 0 ? clinicalData.conditions.map((c, i) => (
-                                            <span key={i} className="badge-condition">{c.condition_name}</span>
-                                        )) : <span className="text-muted fw-bold">No active conditions</span>}
+                    {/* EMERGENCY / CONTACT (Replaced Medical History with Emergency logic for Profile page) */}
+                    <div className="col-12 col-lg-8">
+                        <div className="clinical-panel h-100">
+                            <div className="panel-header">
+                                <div className="panel-title"><ShieldAlert size={18} /> Emergency Support</div>
+                                <button className="panel-edit-btn" onClick={startEditing}>Edit</button>
+                            </div>
+                            <div className="row g-3">
+                                {emergencyContacts.map((c, i) => (
+                                    <div key={i} className="col-md-6">
+                                        <div className={`med-history-box ${c.is_primary ? 'border border-primary border-opacity-50' : ''}`}>
+                                            <div className="med-history-header">
+                                                <div className="med-history-icon"><Phone size={14} className={c.is_primary ? 'text-primary' : ''}/></div>
+                                                <span className="med-history-title">{c.relationship || 'Emergency Contact'} {c.is_primary && '(Primary)'}</span>
+                                            </div>
+                                            <div className="med-history-data">{c.contact_name}</div>
+                                            <div className="text-muted fw-bold mt-1" style={{fontSize: '0.75rem'}}>{c.phone}</div>
+                                            <div className="text-muted fw-bold" style={{fontSize: '0.75rem'}}>{c.email}</div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="col-12 col-md-6">
-                                    <div className="text-secondary small fw-bold text-uppercase mb-2" style={{ fontSize: '0.65rem' }}>Known Allergies</div>
-                                    <div className="d-flex flex-wrap gap-2">
-                                        {clinicalData?.allergies?.length > 0 ? clinicalData.allergies.map((a, i) => (
-                                            <span key={i} className="badge-barrier">{a.allergy_name}</span>
-                                        )) : <span className="text-muted fw-bold">No known allergies</span>}
+                                ))}
+                                {emergencyContacts.length === 0 && <div className="col-12 text-muted fw-bold">No emergency contacts listed</div>}
+                                
+                                <div className="col-12 mt-4">
+                                    <div className="med-history-box">
+                                        <div className="med-history-header">
+                                            <div className="med-history-icon"><MapPin size={14} /></div>
+                                            <span className="med-history-title">Personal Address</span>
+                                        </div>
+                                        <div className="med-history-data">{profile.address}</div>
+                                        <div className="text-muted fw-bold mt-1" style={{fontSize: '0.75rem'}}>{profile.city}, {profile.state}</div>
+                                        <div className="text-muted fw-bold" style={{fontSize: '0.75rem'}}>{profile.country} - {profile.pincode}</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                </div>
 
-                        <div className="section-title mt-5"><Scale size={18} className="text-primary" /> Active Medications</div>
-                        <div className="card shadow-sm border-0 rounded-4 overflow-hidden">
-                            <table className="table medication-table mb-0">
-                                <thead>
-                                    <tr><th>Medication</th><th>Dosage</th><th>Status</th></tr>
-                                </thead>
-                                <tbody>
-                                    {clinicalData?.medications?.length > 0 ? clinicalData.medications.map((m, i) => (
-                                        <tr key={i}>
-                                            <td className="fw-bold">{m.drug_name}</td>
-                                            <td className="text-secondary">{m.dosage}</td>
-                                            <td><span className="badge bg-success bg-opacity-10 text-success rounded-pill px-3">Active</span></td>
+                {/* BOTTOM ROW Grid */}
+                <div className="row g-4 mb-5">
+                    {/* MEDICATIONS */}
+                    <div className="col-12 col-lg-8">
+                        <div className="clinical-panel h-100 p-0 overflow-hidden d-flex flex-column">
+                            <div className="panel-header p-4 pb-2 m-0">
+                                <div className="panel-title"><Pill size={18} /> Active Medications</div>
+                                <button className="panel-edit-btn">Edit</button>
+                            </div>
+                            <div className="table-responsive px-2 flex-grow-1">
+                                <table className="table med-table mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>Name</th>
+                                            <th>Dosage</th>
+                                            <th>Freq</th>
+                                            <th>Status</th>
                                         </tr>
-                                    )) : <tr><td colSpan="3" className="text-center py-4 text-muted">No active medications</td></tr>}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {clinicalData?.medications?.filter(m => m.status === 'active')?.map((med, i) => (
+                                            <tr key={i}>
+                                                <td>
+                                                    <div className="d-flex align-items-center gap-3">
+                                                        <div className="bg-light rounded p-2 text-primary"><Pill size={18}/></div>
+                                                        <div>
+                                                            <div className="fw-black text-dark" style={{fontSize: '0.85rem'}}>{med.drug_name}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td>{med.dosage}</td>
+                                                <td>{med.frequency}</td>
+                                                <td><span className="badge rounded-pill bg-success bg-opacity-10 text-success fw-bold p-2 px-3">Active</span></td>
+                                            </tr>
+                                        )) || <tr><td colSpan="4" className="text-center py-4 fw-bold text-muted">No active medications</td></tr>}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
 
-                    {/* RIGHT: Contact & Emergency */}
-                    <div className="col-12 col-xl-3">
-                        <div className="section-title"><ShieldAlert size={18} className="text-danger" /> Emergency Support</div>
-                        {emergencyContacts.map((c, i) => (
-                            <div key={i} className={`diet-item p-3 mb-3 ${c.is_primary ? 'border-primary' : ''}`}>
-                                <div className="diet-icon bg-danger bg-opacity-10 text-danger"><Phone size={16} /></div>
-                                <div>
-                                    <div className="diet-text">{c.contact_name}</div>
-                                    <div className="text-secondary small fw-bold">{c.relationship} • {c.phone}</div>
-                                </div>
+                    {/* DIET */}
+                    <div className="col-12 col-lg-4">
+                        <div className="clinical-panel h-100">
+                            <div className="panel-header mb-3">
+                                <div className="panel-title"><Activity size={18} /> Conditions Log</div>
                             </div>
-                        ))}
-                        <div className="section-title mt-5"><MapPin size={18} className="text-primary" /> Personal Address</div>
-                        <div className="info-card p-3 border-0 bg-light bg-opacity-50">
-                            <div className="text-secondary small fw-bold mb-2">{profile.address}</div>
-                            <div className="text-dark fw-bold">{profile.city}, {profile.state}</div>
-                            <div className="text-secondary small">{profile.country} - {profile.pincode}</div>
+                            <div className="d-flex flex-column pt-1">
+                                {clinicalData?.conditions?.map((c, i) => (
+                                    <div key={i} className="diet-list-item justify-content-between">
+                                        <div className="d-flex align-items-center gap-2"><Heart size={16} className="text-danger"/> {c.condition_name}</div>
+                                        <span className={`badge bg-${c.status === 'active' ? 'danger' : 'secondary'} bg-opacity-10 text-${c.status === 'active' ? 'danger' : 'secondary'} rounded-pill`}>{c.status}</span>
+                                    </div>
+                                ))}
+                                {clinicalData?.allergies?.map((a, i) => (
+                                    <div key={i + 10} className="diet-list-item justify-content-between">
+                                        <div className="d-flex align-items-center gap-2"><ShieldAlert size={16} className="text-warning"/> {a.allergy_name}</div>
+                                        <span className="badge bg-warning bg-opacity-10 text-warning rounded-pill">{a.severity}</span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     </div>
                 </div>
