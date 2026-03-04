@@ -264,6 +264,14 @@ const TodaySchedule = () => {
                         <span className="ts-section-title">Focus & Metrics</span>
                     </div>
 
+                    <div className="ts-clinic-time-card shadow-sm">
+                        <span className="ts-clinic-time-label">Clinic Time</span>
+                        <div className="ts-clinic-time-value d-flex align-items-center gap-2">
+                             <Clock size={16} />
+                             {liveTime}
+                        </div>
+                    </div>
+
                     <div className="ts-widget-row">
                         <div className="ts-widget-square">
                             <div className="ts-widget-icon bg-danger-subtle text-danger">
@@ -285,24 +293,25 @@ const TodaySchedule = () => {
                         </div>
                     </div>
 
-                    <div className="ts-clock-widget">
-                        <div className="mb-2">
-                            <CloudSun size={32} className="text-warning" />
-                        </div>
-                        <div className="ts-clock-time">{liveTime}</div>
-                        <span className="text-muted small fw-bold">Now is almost Sunny</span>
-                    </div>
-
-                    <div className="ts-promo-card">
-                         <h3 className="ts-promo-title">Sync with NeuroNest Clinical Hub</h3>
-                         <p className="text-muted small mb-0">Manage diagnostics, reports, and prescriptions in one unified station.</p>
-                         <div className="ts-promo-illus">
-                             <div className="bg-warning bg-opacity-10 p-4 rounded-circle">
-                                <Timer size={64} className="text-warning opacity-50" />
-                             </div>
+                    <div className="ts-summary-card">
+                         <h3 className="h6 fw-bolder text-dark mb-1">Today's Summary</h3>
+                         <div className="ts-summary-item">
+                             <span className="ts-summary-label">Total Appointments</span>
+                             <span className="ts-summary-value">{schedule.length}</span>
                          </div>
-                         <div className="ts-promo-btn" onClick={() => navigate('/doctor/profile')}>
-                             <ChevronRight size={24} />
+                         <div className="ts-summary-item">
+                             <span className="ts-summary-label">Completed</span>
+                             <span className="ts-summary-value text-success">{schedule.filter(a => a.status === 'completed').length}</span>
+                         </div>
+                         <div className="ts-summary-item">
+                             <span className="ts-summary-label">Pending</span>
+                             <span className="ts-summary-value text-warning">{schedule.filter(a => a.status === 'approved').length}</span>
+                         </div>
+                         <div className="ts-summary-item pt-2 border-top">
+                             <span className="ts-summary-label">Overtime Risk</span>
+                             <span className={`ts-summary-value ${schedule.filter(a => a.status === 'approved').length > 5 ? 'risk-high' : 'text-success'}`}>
+                                 {schedule.filter(a => a.status === 'approved').length > 5 ? 'High Risk' : 'Low Risk'}
+                             </span>
                          </div>
                     </div>
                 </div>
