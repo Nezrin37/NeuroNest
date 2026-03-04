@@ -205,7 +205,7 @@ const TodaySchedule = () => {
 
 
                     {/* Minimal Calendar Mini-Widget */}
-                    <div className="ts-pinned-card mt-4 p-4">
+                    <div className="ts-pinned-main-container p-3">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <span className="fw-bold text-dark fs-6">March, 2026</span>
                             <div className="d-flex gap-2">
