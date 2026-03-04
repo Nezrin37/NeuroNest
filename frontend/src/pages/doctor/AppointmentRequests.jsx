@@ -139,28 +139,7 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
           <span className="ar-date-secondary">{formatDateSmall(req.appointment_date)}</span>
        </div>
 
-       <div className="ar-conflict-cell">
-          {!isHistory && (
-            <>
-              <div className="ar-conflict-flag" style={{ backgroundColor: req.hasConflict ? '#fbbf24' : '#4ade80' }}></div>
-              <div style={{ display: 'flex', flexDirection: 'column' }}>
-                <span className="ar-conflict-text" style={{ color: req.hasConflict ? '#fbbf24' : '#4ade80' }}>
-                   {req.hasConflict ? "Schedule Conflict" : "Slot Available"}
-                </span>
-                {req.hasConflict && req.conflictDetails && (
-                  <span style={{ fontSize: '0.65rem', color: '#fbbf2490' }}>
-                    {req.conflictDetails}
-                  </span>
-                )}
-              </div>
-            </>
-          )}
-          {isHistory && (
-            <span className="ar-date-secondary" style={{ color: '#4ade8080' }}>
-              {req.status === 'completed' ? 'Session closed' : 'Processed'}
-            </span>
-          )}
-       </div>
+
 
        <div className="ar-decision-cell">
           {!isHistory ? (
@@ -421,34 +400,13 @@ const AppointmentRequests = () => {
 
   const processedRequests = useMemo(() => {
     return (requests || []).map(req => {
-      let conflictDetails = null;
-
-      // Conflict if another pending request has same date/time
-      const pendingConflict = requests.find(other => 
-        other.id !== req.id && 
-        other.appointment_date === req.appointment_date && 
-        other.appointment_time === req.appointment_time
-      );
-      if (pendingConflict) {
-        conflictDetails = `Overlaps with ${pendingConflict.patient_name}'s request`;
-      }
-
-      // OR if an approved appointment exists at that time
-      const approvedConflict = approvedSchedule.find(approved => 
-        approved.appointment_date === req.appointment_date && 
-        approved.appointment_time === req.appointment_time
-      );
-      if (approvedConflict) {
-        conflictDetails = `Overlaps with ${approvedConflict.patient_name}'s session`;
-      }
-
       return { 
         ...req, 
-        hasConflict: !!(pendingConflict || approvedConflict),
-        conflictDetails 
+        hasConflict: false,
+        conflictDetails: null 
       };
     });
-  }, [requests, approvedSchedule]);
+  }, [requests]);
 
   const filteredRequests = useMemo(() => {
     const isHistoryTab = activeTriage === "History";
@@ -472,7 +430,6 @@ const AppointmentRequests = () => {
       });
     }
     
-    if (activeTriage === "Conflict Detected") return list.filter(r => r.hasConflict);
     
     return list;
   }, [processedRequests, history, searchTerm, activeTriage]);
@@ -487,11 +444,7 @@ const AppointmentRequests = () => {
     return {
       total: processedRequests.length,
       highPriority: highP,
-      conflicts: processedRequests.filter(r => r.hasConflict).length,
-      avgTime: processedRequests.length > 0 ? "4.2m" : "0m", 
-      conflictRate: processedRequests.length > 0 
-        ? `${Math.round((processedRequests.filter(r => r.hasConflict).length / processedRequests.length) * 100)}%`
-        : "0%"
+      avgTime: processedRequests.length > 0 ? "4.2m" : "0m"
     };
   }, [processedRequests]);
 
@@ -509,11 +462,6 @@ const AppointmentRequests = () => {
         const priority = (req.priority_level || "").toLowerCase();
         return priority === "urgent" || priority === "emergency" || reason.includes("urgent") || reason.includes("emergency") || reason.includes("severe") || reason.includes("pain") || isCloseDate(req.appointment_date);
       }).length
-    },
-    { 
-      name: "Conflict Detected", 
-      id: "Conflict Detected",
-      count: processedRequests.filter(req => req.hasConflict).length
     },
     { 
       name: "History", 
@@ -588,7 +536,6 @@ const AppointmentRequests = () => {
            <TriageKPI title="Total Requests" value={stats.total} trend="+12% vs week" color="#2b70ff" percent={75} />
            <TriageKPI title="Urgent Triage" value={stats.highPriority} trend="Requires Action" color="#f87171" percent={40} />
            <TriageKPI title="Avg. Approval" value={stats.avgTime} trend="Optimal" color="#4ade80" percent={60} />
-           <TriageKPI title="Conflict Rate" value={stats.conflictRate} trend="Manual Review" color="#fbbf24" percent={20} />
         </div>
 
         <div className="ar-triage-controls">
@@ -619,7 +566,6 @@ const AppointmentRequests = () => {
               <span>Patient Detail</span>
               <span>Clinical Context</span>
               <span>Proposed Slot</span>
-              <span>AI Conflict Check</span>
               <span className="text-end">Triage Actions</span>
            </div>
 

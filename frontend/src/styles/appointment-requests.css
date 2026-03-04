@@ -100,7 +100,7 @@
 /* --- TIER 2: KPI HUB --- */
 .ar-kpi-row {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
 
@@ -243,7 +243,7 @@
 
 .ar-table-head {
   display: grid;
-  grid-template-columns: 2.2fr 1.8fr 1.5fr 1.2fr 180px;
+  grid-template-columns: 2.2fr 1.8fr 1.5fr 180px;
   padding: 8px 24px;
   color: var(--nn-text-muted);
   font-size: 0.72rem;
@@ -255,7 +255,7 @@
 /* Row Styling */
 .ar-triage-row {
   display: grid;
-  grid-template-columns: 2.2fr 1.8fr 1.5fr 1.2fr 180px;
+  grid-template-columns: 2.2fr 1.8fr 1.5fr 180px;
   padding: 24px;
   background: var(--nn-surface);
   border: 1px solid var(--nn-border);
