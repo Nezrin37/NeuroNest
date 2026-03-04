@@ -116,7 +116,10 @@ const TodaySchedule = () => {
                             </div>
                         ))}
 
-                        <div className="ts-add-pinned">
+                        <div className="ts-add-pinned" onClick={() => {
+                            const title = prompt("Enter clinical pin title:");
+                            if(title) alert("Feature integration: This pin will be synchronized with your professional archives.");
+                        }}>
                             <div className="ts-add-icon">
                                 <Plus size={20} />
                             </div>
@@ -134,12 +137,25 @@ const TodaySchedule = () => {
                             </div>
                         </div>
                         <div className="d-grid gap-2" style={{ gridTemplateColumns: 'repeat(7, 1fr)' }}>
-                            {['M','T','W','T','F','S','S'].map((d, i) => <span key={i} className="text-muted text-center fw-bold" style={{ fontSize: '0.6rem' }}>{d}</span>)}
-                            {Array.from({length: 14}).map((_, i) => (
-                                <div key={i} className={`text-center py-1 rounded-circle fw-bold ${i+1 === displayDate.day ? 'bg-warning text-white' : 'text-dark'}`} style={{ fontSize: '0.75rem', cursor: 'pointer' }}>
-                                    {i+1}
-                                </div>
-                            ))}
+                            {['M','T','W','T','F','S','S'].map((d, i) => <span key={i} className={`text-muted text-center fw-bold`} style={{ fontSize: '0.6rem' }}>{d}</span>)}
+                            {Array.from({length: 31}).map((_, i) => {
+                                const dayNum = i + 1;
+                                const isSelected = dayNum === displayDate.day;
+                                return (
+                                    <div 
+                                        key={i} 
+                                        className={`text-center py-1 rounded-circle fw-bold transition-all ${isSelected ? 'bg-warning text-white shadow-sm' : isDark ? 'text-light hover-bg-dark' : 'text-dark hover-bg-light'}`} 
+                                        style={{ fontSize: '0.75rem', cursor: 'pointer' }}
+                                        onClick={() => {
+                                            const newDate = new Date(selectedDate);
+                                            newDate.setDate(dayNum);
+                                            setSelectedDate(newDate.toISOString().split('T')[0]);
+                                        }}
+                                    >
+                                        {dayNum}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
                 </div>
@@ -246,9 +262,6 @@ const TodaySchedule = () => {
                 <div className="ts-right-panel">
                     <div className="ts-section-header">
                         <span className="ts-section-title">Focus & Metrics</span>
-                        <div className="rounded-circle bg-warning text-white p-2 d-flex align-items-center justify-content-center shadow-sm" style={{ width: '32px', height: '32px' }}>
-                            <Plus size={18} />
-                        </div>
                     </div>
 
                     <div className="ts-widget-row">
