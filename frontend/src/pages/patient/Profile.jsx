@@ -11,7 +11,7 @@ import {
   Heart, Calendar, Ruler, Weight, Edit2, 
   Save, X, Plus, Trash2, ShieldAlert,
   CalendarDays, History, ArrowRight, Clock,
-  Droplet, Moon, Scale, Utensils, Hash
+  Droplet, Moon, Scale, Utensils, Hash, Pill
 } from "lucide-react";
 
 const PROFILE_KEYS = [
@@ -319,17 +319,19 @@ const Profile = () => {
                                     <div className="d-flex flex-column align-items-end gap-1">
                                         <span className="text-dark fw-bolder mb-1" style={{fontSize: '0.75rem'}}>Own diagnosis</span>
                                         <div className="d-flex gap-2">
-                                            {clinicalData?.conditions?.filter(c => c.status === 'active').slice(0, 2).map((c, i) =>(
+                                            {(clinicalData?.conditions || []).filter(c => c.status === 'active').slice(0, 2).map((c, i) =>(
                                                <span key={i} className={`badge bg-${i === 0 ? 'warning' : 'primary'} bg-opacity-10 text-${i === 0 ? 'warning' : 'primary'} rounded-pill px-3 py-2 fw-bold`} style={{fontSize: '0.65rem'}}>{c.condition_name}</span>
-                                            )) || <span className="text-muted small">None</span>}
+                                            ))}
+                                            {(!clinicalData?.conditions || clinicalData.conditions.length === 0) && <span className="text-muted small">None</span>}
                                         </div>
                                     </div>
                                     <div className="d-flex flex-column align-items-end gap-1">
                                         <span className="text-dark fw-bolder mb-1" style={{fontSize: '0.75rem'}}>Known Allergies</span>
                                         <div className="d-flex gap-2">
-                                            {clinicalData?.allergies?.slice(0, 2).map((a, i) =>(
+                                            {(clinicalData?.allergies || []).slice(0, 2).map((a, i) =>(
                                                <span key={i} className="badge bg-danger bg-opacity-10 text-danger rounded-pill px-3 py-2 fw-bold" style={{fontSize: '0.65rem'}}>{a.allergy_name}</span>
-                                            )) || <span className="text-muted small">None</span>}
+                                            ))}
+                                            {(!clinicalData?.allergies || clinicalData.allergies.length === 0) && <span className="text-muted small">None</span>}
                                         </div>
                                     </div>
                                 </div>
@@ -348,21 +350,22 @@ const Profile = () => {
                                 <button className="panel-edit-btn">Edit</button>
                             </div>
                             <div className="pt-2">
-                                {clinicalData?.timeline?.slice(0, 5).map((appt, i) => {
+                                {(clinicalData?.timeline || []).slice(0, 5).map((appt, i) => {
                                     const dateObj = new Date(appt.appointment_date);
                                     const month = dateObj.toLocaleString('default', { month: 'short' });
                                     const year = dateObj.getFullYear();
                                     return (
                                     <div key={i} className="timeline-row">
                                         <div className="timeline-left"><span>{month}</span><span>{year}</span></div>
-                                        <div className="timeline-center"><div className="timeline-marker" style={i === clinicalData.timeline.length - 1 ? {borderColor: '#2b70ff'} : {}}></div></div>
+                                        <div className="timeline-center"><div className="timeline-marker" style={i === (clinicalData?.timeline?.length || 0) - 1 ? {borderColor: '#2b70ff'} : {}}></div></div>
                                         <div className="timeline-right">
                                             <div className="timeline-title">{appt.reason || 'General Appt'}</div>
                                             <div className="timeline-subtitle">Dr. {appt.doctor_name || 'Specialist'}</div>
                                         </div>
                                     </div>
                                     );
-                                }) || <div className="text-muted text-center pt-4 fw-bold">No recent history</div>}
+                                })}
+                                {(!clinicalData?.timeline || clinicalData.timeline.length === 0) && <div className="text-muted text-center pt-4 fw-bold">No recent history</div>}
                             </div>
                         </div>
                     </div>
@@ -426,7 +429,7 @@ const Profile = () => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        {clinicalData?.medications?.filter(m => m.status === 'active')?.map((med, i) => (
+                                        {(clinicalData?.medications || []).filter(m => m.status === 'active').map((med, i) => (
                                             <tr key={i}>
                                                 <td>
                                                     <div className="d-flex align-items-center gap-3">
@@ -440,7 +443,8 @@ const Profile = () => {
                                                 <td>{med.frequency}</td>
                                                 <td><span className="badge rounded-pill bg-success bg-opacity-10 text-success fw-bold p-2 px-3">Active</span></td>
                                             </tr>
-                                        )) || <tr><td colSpan="4" className="text-center py-4 fw-bold text-muted">No active medications</td></tr>}
+                                        ))}
+                                        {(!clinicalData?.medications || clinicalData.medications.filter(m => m.status === 'active').length === 0) && <tr><td colSpan="4" className="text-center py-4 fw-bold text-muted">No active medications</td></tr>}
                                     </tbody>
                                 </table>
                             </div>
@@ -454,13 +458,13 @@ const Profile = () => {
                                 <div className="panel-title"><Activity size={18} /> Conditions Log</div>
                             </div>
                             <div className="d-flex flex-column pt-1">
-                                {clinicalData?.conditions?.map((c, i) => (
+                                {(clinicalData?.conditions || []).map((c, i) => (
                                     <div key={i} className="diet-list-item justify-content-between">
                                         <div className="d-flex align-items-center gap-2"><Heart size={16} className="text-danger"/> {c.condition_name}</div>
                                         <span className={`badge bg-${c.status === 'active' ? 'danger' : 'secondary'} bg-opacity-10 text-${c.status === 'active' ? 'danger' : 'secondary'} rounded-pill`}>{c.status}</span>
                                     </div>
                                 ))}
-                                {clinicalData?.allergies?.map((a, i) => (
+                                {(clinicalData?.allergies || []).map((a, i) => (
                                     <div key={i + 10} className="diet-list-item justify-content-between">
                                         <div className="d-flex align-items-center gap-2"><ShieldAlert size={16} className="text-warning"/> {a.allergy_name}</div>
                                         <span className="badge bg-warning bg-opacity-10 text-warning rounded-pill">{a.severity}</span>
