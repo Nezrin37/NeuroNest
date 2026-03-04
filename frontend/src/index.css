@@ -15,8 +15,17 @@ body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   color: var(--nn-text-main);
   background-color: var(--nn-bg);
-  transition: background 0.4s ease, color 0.4s ease;
+  background-image: url('/light-bg-pattern.png') !important;
+  background-size: cover !important;
+  background-position: center top !important;
+  background-attachment: fixed !important;
+  background-repeat: no-repeat !important;
+  transition: background-color 0.4s ease, color 0.4s ease;
   overflow-x: hidden;
+}
+
+body.dark {
+  background-image: none !important;
 }
 
 /* Common Text Utilities */
