@@ -14,6 +14,7 @@ export default function VideoConsultation() {
     const peerConnection = useRef(null);
     const socket = useRef(null);
     const localStreamRef = useRef(null);
+    const remoteStreamRef = useRef(null);
     const iceCandidateQueue = useRef([]);
     
     const [isMuted, setIsMuted] = useState(false);
@@ -51,6 +52,12 @@ export default function VideoConsultation() {
                         { urls: "stun:stun1.l.google.com:19302" },
                     ],
                 });
+                remoteStreamRef.current = new MediaStream();
+                if (remoteVideo.current) {
+                    remoteVideo.current.srcObject = remoteStreamRef.current;
+                    remoteVideo.current.muted = false;
+                    remoteVideo.current.volume = 1;
+                }
 
                 stream.getTracks().forEach((track) => {
                     peerConnection.current?.addTrack(track, stream);
@@ -58,9 +65,17 @@ export default function VideoConsultation() {
 
                 peerConnection.current.ontrack = (event) => {
                     if (!remoteVideo.current) return;
+                    // Safari/Brave mobile may deliver track events with empty event.streams.
+                    // Build/maintain the remote MediaStream manually for maximum compatibility.
                     if (event.streams && event.streams[0]) {
                         remoteVideo.current.srcObject = event.streams[0];
+                    } else if (remoteStreamRef.current && event.track) {
+                        remoteStreamRef.current.addTrack(event.track);
+                        remoteVideo.current.srcObject = remoteStreamRef.current;
                     }
+                    remoteVideo.current
+                        .play()
+                        .catch((err) => console.warn("Remote autoplay blocked until user interaction:", err));
                     setIsRemoteConnected(true);
                 };
 
@@ -106,6 +121,7 @@ export default function VideoConsultation() {
                     if (remoteVideo.current) {
                         remoteVideo.current.srcObject = null;
                     }
+                    remoteStreamRef.current = new MediaStream();
                 });
 
                 socket.current.on("webrtc_offer", async (data) => {
@@ -177,6 +193,7 @@ export default function VideoConsultation() {
             if (remoteVideo.current) {
                 remoteVideo.current.srcObject = null;
             }
+            remoteStreamRef.current = null;
             iceCandidateQueue.current = [];
         };
     }, [roomId]);
