@@ -18,10 +18,12 @@ export default function VideoConsultation() {
     const remoteStreamRef = useRef(null);
     const iceCandidateQueue = useRef([]);
     const hasSentCallEndedRef = useRef(false);
+    const hasRemotePeerRef = useRef(false);
     
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
     const [isRemoteConnected, setIsRemoteConnected] = useState(false);
+    const [needsAudioResume, setNeedsAudioResume] = useState(false);
 
     useEffect(() => {
         const room = `consult_${roomId}`;
@@ -33,6 +35,35 @@ export default function VideoConsultation() {
                 const candidate = iceCandidateQueue.current.shift();
                 await peerConnection.current.addIceCandidate(candidate);
             }
+        };
+
+        const getIceServers = () => {
+            const fromEnv = import.meta.env.VITE_ICE_SERVERS;
+            if (fromEnv) {
+                try {
+                    const parsed = JSON.parse(fromEnv);
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        return parsed;
+                    }
+                } catch (err) {
+                    console.warn("Invalid VITE_ICE_SERVERS JSON, using defaults.", err);
+                }
+            }
+            return [
+                { urls: "stun:stun.l.google.com:19302" },
+                { urls: "stun:stun1.l.google.com:19302" },
+                { urls: "stun:global.stun.twilio.com:3478" },
+                {
+                    urls: "turn:global.relay.metered.ca:80",
+                    username: "openrelayproject",
+                    credential: "openrelayproject",
+                },
+                {
+                    urls: "turn:global.relay.metered.ca:443",
+                    username: "openrelayproject",
+                    credential: "openrelayproject",
+                },
+            ];
         };
 
         const notifyCallEnded = async () => {
@@ -66,10 +97,7 @@ export default function VideoConsultation() {
                 }
 
                 peerConnection.current = new RTCPeerConnection({
-                    iceServers: [
-                        { urls: "stun:stun.l.google.com:19302" },
-                        { urls: "stun:stun1.l.google.com:19302" },
-                    ],
+                    iceServers: getIceServers(),
                 });
                 remoteStreamRef.current = new MediaStream();
                 if (remoteVideo.current) {
@@ -94,7 +122,11 @@ export default function VideoConsultation() {
                     }
                     remoteVideo.current
                         .play()
-                        .catch((err) => console.warn("Remote autoplay blocked until user interaction:", err));
+                        .then(() => setNeedsAudioResume(false))
+                        .catch((err) => {
+                            console.warn("Remote autoplay blocked until user interaction:", err);
+                            setNeedsAudioResume(true);
+                        });
                     setIsRemoteConnected(true);
                 };
 
@@ -124,7 +156,16 @@ export default function VideoConsultation() {
                     console.error("Video socket connect_error:", err?.message || err);
                 });
 
+                socket.current.on("connect", () => {
+                    socket.current?.emit("join_video_room", { room });
+                });
+
+                socket.current.on("video_room_state", ({ participants }) => {
+                    hasRemotePeerRef.current = Number(participants) >= 2;
+                });
+
                 socket.current.on("user_joined", async () => {
+                    hasRemotePeerRef.current = true;
                     if (!peerConnection.current) return;
                     try {
                         const offer = await peerConnection.current.createOffer();
@@ -136,6 +177,7 @@ export default function VideoConsultation() {
                 });
 
                 socket.current.on("user_left", () => {
+                    hasRemotePeerRef.current = false;
                     setIsRemoteConnected(false);
                     if (remoteVideo.current) {
                         remoteVideo.current.srcObject = null;
@@ -185,7 +227,6 @@ export default function VideoConsultation() {
                     }
                 });
 
-                socket.current.emit("join_video_room", { room });
             } catch (err) {
                 console.error("Error accessing media devices.", err);
                 alert("Could not access camera or microphone. Please check your permissions.");
@@ -220,6 +261,16 @@ export default function VideoConsultation() {
 
     const handleHangup = () => {
         navigate(-1);
+    };
+
+    const resumeRemoteAudio = async () => {
+        if (!remoteVideo.current) return;
+        try {
+            await remoteVideo.current.play();
+            setNeedsAudioResume(false);
+        } catch (err) {
+            console.error("Unable to resume remote audio playback:", err);
+        }
     };
 
     const toggleAudio = () => {
@@ -299,6 +350,15 @@ export default function VideoConsultation() {
 
             {/* Controls Bar */}
             <div className="video-controls-bar">
+                {needsAudioResume && (
+                    <button
+                        className="video-control-btn"
+                        onClick={resumeRemoteAudio}
+                        title="Enable remote audio"
+                    >
+                        Enable Audio
+                    </button>
+                )}
                 <button
                     className={`video-control-btn ${isMuted ? 'active-danger' : ''}`}
                     onClick={toggleAudio}
