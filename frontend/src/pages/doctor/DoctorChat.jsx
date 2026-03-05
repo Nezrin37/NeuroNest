@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { initSocket, getSocket, disconnectSocket } from '../../services/socket';
 import { getConversations, getMessages, markAsRead, getPatientContext, startConversation, sendMessage } from '../../api/chat';
@@ -31,7 +31,9 @@ const DoctorChat = ({ isEmbedded = false }) => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const patientIdParam = searchParams.get('patientId');
+    const startVideoParam = searchParams.get('startVideo') === '1';
     const isFocusedMode = Boolean(patientIdParam); // Single-patient focused view
+    const hasAutoStartedVideoRef = useRef(false);
 
     const fetchConversations = useCallback(async () => {
         try {
@@ -195,6 +197,14 @@ const DoctorChat = ({ isEmbedded = false }) => {
         await handleSendMessage(`${roleStr} is initiating a secure video consultation.`, 'call_request');
         navigate(`/consultation/${selectedConv.id}`);
     };
+
+    useEffect(() => {
+        if (!startVideoParam || hasAutoStartedVideoRef.current) return;
+        if (!selectedConv || !currentUser) return;
+
+        hasAutoStartedVideoRef.current = true;
+        handleVideoCall();
+    }, [startVideoParam, selectedConv, currentUser, handleVideoCall]);
 
     return (
         <div className="d-flex w-100 h-100 overflow-hidden bg-white rounded-4 shadow-sm">

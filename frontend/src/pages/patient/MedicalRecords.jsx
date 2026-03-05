@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Plus, AlertCircle, X, Sun, Sunrise, Sunset, Moon, Minus, ChevronUp, ChevronDown, ChevronLeft, Flame, Activity, Pill, FileText, Search, Filter } from "lucide-react";
+import { Plus, AlertCircle, X, Sun, Sunrise, Sunset, Moon, Minus, ChevronUp, ChevronDown, ChevronLeft, Flame, Activity, Pill, FileText, Search, Filter, Video } from "lucide-react";
 import { getPatientDossier } from "../../api/doctor";
 import { getUser } from "../../utils/auth";
 import { getDoctorProfile } from "../../services/doctorProfileService";
@@ -139,6 +139,10 @@ const MedicalRecords = ({ patientId: propPatientId = null }) => {
   const [recordToDelete, setRecordToDelete] = useState(null);
   const [isViewOpen, setIsViewOpen] = useState(false);
   const [recordToView, setRecordToView] = useState(null);
+  const handleStartVideoCall = () => {
+    if (!patientId) return;
+    navigate(`/doctor/chat?patientId=${patientId}&startVideo=1`);
+  };
   const severeAllergyCount = allergies.filter(
     (item) => String(item.severity || "").toLowerCase() === "severe",
   ).length;
@@ -985,6 +989,16 @@ const MedicalRecords = ({ patientId: propPatientId = null }) => {
               </div>
             </div>
             <div className="header-nexus-right">
+              {isDoctor && patientId && (
+                <button
+                  type="button"
+                  onClick={handleStartVideoCall}
+                  className="btn btn-dark rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-2"
+                >
+                  <Video size={16} />
+                  Video Call
+                </button>
+              )}
               {identity && (
                 <div className="patient-identity-capsule">
                   <div className="capsule-avatar-mini">
