@@ -23,6 +23,8 @@ export default function VideoConsultation() {
     const makingOfferRef = useRef(false);
     const ignoreOfferRef = useRef(false);
     const politeRef = useRef(false);
+    const pendingLocalIceRef = useRef([]);
+    const reconnectAttemptsRef = useRef(0);
     
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
@@ -32,6 +34,8 @@ export default function VideoConsultation() {
     useEffect(() => {
         const room = `consult_${roomId}`;
         let isDisposed = false;
+        let joinRetryTimer = null;
+        let restartTimer = null;
 
         const ensureRemotePlayback = async () => {
             if (!remoteVideo.current) return;
@@ -54,6 +58,18 @@ export default function VideoConsultation() {
             }
         };
 
+        const flushPendingLocalIce = () => {
+            if (!socket.current || !remoteSidRef.current) return;
+            while (pendingLocalIceRef.current.length > 0) {
+                const candidate = pendingLocalIceRef.current.shift();
+                socket.current.emit("ice_candidate", {
+                    room,
+                    to: remoteSidRef.current,
+                    candidate,
+                });
+            }
+        };
+
         const createAndSendOffer = async () => {
             if (!peerConnection.current || !socket.current || !remoteSidRef.current) return;
             if (makingOfferRef.current) return;
@@ -67,10 +83,29 @@ export default function VideoConsultation() {
                     to: remoteSidRef.current,
                     offer: peerConnection.current.localDescription,
                 });
+                flushPendingLocalIce();
             } catch (err) {
                 console.error("Error creating/sending offer:", err);
             } finally {
                 makingOfferRef.current = false;
+            }
+        };
+
+        const restartIceAndRenegotiate = async () => {
+            if (!peerConnection.current || !remoteSidRef.current) return;
+            if (makingOfferRef.current) return;
+            try {
+                reconnectAttemptsRef.current += 1;
+                const offer = await peerConnection.current.createOffer({ iceRestart: true });
+                await peerConnection.current.setLocalDescription(offer);
+                socket.current?.emit("webrtc_offer", {
+                    room,
+                    to: remoteSidRef.current,
+                    offer: peerConnection.current.localDescription,
+                });
+                flushPendingLocalIce();
+            } catch (err) {
+                console.error("ICE restart renegotiation failed:", err);
             }
         };
 
@@ -166,6 +201,12 @@ export default function VideoConsultation() {
                     if (state === "disconnected" || state === "failed" || state === "closed") {
                         setIsRemoteConnected(false);
                     }
+                    if (state === "connected") {
+                        reconnectAttemptsRef.current = 0;
+                    }
+                    if ((state === "failed" || state === "disconnected") && reconnectAttemptsRef.current < 3) {
+                        void restartIceAndRenegotiate();
+                    }
                 };
                 peerConnection.current.onnegotiationneeded = async () => {
                     if (!remoteSidRef.current) return;
@@ -182,6 +223,10 @@ export default function VideoConsultation() {
 
                 peerConnection.current.onicecandidate = (event) => {
                     if (!event.candidate || !socket.current) return;
+                    if (!remoteSidRef.current) {
+                        pendingLocalIceRef.current.push(event.candidate);
+                        return;
+                    }
                     socket.current.emit("ice_candidate", {
                         room,
                         to: remoteSidRef.current,
@@ -211,6 +256,7 @@ export default function VideoConsultation() {
                 socket.current.on("video_peer", async ({ peerSid, isPolite, shouldOffer }) => {
                     remoteSidRef.current = peerSid || null;
                     politeRef.current = Boolean(isPolite);
+                    flushPendingLocalIce();
                     if (shouldOffer && remoteSidRef.current) {
                         await createAndSendOffer();
                     }
@@ -223,6 +269,7 @@ export default function VideoConsultation() {
 
                 socket.current.on("user_joined", ({ sid }) => {
                     remoteSidRef.current = sid || remoteSidRef.current;
+                    flushPendingLocalIce();
                 });
 
                 socket.current.on("user_left", () => {
@@ -256,6 +303,7 @@ export default function VideoConsultation() {
                             to: data?.from || remoteSidRef.current,
                             answer: peerConnection.current.localDescription,
                         });
+                        flushPendingLocalIce();
                     } catch (error) {
                         console.error("Error handling offer:", error);
                     }
@@ -289,6 +337,21 @@ export default function VideoConsultation() {
                     }
                 });
 
+                joinRetryTimer = setInterval(() => {
+                    if (!socket.current?.connected) return;
+                    if (isRemoteConnected) return;
+                    socket.current.emit("join_video_room", { room });
+                    if (!politeRef.current && remoteSidRef.current && peerConnection.current?.signalingState === "stable") {
+                        void createAndSendOffer();
+                    }
+                }, 3000);
+
+                restartTimer = setTimeout(() => {
+                    if (!isRemoteConnected && remoteSidRef.current) {
+                        void restartIceAndRenegotiate();
+                    }
+                }, 8000);
+
             } catch (err) {
                 console.error("Error accessing media devices.", err);
                 alert("Could not access camera or microphone. Please check your permissions.");
@@ -318,6 +381,10 @@ export default function VideoConsultation() {
             }
             remoteStreamRef.current = null;
             iceCandidateQueue.current = [];
+            pendingLocalIceRef.current = [];
+            reconnectAttemptsRef.current = 0;
+            if (joinRetryTimer) clearInterval(joinRetryTimer);
+            if (restartTimer) clearTimeout(restartTimer);
         };
     }, [roomId]);
 
