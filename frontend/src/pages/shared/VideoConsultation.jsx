@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Video, Mic, MicOff, VideoOff, PhoneOff } from 'lucide-react';
 import { getUser } from '../../utils/auth';
 import { io } from 'socket.io-client';
+import { sendMessage } from '../../api/chat';
 
 export default function VideoConsultation() {
     const { roomId } = useParams();
@@ -16,6 +17,7 @@ export default function VideoConsultation() {
     const localStreamRef = useRef(null);
     const remoteStreamRef = useRef(null);
     const iceCandidateQueue = useRef([]);
+    const hasSentCallEndedRef = useRef(false);
     
     const [isMuted, setIsMuted] = useState(false);
     const [isVideoOff, setIsVideoOff] = useState(false);
@@ -30,6 +32,23 @@ export default function VideoConsultation() {
             while (iceCandidateQueue.current.length > 0) {
                 const candidate = iceCandidateQueue.current.shift();
                 await peerConnection.current.addIceCandidate(candidate);
+            }
+        };
+
+        const notifyCallEnded = async () => {
+            if (hasSentCallEndedRef.current) return;
+            const conversationId = Number(roomId);
+            if (!Number.isInteger(conversationId)) return;
+            hasSentCallEndedRef.current = true;
+            const roleLabel = user?.role === 'doctor' ? 'Doctor' : 'Patient';
+            try {
+                await sendMessage(
+                    conversationId,
+                    `${roleLabel} ended the consultation.`,
+                    'call_ended',
+                );
+            } catch (err) {
+                console.error("Failed to send call_ended message:", err);
             }
         };
 
@@ -177,6 +196,7 @@ export default function VideoConsultation() {
 
         return () => {
             isDisposed = true;
+            void notifyCallEnded();
             if (socket.current) {
                 socket.current.emit("leave_video_room", { room });
                 socket.current.disconnect();

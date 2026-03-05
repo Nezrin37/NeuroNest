@@ -174,6 +174,7 @@ def send_message_http(conversation_id):
     current_user_id = int(get_jwt_identity())
     data = request.get_json()
     content = data.get("content")
+    msg_type = data.get("type", "text")
     
     # Verify participation
     part = Participant.query.filter_by(conversation_id=conversation_id, user_id=current_user_id).first()
@@ -184,7 +185,7 @@ def send_message_http(conversation_id):
         conversation_id=conversation_id,
         sender_id=current_user_id,
         content=content,
-        type="text"
+        type=msg_type
     )
     db.session.add(msg)
     db.session.commit()

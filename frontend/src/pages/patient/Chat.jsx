@@ -145,10 +145,8 @@ const Chat = () => {
                     type: type
                 });
             } else {
-                if (type === 'text') {
-                    const savedMsg = await chatAPI.sendMessage(selectedConv.id, content);
-                    handleNewMessage(savedMsg);
-                }
+                const savedMsg = await chatAPI.sendMessage(selectedConv.id, content, type);
+                handleNewMessage(savedMsg);
             }
         } catch (err) {
             console.error("Failed to send message", err);

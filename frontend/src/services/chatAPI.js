@@ -33,8 +33,8 @@ const chatAPI = {
     },
 
     // 4. Send Message (HTTP)
-    sendMessage: async (conversationId, content) => {
-        const response = await axios.post(`${API_URL}/${conversationId}/messages`, { content }, getAuthHeaders());
+    sendMessage: async (conversationId, content, type = 'text') => {
+        const response = await axios.post(`${API_URL}/${conversationId}/messages`, { content, type }, getAuthHeaders());
         return response.data;
     },
 

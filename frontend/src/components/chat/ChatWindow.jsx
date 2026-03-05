@@ -67,9 +67,21 @@ const ChatWindow = ({ messages, currentUserId, onSendMessage, loadingMessages, m
     const renderMessageStream = () => {
         let lastDayKey = '';
         const blocks = [];
+        let latestActiveCallRequestKey = null;
+
+        messages.forEach((msg, index) => {
+            const key = msg.id != null ? String(msg.id) : `idx-${index}`;
+            if (msg?.type === 'call_request') {
+                latestActiveCallRequestKey = key;
+            }
+            if (msg?.type === 'call_ended') {
+                latestActiveCallRequestKey = null;
+            }
+        });
 
         messages.forEach((msg, index) => {
             const dayKey = getISTDayKey(msg.created_at);
+            const key = msg.id != null ? String(msg.id) : `idx-${index}`;
             if (dayKey && dayKey !== lastDayKey) {
                 blocks.push(
                     <div className="d-flex justify-content-center my-4" key={`day-${dayKey}-${index}`}>
@@ -81,12 +93,13 @@ const ChatWindow = ({ messages, currentUserId, onSendMessage, loadingMessages, m
                 lastDayKey = dayKey;
             }
 
-            blocks.push(
+                blocks.push(
                 <MessageBubble 
-                    key={msg.id || index} 
+                    key={key} 
                     message={msg} 
                     isMe={String(msg.sender_id) === String(currentUserId)}
                     otherUserAvatar={otherUser?.profile_image}
+                    isActiveCallRequest={msg?.type === 'call_request' && key === latestActiveCallRequestKey}
                 />
             );
         });

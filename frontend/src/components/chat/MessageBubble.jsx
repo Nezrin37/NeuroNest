@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Check, CheckCheck, Download, Paperclip, Video } from 'lucide-react';
+import { Check, CheckCheck, Download, Paperclip, Video, PhoneOff } from 'lucide-react';
 import { resolveApiUrl } from '../../config/env';
 import { formatTimeIST } from '../../utils/time';
 
@@ -24,7 +24,7 @@ const getMessageFileUrl = (content = '') => {
     return resolveApiUrl(content.trim());
 };
 
-const MessageBubble = ({ message, isMe, otherUserAvatar }) => {
+const MessageBubble = ({ message, isMe, otherUserAvatar, isActiveCallRequest = false }) => {
     const navigate = useNavigate();
     const content = message?.content || '';
     const isFileMessage = message?.type === 'file' || content.includes('/uploads/');
@@ -57,12 +57,29 @@ const MessageBubble = ({ message, isMe, otherUserAvatar }) => {
                             <span>Video Consultation</span>
                         </div>
                         <p className={`mb-3 small fw-medium ${isMe ? 'text-white text-opacity-75' : 'text-secondary'}`}>{content}</p>
-                        <button 
-                            className={`btn btn-sm fw-bold w-100 rounded-pill shadow-sm transition-all hover-scale ${isMe ? 'btn-light text-primary' : 'btn-primary text-white'}`}
-                            onClick={() => navigate(`/consultation/${message.conversation_id}`)}
-                        >
-                            Join Consult
-                        </button>
+                        {isActiveCallRequest ? (
+                            <button 
+                                className={`btn btn-sm fw-bold w-100 rounded-pill shadow-sm transition-all hover-scale ${isMe ? 'btn-light text-primary' : 'btn-primary text-white'}`}
+                                onClick={() => navigate(`/consultation/${message.conversation_id}`)}
+                            >
+                                Join Consult
+                            </button>
+                        ) : (
+                            <div
+                                className={`btn btn-sm fw-bold w-100 rounded-pill ${isMe ? 'btn-light text-secondary' : 'btn-secondary text-white'} disabled`}
+                                style={{ opacity: 0.75, cursor: 'not-allowed' }}
+                            >
+                                Consultation Ended
+                            </div>
+                        )}
+                    </div>
+                ) : message?.type === 'call_ended' ? (
+                    <div className={`rounded-3 p-3 ${isMe ? 'bg-white bg-opacity-25' : 'bg-white border'}`}>
+                        <div className="d-flex align-items-center gap-2 mb-1 fw-bold text-uppercase" style={{ fontSize: '0.75rem', letterSpacing: '0.05em' }}>
+                            <PhoneOff size={16} />
+                            <span>Consultation Ended</span>
+                        </div>
+                        <p className={`mb-0 small fw-medium ${isMe ? 'text-white text-opacity-75' : 'text-secondary'}`}>{content}</p>
                     </div>
                 ) : isFileMessage && fileUrl ? (
                     <div className={`rounded-3 p-3 text-start ${isMe ? 'bg-white bg-opacity-25' : 'bg-white border'}`}>
