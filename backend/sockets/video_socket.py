@@ -21,8 +21,31 @@ def register_video_events(socketio):
         if not room:
             return
         join_room(room)
-        print(f"[VideoSocket] User joined room: {room}")
+        participants = _room_participants(room)
+        if len(participants) > 2:
+            leave_room(room)
+            emit("room_full", {"room": room}, room=request.sid)
+            print(f"[VideoSocket] Room full, rejected sid {request.sid} for room: {room}")
+            return
+
+        print(f"[VideoSocket] User joined room: {room} as sid {request.sid}")
         emit("user_joined", {"room": room, "sid": request.sid}, room=room, include_self=False)
+
+        peers = [sid for sid in participants if sid != request.sid]
+        peer_sid = peers[0] if peers else None
+        # Joining user gets explicit peer and polite role.
+        emit(
+            "video_peer",
+            {"room": room, "peerSid": peer_sid, "isPolite": bool(peer_sid), "shouldOffer": False},
+            room=request.sid,
+        )
+        # Existing peer is the offerer.
+        if peer_sid:
+            emit(
+                "video_peer",
+                {"room": room, "peerSid": request.sid, "isPolite": False, "shouldOffer": True},
+                room=peer_sid,
+            )
         _emit_room_state(room)
 
     @socketio.on("webrtc_offer")

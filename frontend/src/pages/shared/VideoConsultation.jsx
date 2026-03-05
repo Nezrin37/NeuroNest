@@ -203,14 +203,22 @@ export default function VideoConsultation() {
                     const remoteParticipants = participants.filter((sid) => sid !== selfSidRef.current);
                     remoteSidRef.current = remoteParticipants[0] || null;
                     politeRef.current = participants[0] !== selfSidRef.current;
-                    if (remoteSidRef.current && participants.length === 2) {
-                        // First participant becomes offerer, second is polite answerer.
-                        if (!politeRef.current) {
-                            await createAndSendOffer();
-                        }
-                    } else if (!remoteSidRef.current) {
+                    if (!remoteSidRef.current) {
                         setIsRemoteConnected(false);
                     }
+                });
+
+                socket.current.on("video_peer", async ({ peerSid, isPolite, shouldOffer }) => {
+                    remoteSidRef.current = peerSid || null;
+                    politeRef.current = Boolean(isPolite);
+                    if (shouldOffer && remoteSidRef.current) {
+                        await createAndSendOffer();
+                    }
+                });
+
+                socket.current.on("room_full", () => {
+                    alert("Consultation room is full. Only two participants are allowed.");
+                    navigate(-1);
                 });
 
                 socket.current.on("user_joined", ({ sid }) => {
