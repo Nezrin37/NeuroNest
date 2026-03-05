@@ -1,3 +1,4 @@
+from flask import request
 from flask_socketio import emit, join_room, leave_room
 import logging
 
@@ -9,7 +10,13 @@ def register_video_events(socketio):
             return
         join_room(room)
         print(f"[VideoSocket] User joined room: {room}")
-        emit("user_joined", {"room": room}, room=room, include_self=False)
+        participants = socketio.server.manager.rooms.get("/", {}).get(room, set())
+        emit(
+            "video_room_state",
+            {"room": room, "participants": len(participants)},
+            room=request.sid,
+        )
+        emit("user_joined", {"room": room, "sid": request.sid}, room=room, include_self=False)
 
     @socketio.on("webrtc_offer")
     def handle_offer(data):
@@ -36,4 +43,4 @@ def register_video_events(socketio):
             return
         leave_room(room)
         print(f"[VideoSocket] User left room: {room}")
-        emit("user_left", {"room": room}, room=room, include_self=False)
+        emit("user_left", {"room": room, "sid": request.sid}, room=room, include_self=False)
