@@ -18,7 +18,12 @@ def test_email():
 
         resp = req_lib.post(
             "https://api.resend.com/emails",
-            headers={"Authorization": f"Bearer {resend_api_key}", "Content-Type": "application/json"},
+            headers={
+                "Authorization": f"Bearer {resend_api_key}",
+                "Content-Type": "application/json",
+                "User-Agent": "python-httpx/0.23.0",
+                "Accept": "application/json",
+            },
             json={
                 "from": "NeuroNest <onboarding@resend.dev>",
                 "to": ["neuronest4@gmail.com"],
@@ -27,11 +32,11 @@ def test_email():
             },
             timeout=15
         )
-        data = resp.json()
         if resp.status_code == 200:
-            return jsonify({"status": "SUCCESS", "id": data.get("id")}), 200
+            data = resp.json()
+            return jsonify({"status": "SUCCESS", "id": data.get("id"), "version": version}), 200
         else:
-            return jsonify({"status": "error", "http_code": resp.status_code, "detail": data}), 500
+            return jsonify({"status": "error", "http_code": resp.status_code, "detail": resp.text, "version": version}), 500
     except Exception as e:
         return jsonify({"status": "error", "version": version, "type": type(e).__name__, "msg": str(e)}), 500
 
