@@ -16,7 +16,7 @@ def test_email():
 
     payload = json.dumps({
         "from": "NeuroNest <onboarding@resend.dev>",
-        "to": ["nayanasunilkumar8@gmail.com"],
+        "to": ["neuronest4@gmail.com"],
         "subject": "NeuroNest Resend Test",
         "text": "This confirms your NeuroNest email system is working via Resend!",
     }).encode("utf-8")
