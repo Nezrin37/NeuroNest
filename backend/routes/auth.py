@@ -9,34 +9,28 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 @auth_bp.route("/test-email")
 def test_email():
     try:
-        import urllib.request
-        import urllib.error
-        import json as _json
-        import os as _os
+        import requests as req_lib
+        resend_api_key = os.getenv("RESEND_API_KEY")
 
-        resend_api_key = _os.getenv("RESEND_API_KEY")
         if not resend_api_key:
             return jsonify({"status": "error", "reason": "RESEND_API_KEY missing"}), 500
 
-        payload = _json.dumps({
-            "from": "NeuroNest <onboarding@resend.dev>",
-            "to": ["neuronest4@gmail.com"],
-            "subject": "NeuroNest Test",
-            "text": "Email system working!",
-        }).encode("utf-8")
-
-        req = urllib.request.Request(
+        resp = req_lib.post(
             "https://api.resend.com/emails",
-            data=payload,
             headers={"Authorization": f"Bearer {resend_api_key}", "Content-Type": "application/json"},
-            method="POST"
+            json={
+                "from": "NeuroNest <onboarding@resend.dev>",
+                "to": ["neuronest4@gmail.com"],
+                "subject": "NeuroNest Test",
+                "text": "Email system working!",
+            },
+            timeout=15
         )
-        with urllib.request.urlopen(req, timeout=15) as resp:
-            result = _json.loads(resp.read())
-            return jsonify({"status": "SUCCESS", "id": result.get("id")}), 200
-    except urllib.error.HTTPError as e:
-        body = e.read().decode("utf-8")
-        return jsonify({"status": "error", "http_code": e.code, "detail": body}), 500
+        data = resp.json()
+        if resp.status_code == 200:
+            return jsonify({"status": "SUCCESS", "id": data.get("id")}), 200
+        else:
+            return jsonify({"status": "error", "http_code": resp.status_code, "detail": data}), 500
     except Exception as e:
         return jsonify({"status": "error", "type": type(e).__name__, "msg": str(e)}), 500
 
