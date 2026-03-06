@@ -106,18 +106,26 @@ class NotificationService:
         import urllib.error
         import json
 
-        # --- Primary: Resend API (works on Render, bypasses SMTP port blocks) ---
+        # --- Resend API (bypasses Render SMTP port blocks via HTTP) ---
         resend_api_key = os.getenv("RESEND_API_KEY")
-
-        # Use custom from address if set (requires verified domain on Resend),
-        # otherwise fall back to Resend's free onboarding address.
         sender = os.getenv("RESEND_FROM", "onboarding@resend.dev")
+
+        # ---------------------------------------------------------------
+        # TEST_EMAIL_OVERRIDE: set this env var On Render to redirect ALL
+        # emails to one inbox during development/demo.
+        # Remove it in production to send to real recipients.
+        # ---------------------------------------------------------------
+        test_override = os.getenv("TEST_EMAIL_OVERRIDE")
+        actual_recipient = test_override or recipient
+        if test_override:
+            body = f"[DEV MODE] This email was intended for: {recipient}\n\n{body}"
+            print(f"[EMAIL] TEST OVERRIDE active — redirecting {recipient} → {test_override}")
 
         if resend_api_key:
             try:
                 payload = json.dumps({
                     "from": f"NeuroNest <{sender}>",
-                    "to": [recipient],
+                    "to": [actual_recipient],
                     "subject": subject,
                     "text": body,
                 }).encode("utf-8")
@@ -135,7 +143,7 @@ class NotificationService:
                 )
                 with urllib.request.urlopen(req, timeout=15) as resp:
                     result = json.loads(resp.read())
-                    print(f"[EMAIL] Resend SUCCESS to {recipient}: {result}")
+                    print(f"[EMAIL] Resend SUCCESS → {actual_recipient} (intended: {recipient})")
                     return True
             except urllib.error.HTTPError as e:
                 error_body = e.read().decode("utf-8")
