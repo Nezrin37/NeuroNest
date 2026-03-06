@@ -134,6 +134,10 @@ class NotificationService:
                     result = json.loads(resp.read())
                     print(f"[EMAIL] Resend SUCCESS to {recipient}: {result}")
                     return True
+            except urllib.error.HTTPError as e:
+                error_body = e.read().decode("utf-8")
+                print(f"[EMAIL ERROR] Resend HTTP {e.code}: {error_body}")
+                return False
             except Exception as e:
                 print(f"[EMAIL ERROR] Resend failed: {type(e).__name__}: {e}")
                 return False
