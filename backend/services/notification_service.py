@@ -128,6 +128,8 @@ class NotificationService:
                     headers={
                         "Authorization": f"Bearer {resend_api_key}",
                         "Content-Type": "application/json",
+                        "User-Agent": "python-httpx/0.23.0",
+                        "Accept": "application/json",
                     },
                     method="POST"
                 )
