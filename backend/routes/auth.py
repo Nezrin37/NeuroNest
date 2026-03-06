@@ -8,16 +8,39 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/test-email")
 def test_email():
-    from services.notification_service import NotificationService
-    recipient = "nayanasunilkumar8@gmail.com"
-    subject = "NeuroNest Live Diagnostic"
-    body = "If you are reading this, your Render SMTP configuration is working perfectly via Auth route!"
-    
-    success = NotificationService.send_email(recipient, subject, body)
-    if success:
-        return {"status": "success", "message": f"Test email sent to {recipient}."}, 200
-    else:
-        return {"status": "error", "message": "Failed to send email. Check Render logs."}, 500
+    import smtplib, os
+    smtp_host = os.getenv("SMTP_HOST")
+    smtp_port = os.getenv("SMTP_PORT", "587")
+    smtp_user = os.getenv("SMTP_USER")
+    smtp_pass = os.getenv("SMTP_PASS")
+
+    config_status = {
+        "SMTP_HOST": smtp_host or "MISSING",
+        "SMTP_PORT": smtp_port,
+        "SMTP_USER": smtp_user or "MISSING",
+        "SMTP_PASS": "SET" if smtp_pass else "MISSING",
+    }
+
+    if not all([smtp_host, smtp_user, smtp_pass]):
+        return {"status": "error", "reason": "Missing env vars", "config": config_status}, 500
+
+    try:
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+        msg = MIMEMultipart()
+        msg['From'] = smtp_user
+        msg['To'] = "nayanasunilkumar8@gmail.com"
+        msg['Subject'] = "NeuroNest SMTP Diagnostic"
+        msg.attach(MIMEText("This email confirms your NeuroNest SMTP settings are working!", 'plain'))
+
+        server = smtplib.SMTP(smtp_host, int(smtp_port), timeout=15)
+        server.starttls()
+        server.login(smtp_user, smtp_pass)
+        server.send_message(msg)
+        server.quit()
+        return {"status": "SUCCESS", "message": "Email sent! Check your inbox and spam folder.", "config": config_status}, 200
+    except Exception as e:
+        return {"status": "error", "reason": f"{type(e).__name__}: {str(e)}", "config": config_status}, 500
 
 def parse_user_agent(ua_string):
     if not ua_string: return "Unknown Device"
