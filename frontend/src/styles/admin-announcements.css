@@ -4,10 +4,13 @@
     flex-direction: column;
     gap: 24px;
     height: 100%;
-    max-width: 1400px;
-    margin: 0 auto;
+    width: 100%;
+    background: white;
+    border-radius: 24px;
+    border: 1px solid #E2E8F0;
+    padding: 32px;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
-    padding-bottom: 60px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .announcements-header {
