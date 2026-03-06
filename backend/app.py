@@ -110,20 +110,7 @@ def create_app():
     # ================= Home Route =================
     @app.route("/")
     def home():
-        return {"status": "NeuroNest Live! Backend session is active."}
-
-    @app.route("/test-email")
-    def test_email_route():
-        from services.notification_service import NotificationService
-        recipient = "nayanasunilkumar8@gmail.com"
-        subject = "NeuroNest Live Diagnostic"
-        body = "If you are reading this, your Render SMTP configuration is working perfectly!"
-        
-        success = NotificationService.send_email(recipient, subject, body)
-        if success:
-            return {"status": "success", "message": f"Test email sent to {recipient}. Check inbox/spam."}, 200
-        else:
-            return {"status": "error", "message": "Failed to send email. Check Render logs for the exact error."}, 500
+        return {"status": "NeuroNest backend running"}
 
     # NOTE: /uploads/<filename> route removed — files are now served by Cloudinary directly.
 

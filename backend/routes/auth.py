@@ -6,6 +6,19 @@ from flask_jwt_extended import create_access_token
 
 auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
+@auth_bp.route("/test-email")
+def test_email():
+    from services.notification_service import NotificationService
+    recipient = "nayanasunilkumar8@gmail.com"
+    subject = "NeuroNest Live Diagnostic"
+    body = "If you are reading this, your Render SMTP configuration is working perfectly via Auth route!"
+    
+    success = NotificationService.send_email(recipient, subject, body)
+    if success:
+        return {"status": "success", "message": f"Test email sent to {recipient}."}, 200
+    else:
+        return {"status": "error", "message": "Failed to send email. Check Render logs."}, 500
+
 def parse_user_agent(ua_string):
     if not ua_string: return "Unknown Device"
     ua_string = ua_string.lower()
