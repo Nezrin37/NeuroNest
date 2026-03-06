@@ -8,39 +8,24 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/test-email")
 def test_email():
-    import smtplib, os
-    smtp_host = os.getenv("SMTP_HOST")
-    smtp_port = os.getenv("SMTP_PORT", "587")
-    smtp_user = os.getenv("SMTP_USER")
-    smtp_pass = os.getenv("SMTP_PASS")
-
+    import os
+    resend_api_key = os.getenv("RESEND_API_KEY")
     config_status = {
-        "SMTP_HOST": smtp_host or "MISSING",
-        "SMTP_PORT": smtp_port,
-        "SMTP_USER": smtp_user or "MISSING",
-        "SMTP_PASS": "SET" if smtp_pass else "MISSING",
+        "RESEND_API_KEY": "SET" if resend_api_key else "MISSING",
     }
 
-    if not all([smtp_host, smtp_user, smtp_pass]):
-        return {"status": "error", "reason": "Missing env vars", "config": config_status}, 500
+    from services.notification_service import NotificationService
+    success = NotificationService.send_email(
+        "nayanasunilkumar8@gmail.com",
+        "NeuroNest Resend Diagnostic",
+        "This confirms NeuroNest email notifications are working via Resend API!"
+    )
 
-    try:
-        from email.mime.text import MIMEText
-        from email.mime.multipart import MIMEMultipart
-        msg = MIMEMultipart()
-        msg['From'] = smtp_user
-        msg['To'] = "nayanasunilkumar8@gmail.com"
-        msg['Subject'] = "NeuroNest SMTP Diagnostic"
-        msg.attach(MIMEText("This email confirms your NeuroNest SMTP settings are working!", 'plain'))
+    if success:
+        return {"status": "SUCCESS", "message": "Email sent! Check your inbox.", "config": config_status}, 200
+    else:
+        return {"status": "error", "message": "Failed. Check RESEND_API_KEY.", "config": config_status}, 500
 
-        server = smtplib.SMTP(smtp_host, int(smtp_port), timeout=15)
-        server.starttls()
-        server.login(smtp_user, smtp_pass)
-        server.send_message(msg)
-        server.quit()
-        return {"status": "SUCCESS", "message": "Email sent! Check your inbox and spam folder.", "config": config_status}, 200
-    except Exception as e:
-        return {"status": "error", "reason": f"{type(e).__name__}: {str(e)}", "config": config_status}, 500
 
 def parse_user_agent(ua_string):
     if not ua_string: return "Unknown Device"
