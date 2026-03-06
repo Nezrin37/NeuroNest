@@ -110,7 +110,7 @@ def create_app():
     # ================= Home Route =================
     @app.route("/")
     def home():
-        return {"status": "DEPLOY_SUCCESS_V5_LIVE"}
+        return {"status": "NeuroNest-V6-RESEND-LIVE"}
 
     # NOTE: /uploads/<filename> route removed — files are now served by Cloudinary directly.
 
