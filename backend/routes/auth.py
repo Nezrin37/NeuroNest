@@ -8,6 +8,7 @@ auth_bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 @auth_bp.route("/test-email")
 def test_email():
+    version = "V_REQUESTS_2026"  # marker
     try:
         import requests as req_lib
         resend_api_key = os.getenv("RESEND_API_KEY")
@@ -32,7 +33,7 @@ def test_email():
         else:
             return jsonify({"status": "error", "http_code": resp.status_code, "detail": data}), 500
     except Exception as e:
-        return jsonify({"status": "error", "type": type(e).__name__, "msg": str(e)}), 500
+        return jsonify({"status": "error", "version": version, "type": type(e).__name__, "msg": str(e)}), 500
 
 def parse_user_agent(ua_string):
     if not ua_string: return "Unknown Device"
