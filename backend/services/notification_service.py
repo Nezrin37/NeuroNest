@@ -103,6 +103,7 @@ class NotificationService:
     @staticmethod
     def send_email(recipient, subject, body):
         import urllib.request
+        import urllib.error
         import json
 
         # --- Primary: Resend API (works on Render, bypasses SMTP port blocks) ---
