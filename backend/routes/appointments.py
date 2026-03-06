@@ -117,9 +117,7 @@ def _book_slot_atomic(*, current_user_id: int, doctor_id: int, slot_id: int, rea
             reason="Auto-confirm booking",
         )
 
-    # Trigger notification logic (Email, App, SMS check inside service)
-    NotificationService.notify_appointment_event(appointment.id, "new_booking")
-
+    # NOTE: notification is fired by the caller AFTER db.session.commit()
     return appointment, None, None
 
 
@@ -239,6 +237,11 @@ def book_by_slot():
             return jsonify({"error": err_msg}), err_code
 
         db.session.commit()
+        # ── Trigger notifications (email + in-app) to doctor and patient ──
+        try:
+            NotificationService.notify_appointment_event(appointment.id, "new_booking")
+        except Exception as notif_err:
+            print(f"[NOTIFICATION] Warning: could not send notification: {notif_err}")
         return jsonify(appointment.to_dict()), 201
 
     except Exception as e:
