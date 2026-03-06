@@ -126,6 +126,7 @@ def reject_appointment(appointment_id):
                 source="doctor_reject",
                 reason="Doctor rejected appointment",
             )
+    NotificationService.notify_appointment_event(appointment.id, "rejected")
     db.session.commit()
     
     return jsonify({
@@ -175,22 +176,7 @@ def reschedule_appointment(appointment_id):
             )
         appointment.slot_id = None
 
-    db.session.add(
-        InAppNotification(
-            user_id=appointment.patient_id,
-            type="appointment_rescheduled",
-            title="Appointment Rescheduled",
-            message=f"Dr. {appointment.doctor.full_name} has suggested a new time for your appointment: {new_date} at {new_time}. Please review and confirm.",
-            payload={
-                "appointment_id": appointment.id,
-                "old_date": str(old_date),
-                "old_time": str(old_time),
-                "new_date": str(new_date),
-                "new_time": str(new_time),
-                "doctor_id": current_user_id
-            },
-        )
-    )
+    NotificationService.notify_appointment_event(appointment.id, "rescheduled")
     
     db.session.commit()
     
@@ -562,6 +548,7 @@ def complete_appointment(appointment_id):
         return jsonify({"message": "Appointment not found"}), 404
         
     appointment.status = "completed"
+    NotificationService.notify_appointment_event(appointment.id, "completed")
     db.session.commit()
     
     return jsonify({"message": "Appointment marked as completed"}), 200

@@ -14,44 +14,73 @@ class NotificationService:
     @staticmethod
     def notify_appointment_event(appointment_id, event_type):
         """
-        event_type: 'new_booking', 'cancelled', 'rescheduled', 'approved'
+        event_type: 'new_booking', 'cancelled', 'rescheduled', 'approved', 'rejected'
         """
+        from database.models import DoctorNotificationSetting, NotificationPreference
         appointment = Appointment.query.get(appointment_id)
         if not appointment:
             return
 
         doctor_id = appointment.doctor_id
+        patient_id = appointment.patient_id
         
-        # Get doctor's notification settings
-        settings = DoctorNotificationSetting.query.filter_by(doctor_user_id=doctor_id).first()
-        if not settings:
-            settings = DoctorNotificationSetting(doctor_user_id=doctor_id)
-            db.session.add(settings)
+        # 1. NOTIFY DOCTOR
+        doctor_settings = DoctorNotificationSetting.query.filter_by(doctor_user_id=doctor_id).first()
+        if not doctor_settings:
+            doctor_settings = DoctorNotificationSetting(doctor_user_id=doctor_id)
+            db.session.add(doctor_settings)
             db.session.commit()
 
-        # Generate Message
-        message_content = NotificationService._generate_message(appointment, event_type)
+        doctor_msg = NotificationService._generate_message(appointment, event_type, recipient_role="doctor")
 
-        # 1. In-App Notification (Persistent)
-        if settings.in_app_notifications:
+        if doctor_settings.in_app_notifications:
             NotificationService.send_in_app(
                 user_id=doctor_id,
                 title=f"Clinical Update: {event_type.replace('_', ' ').title()}",
-                message=message_content,
+                message=doctor_msg,
                 payload={"appointment_id": appointment.id, "event_type": event_type}
             )
 
-        # 2. Email Alert (SMTP)
-        if settings.email_on_booking:
-            doctor_email = appointment.doctor.email
-            subject = f"NeuroNest Appointment Update - {event_type.replace('_', ' ').title()}"
-            NotificationService.send_email(doctor_email, subject, message_content)
+        if doctor_settings.email_on_booking:
+            NotificationService.send_email(
+                appointment.doctor.email, 
+                f"NeuroNest Appointment Update - {event_type.replace('_', ' ').title()}", 
+                doctor_msg
+            )
 
-        # 3. SMS Alert
-        if settings.sms_on_booking:
+        if doctor_settings.sms_on_booking:
             phone = appointment.doctor.doctor_profile.phone if appointment.doctor.doctor_profile else None
             if phone:
-                NotificationService.send_sms(phone, message_content)
+                NotificationService.send_sms(phone, doctor_msg)
+
+        # 2. NOTIFY PATIENT
+        patient_settings = NotificationPreference.query.filter_by(user_id=patient_id).first()
+        if not patient_settings:
+            patient_settings = NotificationPreference(user_id=patient_id)
+            db.session.add(patient_settings)
+            db.session.commit()
+
+        patient_msg = NotificationService._generate_message(appointment, event_type, recipient_role="patient")
+
+        if patient_settings.inapp_appointments:
+            NotificationService.send_in_app(
+                user_id=patient_id,
+                title=f"Health Update: {event_type.replace('_', ' ').title()}",
+                message=patient_msg,
+                payload={"appointment_id": appointment.id, "event_type": event_type}
+            )
+
+        if patient_settings.email_appointments:
+            NotificationService.send_email(
+                appointment.patient.email,
+                f"NeuroNest Appointment Update - {event_type.replace('_', ' ').title()}",
+                patient_msg
+            )
+
+        if patient_settings.sms_appointments:
+            phone = appointment.patient.patient_profile.phone if appointment.patient.patient_profile else None
+            if phone:
+                NotificationService.send_sms(phone, patient_msg)
 
     @staticmethod
     def send_in_app(user_id, title, message, payload=None):
@@ -124,18 +153,37 @@ class NotificationService:
         return True
 
     @staticmethod
-    def _generate_message(appointment, event_type):
+    def _generate_message(appointment, event_type, recipient_role="doctor"):
         patient_name = appointment.patient.full_name
+        doctor_name = appointment.doctor.full_name
         apt_date = appointment.appointment_date.strftime("%b %d, %Y")
         apt_time = appointment.appointment_time.strftime("%I:%M %p")
         
-        if event_type == "new_booking":
-            return f"You have a new appointment request from {patient_name} on {apt_date} at {apt_time}."
-        elif event_type == "cancelled":
-            return f"Appointment with {patient_name} on {apt_date} at {apt_time} has been cancelled."
-        elif event_type == "rescheduled":
-            return f"Patient {patient_name} has rescheduled their appointment to {apt_date} at {apt_time}."
-        elif event_type == "approved":
-            return f"Appointment with {patient_name} on {apt_date} at {apt_time} is now confirmed."
+        if recipient_role == "doctor":
+            if event_type == "new_booking":
+                return f"You have a new appointment request from {patient_name} on {apt_date} at {apt_time}."
+            elif event_type == "cancelled":
+                return f"Appointment with {patient_name} on {apt_date} at {apt_time} has been cancelled."
+            elif event_type == "rescheduled":
+                return f"Patient {patient_name} has rescheduled their appointment to {apt_date} at {apt_time}."
+            elif event_type == "approved":
+                return f"Appointment with {patient_name} on {apt_date} at {apt_time} is now confirmed."
+            elif event_type == "rejected":
+                return f"Appointment request from {patient_name} on {apt_date} at {apt_time} has been rejected."
+            elif event_type == "completed":
+                return f"Appointment with {patient_name} on {apt_date} has been completed."
+        else: # Patient
+            if event_type == "new_booking":
+                return f"Your appointment request with {doctor_name} on {apt_date} at {apt_time} has been submitted and is pending approval."
+            elif event_type == "cancelled":
+                return f"Your appointment with {doctor_name} on {apt_date} at {apt_time} has been cancelled."
+            elif event_type == "rescheduled":
+                return f"Your appointment with {doctor_name} has been rescheduled to {apt_date} at {apt_time}."
+            elif event_type == "approved":
+                return f"Great news! Your appointment with {doctor_name} on {apt_date} at {apt_time} has been approved."
+            elif event_type == "rejected":
+                return f"We regret to inform you that your appointment request with {doctor_name} on {apt_date} at {apt_time} could not be accepted at this time."
+            elif event_type == "completed":
+                return f"Your appointment with {doctor_name} on {apt_date} has been marked as completed. We hope you had a good experience."
         
-        return f"Update on appointment with {patient_name} on {apt_date} at {apt_time}."
+        return f"Update on appointment between {patient_name} and {doctor_name} on {apt_date} at {apt_time}."

@@ -300,6 +300,8 @@ def book_appointment():
         )
 
         db.session.add(new_appointment)
+        db.session.flush() # ensure ID is generated
+        NotificationService.notify_appointment_event(new_appointment.id, "new_booking")
         db.session.commit()
 
         payload = new_appointment.to_dict()
@@ -486,6 +488,7 @@ def confirm_reschedule(id):
 
         # If doctor suggested it, we can auto-approve it once patient confirms
         appointment.status = "approved"
+        NotificationService.notify_appointment_event(appointment.id, "approved")
         
         db.session.commit()
         return jsonify({"message": "Appointment confirmed successfully", "appointment": appointment.to_dict()}), 200

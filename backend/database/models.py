@@ -152,6 +152,47 @@ class EmergencyContact(db.Model):
             "created_at": self.created_at.isoformat() + 'Z',
             "updated_at": self.updated_at.isoformat() + 'Z',
         }
+
+
+# =========================================
+# NOTIFICATION PREFERENCES TABLE (Patient)
+# =========================================
+class NotificationPreference(db.Model):
+    __tablename__ = "notification_preferences"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False)
+
+    # Email
+    email_appointments = db.Column(db.Boolean, default=True)
+    email_prescriptions = db.Column(db.Boolean, default=True)
+    email_messages = db.Column(db.Boolean, default=True)
+    email_announcements = db.Column(db.Boolean, default=True)
+    email_feedback = db.Column(db.Boolean, default=True)
+
+    # SMS
+    sms_appointments = db.Column(db.Boolean, default=False)
+    sms_prescriptions = db.Column(db.Boolean, default=False)
+    sms_messages = db.Column(db.Boolean, default=False)
+    sms_announcements = db.Column(db.Boolean, default=False)
+
+    # In-App
+    inapp_appointments = db.Column(db.Boolean, default=True)
+    inapp_prescriptions = db.Column(db.Boolean, default=True)
+    inapp_messages = db.Column(db.Boolean, default=True)
+    inapp_announcements = db.Column(db.Boolean, default=True)
+
+    allow_doctor_followup = db.Column(db.Boolean, default=True)
+    allow_promotions = db.Column(db.Boolean, default=False)
+    allow_anonymous_feedback = db.Column(db.Boolean, default=True)
+    share_history_with_doctors = db.Column(db.Boolean, default=True)
+    allow_analytics = db.Column(db.Boolean, default=True)
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Relationships
+    user = db.relationship("User", backref=db.backref("notification_preferences", uselist=False))
     
 # =========================================
 # APPOINTMENTS TABLE
