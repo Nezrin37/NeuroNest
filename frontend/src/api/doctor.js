@@ -124,37 +124,37 @@ export const getClinicalRemarks = async (patientId) => {
 // ============================================
 
 export const getAllDoctorSettings = async () => {
-  const response = await axios.get("/doctor/settings/");
+  const response = await axios.get("/api/doctor/settings/");
   return response.data;
 };
 
 export const updateDoctorScheduleConfig = async (payload) => {
-  const response = await axios.put("/doctor/settings/schedule", payload);
+  const response = await axios.put("/api/doctor/settings/schedule", payload);
   return response.data;
 };
 
 export const updateDoctorNotificationSettings = async (payload) => {
-  const response = await axios.put("/doctor/settings/notifications", payload);
+  const response = await axios.put("/api/doctor/settings/notifications", payload);
   return response.data;
 };
 
 export const updateDoctorPrivacySettings = async (payload) => {
-  const response = await axios.put("/doctor/settings/privacy", payload);
+  const response = await axios.put("/api/doctor/settings/privacy", payload);
   return response.data;
 };
 
 export const updateDoctorConsultationSettings = async (payload) => {
-  const response = await axios.put("/doctor/settings/consultation", payload);
+  const response = await axios.put("/api/doctor/settings/consultation", payload);
   return response.data;
 };
 
 export const updateDoctorAccount = async (payload) => {
-  const response = await axios.put("/doctor/settings/account", payload);
+  const response = await axios.put("/api/doctor/settings/account", payload);
   return response.data;
 };
 
 export const changeDoctorPassword = async (payload) => {
-  const response = await axios.post("/doctor/settings/change-password", payload);
+  const response = await axios.post("/api/doctor/settings/change-password", payload);
   return response.data;
 };
 
