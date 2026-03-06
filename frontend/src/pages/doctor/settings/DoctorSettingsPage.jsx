@@ -75,10 +75,6 @@ const DoctorSettingsPage = () => {
 
     return (
         <div className="doc-settings-root">
-            <div className="doc-settings-header">
-                <h1 className="doc-settings-title">Professional Configuration</h1>
-                <p className="doc-settings-subtitle">Manage your clinical schedule, professional visibility, and patient engagement rules.</p>
-            </div>
 
             <div className="doc-settings-layout">
                 {/* Horizontal Navigation System */}
