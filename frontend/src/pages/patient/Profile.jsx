@@ -178,8 +178,23 @@ const Profile = () => {
       await api.put("/profile/me", formData, { headers: { "Content-Type": "multipart/form-data" } });
       await api.put("/profile/emergency-contact/me", emergencyContacts);
 
+      // Force local storage to reflect new name synchronously
+      const userStr = localStorage.getItem('neuronest_user');
+      if (userStr && profile.full_name) {
+          try {
+              const parsedUser = JSON.parse(userStr);
+              parsedUser.full_name = profile.full_name;
+              localStorage.setItem('neuronest_user', JSON.stringify(parsedUser));
+          } catch (e) {}
+      }
+
       setEditing(false);
       fetchClinicalData();
+      
+      // Reload page briefly to refresh global UI context (navbar, layout, etc.)
+      setTimeout(() => {
+          window.location.reload();
+      }, 500);
     } catch (err) {
       alert(err.response?.data?.message || "Update failed");
     }

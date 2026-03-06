@@ -81,6 +81,8 @@ def update_my_profile():
 
     if "full_name" in data:
         profile.full_name = data.get("full_name")
+        if profile.user:
+            profile.user.full_name = data.get("full_name")
 
     if "phone" in data:
         profile.phone = data.get("phone")
