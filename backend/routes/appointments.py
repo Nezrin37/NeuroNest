@@ -136,6 +136,10 @@ def debug_doctors():
         })
     return jsonify(res)
 
+@appointments_bp.route("/ping-v10-test", methods=["GET"])
+def ping_v10_test():
+    return jsonify({"status": "V10 LIVE", "msg": "I AM RUNNING THE LATEST CODE"}), 200
+
 @appointments_bp.route("/doctors", methods=["GET"])
 @jwt_required()
 def get_all_doctors():
@@ -163,7 +167,7 @@ def get_all_doctors():
             is_visible = True if raw_visibility is None else bool(raw_visibility)
             
             # DEBUG: Print to logs to see what's happening
-            print(f"[DEBUG] Doctor: {user.full_name}, ID: {user.id}, Visibility: {is_visible}")
+            print(f"[DEBUG_SCAN] Found Doctor: {user.full_name}, ID: {user.id}, Email: {user.email}, Visibility: {is_visible}")
             
             if not is_visible:
                 print(f"[PRIVACY ENFORCED] Hiding doctor {user.id} ({user.full_name}) from patient search")
@@ -181,10 +185,13 @@ def get_all_doctors():
                 {
                     "id": user.id,
                     "full_name": user.full_name,
+                    "email": user.email,
                     "specialization": profile.specialization or "General Physician",
                     "consultation_mode": (consultation.consultation_mode if consultation and consultation.consultation_mode 
                                          else (profile.consultation_mode or "Both")),
-                    "consultation_fee": actual_fee
+                    "consultation_fee": actual_fee,
+                    "debug_visibility": is_visible,
+                    "debug_raw_privacy": raw_visibility
                 }
             )
 
