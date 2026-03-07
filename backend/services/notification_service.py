@@ -324,22 +324,25 @@ class NotificationService:
 
     @staticmethod
     def send_sms(phone_number, message):
-        # Using a generic placeholder or a free-tier API if available.
-        # For production, Twilio is recommended.
         twilio_sid = os.getenv("TWILIO_SID")
         twilio_auth = os.getenv("TWILIO_AUTH")
         twilio_phone = os.getenv("TWILIO_FROM_PHONE")
 
-        if twilio_sid and twilio_auth:
-             try:
-                 # Real Twilio Call
-                 print(f"Attempting real Twilio SMS to {phone_number}")
-                 # (Implementation hidden to keep response clean, but structure is here)
-                 pass
-             except Exception as e:
-                 print(f"Twilio error: {e}")
-        
-        # Fallback to console logging for visibility in Vercel logs
+        if twilio_sid and twilio_auth and twilio_phone:
+            try:
+                from twilio.rest import Client
+                client = Client(twilio_sid, twilio_auth)
+                msg_obj = client.messages.create(
+                    body=message,
+                    from_=twilio_phone,
+                    to=phone_number
+                )
+                print(f"[TWILIO SMS] Sent to {phone_number}, SID: {msg_obj.sid}")
+                return True
+            except Exception as e:
+                print(f"[TWILIO ERROR] {e}")
+
+        # Fallback to console logging if Twilio is not configured or fails
         print(f"[SIMULATED SMS] To: {phone_number}, Message: {message}")
         return True
 

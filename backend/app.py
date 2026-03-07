@@ -122,10 +122,15 @@ def create_app():
     def home():
         return {"status": "NeuroNest-V6-RESEND-LIVE"}
 
-    # NOTE: /uploads/<filename> route removed — files are now served by Cloudinary directly.
+    from apscheduler.schedulers.background import BackgroundScheduler
+    from services.scheduler_service import check_upcoming_consultations
+    
+    scheduler = BackgroundScheduler()
+    # Pass the app instance to the job so it can use the app_context
+    scheduler.add_job(func=check_upcoming_consultations, trigger="interval", minutes=1, args=[app])
+    scheduler.start()
 
     return app
-
 
 app = create_app()
 
