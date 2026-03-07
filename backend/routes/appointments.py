@@ -122,6 +122,20 @@ def _book_slot_atomic(*, current_user_id: int, doctor_id: int, slot_id: int, rea
     return appointment, None, None
 
 
+@appointments_bp.route("/debug-doctors", methods=["GET"])
+def debug_doctors():
+    from database.models import User, DoctorProfile, DoctorPrivacySetting
+    data = db.session.query(User, DoctorPrivacySetting).join(DoctorPrivacySetting, User.id == DoctorPrivacySetting.doctor_user_id, isouter=True).filter(User.role == "doctor").all()
+    res = []
+    for u, p in data:
+        res.append({
+            "id": u.id,
+            "name": u.full_name,
+            "privacy_exists": p is not None,
+            "show_profile_publicly": p.show_profile_publicly if p else "N/A"
+        })
+    return jsonify(res)
+
 @appointments_bp.route("/doctors", methods=["GET"])
 @jwt_required()
 def get_all_doctors():
