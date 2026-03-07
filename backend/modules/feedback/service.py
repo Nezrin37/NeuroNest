@@ -31,6 +31,11 @@ class FeedbackService:
         if appt.feedback_given:
             return None, "Feedback already submitted for this appointment."
         
+        from database.models import DoctorPrivacySetting
+        privacy = DoctorPrivacySetting.query.filter_by(doctor_user_id=appt.doctor_id).first()
+        if privacy and not privacy.allow_reviews_publicly:
+            return None, "This doctor does not accept public reviews at this time."
+        
         rating = int(data['rating'])
         sentiment = "positive" if rating >= 4 else ("negative" if rating <= 2 else "neutral")
         is_serious = bool(data.get('is_serious_complaint', False))
