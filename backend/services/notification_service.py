@@ -13,7 +13,7 @@ class NotificationService:
     def notify_appointment_event(appointment_id, event_type):
         """
         event_type: 'new_booking', 'cancelled', 'rescheduled', 'approved', 'rejected', 'completed'
-        Email is ALWAYS sent for every event. In-app and SMS respect user settings.
+        Doctor delivery channels respect notification settings (email + in-app).
         """
         from database.models import db, Appointment, DoctorNotificationSetting, NotificationPreference
         appointment = Appointment.query.get(appointment_id)
@@ -43,17 +43,12 @@ class NotificationService:
                 payload={"appointment_id": appointment.id, "event_type": event_type}
             )
 
-        # Email — ALWAYS send (with HTML template matching event type)
-        try:
-            NotificationService.send_email(appointment.doctor.email, subject, doctor_msg, event_type=event_type)
-        except Exception as e:
-            print(f"[NOTIFICATION] Doctor email failed: {e}")
-
-        # SMS (respects setting)
-        if doctor_settings.sms_on_booking:
-            phone = appointment.doctor.doctor_profile.phone if appointment.doctor.doctor_profile else None
-            if phone:
-                NotificationService.send_sms(phone, doctor_msg)
+        # Email (respects setting)
+        if doctor_settings.email_on_booking:
+            try:
+                NotificationService.send_email(appointment.doctor.email, subject, doctor_msg, event_type=event_type)
+            except Exception as e:
+                print(f"[NOTIFICATION] Doctor email failed: {e}")
 
         # ── 2. PATIENT ───────────────────────────────────────────────
         patient_settings = NotificationPreference.query.filter_by(user_id=patient_id).first()

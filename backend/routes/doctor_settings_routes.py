@@ -127,8 +127,9 @@ def update_notification_settings():
 
     if "email_on_booking" in data:
         notifications.email_on_booking = bool(data["email_on_booking"])
-    if "sms_on_booking" in data:
-        notifications.sms_on_booking = bool(data["sms_on_booking"])
+    # SMS delivery is deprecated for doctor notifications.
+    # Keep hard-disabled even if legacy clients send this field.
+    notifications.sms_on_booking = False
     if "in_app_notifications" in data:
         notifications.in_app_notifications = bool(data["in_app_notifications"])
     if "reminder_before_minutes" in data:
@@ -237,4 +238,3 @@ def change_password():
     user.password_hash = hash_password(new_pw)
     db.session.commit()
     return jsonify({"message": "Password changed successfully"}), 200
-

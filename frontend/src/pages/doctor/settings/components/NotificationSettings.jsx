@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { Mail, Smartphone, BellRing, Clock, Save } from 'lucide-react';
+import { Mail, BellRing, Clock, Save } from 'lucide-react';
 import { updateDoctorNotificationSettings } from '../../../../api/doctor';
 
 const NotificationSettings = ({ data, onSaveSuccess }) => {
     const [formData, setFormData] = useState({
         email_on_booking: data?.email_on_booking ?? true,
-        sms_on_booking: data?.sms_on_booking ?? false,
         in_app_notifications: data?.in_app_notifications ?? true,
         reminder_before_minutes: data?.reminder_before_minutes || 30,
     });
@@ -66,22 +65,6 @@ const NotificationSettings = ({ data, onSaveSuccess }) => {
                                 <div className="card-content">
                                     <h4 className="flex items-center gap-2"><Mail size={14}/> Email Alerts</h4>
                                     <p>Get instant professional summaries in your inbox.</p>
-                                </div>
-                                <div className="card-indicator"></div>
-                            </label>
-
-                            {/* SMS */}
-                            <label className={`radio-card ${formData.sms_on_booking ? 'active' : ''}`}>
-                                <input 
-                                    type="checkbox" 
-                                    name="sms_on_booking"
-                                    checked={formData.sms_on_booking}
-                                    onChange={handleChange}
-                                    style={{ display: 'none' }}
-                                />
-                                <div className="card-content">
-                                    <h4 className="flex items-center gap-2"><Smartphone size={14}/> SMS Alerts</h4>
-                                    <p>Critical text messages straight to your phone.</p>
                                 </div>
                                 <div className="card-indicator"></div>
                             </label>

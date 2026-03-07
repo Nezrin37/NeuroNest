@@ -44,8 +44,7 @@ def _trigger_upcoming_consultation_alert(appt, minutes_until):
     title = f"Upcoming Consultation in {minutes_until} mins"
     message = f"Your appointment with patient {patient.full_name} is starting in {minutes_until} minutes."
 
-    # Send Notification (Email / SMS / In-App based on user prefs)
-    # Actually, DoctorNotificationSetting decides delivery channels for this alert too
+    # Send Notification (Email / In-App based on doctor settings)
     doc_settings = DoctorNotificationSetting.query.filter_by(doctor_user_id=doctor.id).first()
 
     # 1. In-App Notification (Database Log)
@@ -64,8 +63,3 @@ def _trigger_upcoming_consultation_alert(appt, minutes_until):
             subject=title,
             body=f"Hello Dr. {doctor.full_name},\n\n" + message + "\n\nRegards,\nThe App Team"
         )
-    
-    # 3. SMS Notification
-    doctor_phone = doctor.doctor_profile.phone if doctor.doctor_profile else None
-    if doc_settings and doc_settings.sms_on_booking and doctor_phone:
-        NotificationService.send_sms(doctor_phone, f"NevroNest Alert: {message}")
