@@ -131,7 +131,9 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
                   {req.priority_level === 'emergency' ? 'EMERGENCY' : req.priority_level === 'urgent' ? 'URGENT' : 'Priority Case'}
                </span>
              )}
-             <span className="ar-clin-badge">{req.consultation_type || 'OPD'}</span>
+             <span className={`ar-clin-badge ${(req.consultation_type || 'in_person') === 'online' ? 'ar-online-badge' : 'ar-inperson-badge'}`}>
+                {(req.consultation_type || 'in_person') === 'online' ? '💻 Online' : '🏥 In-Person'}
+             </span>
              {isHistory && <StatusBadge status={req.status} />}
           </div>
        </div>
@@ -337,6 +339,7 @@ const AppointmentRequests = () => {
   const [searchTerm, setSearchTerm]   = useState("");
   const { isDark }                    = useTheme();
   const [activeTriage, setActiveTriage] = useState("Needs Review");
+  const [modeFilter, setModeFilter]     = useState("all");  // all / online / in_person
 
   const [rescheduleTarget, setRescheduleTarget] = useState(null);
 
@@ -427,17 +430,20 @@ const AppointmentRequests = () => {
         const priority = (req.priority_level || "").toLowerCase();
         return priority === "urgent" ||
                priority === "emergency" ||
-               reason.includes("urgent") || 
-               reason.includes("emergency") || 
-               reason.includes("severe") || 
-               reason.includes("pain") || 
+               reason.includes("urgent") ||
+               reason.includes("emergency") ||
+               reason.includes("severe") ||
+               reason.includes("pain") ||
                isCloseDate(req.appointment_date);
       });
     }
-    
-    
+
+    if (modeFilter !== "all") {
+      list = list.filter(r => (r.consultation_type || "in_person") === modeFilter);
+    }
+
     return list;
-  }, [processedRequests, history, searchTerm, activeTriage]);
+  }, [processedRequests, history, searchTerm, activeTriage, modeFilter]);
 
   const stats = useMemo(() => {
     const highP = processedRequests.filter(req => {
@@ -564,6 +570,43 @@ const AppointmentRequests = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
            </div>
+         {/* Online / In-Person Mode Tabs */}
+         <div style={{ display: 'flex', gap: '6px', marginTop: '12px', marginBottom: '4px' }}>
+           {[
+             { key: 'all',       label: 'All Modes',  icon: '📋' },
+             { key: 'online',    label: 'Online',     icon: '💻' },
+             { key: 'in_person', label: 'In-Person',  icon: '🏥' },
+           ].map(tab => {
+             const src = activeTriage === 'History' ? history : processedRequests;
+             const cnt = tab.key === 'all'
+               ? src.length
+               : src.filter(r => (r.consultation_type || 'in_person') === tab.key).length;
+             return (
+               <button
+                 key={tab.key}
+                 onClick={() => setModeFilter(tab.key)}
+                 style={{
+                   padding: '5px 14px', borderRadius: '8px', cursor: 'pointer',
+                   background: modeFilter === tab.key
+                     ? (tab.key === 'online' ? '#E0F2FE' : tab.key === 'in_person' ? '#DBEAFE' : 'var(--nn-surface)')
+                     : 'transparent',
+                   color: modeFilter === tab.key
+                     ? (tab.key === 'online' ? '#0369A1' : tab.key === 'in_person' ? '#1D4ED8' : 'var(--nn-primary)')
+                     : 'var(--nn-text-muted)',
+                   fontWeight: modeFilter === tab.key ? 700 : 500,
+                   fontSize: '12px', transition: 'all 0.18s',
+                   border: modeFilter === tab.key ? '1.5px solid currentColor' : '1.5px solid transparent',
+                 }}
+               >
+                 {tab.icon} {tab.label}
+                 <span style={{
+                   marginLeft: '5px', background: 'rgba(0,0,0,0.08)',
+                   borderRadius: '999px', padding: '0 6px', fontSize: '10px', fontWeight: 800
+                 }}>{cnt}</span>
+               </button>
+             );
+           })}
+         </div>
         </div>
 
         <div className="ar-triage-list">
