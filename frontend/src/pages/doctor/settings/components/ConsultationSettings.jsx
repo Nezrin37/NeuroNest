@@ -48,33 +48,16 @@ const ConsultationSettings = ({ data, onSaveSuccess }) => {
                         <h3>Financial Configuration</h3>
                     </div>
                     
-                    <div className="form-field-row">
-                        <div className="form-field w-half">
-                            <label>Base Consultation Fee (₹)</label>
-                            <input 
-                                type="number"
-                                name="consultation_fee" 
-                                value={formData.consultation_fee} 
-                                onChange={handleChange}
-                                className="premium-input"
-                                min="0" step="50"
-                            />
-                        </div>
-                        
-                        <div className="form-field w-half">
-                            <label>Unpaid Booking Auto-Cancel (Minutes)</label>
-                            <select 
-                                name="auto_cancel_unpaid_minutes" 
-                                value={formData.auto_cancel_unpaid_minutes} 
-                                onChange={handleChange}
-                                className="premium-select"
-                            >
-                                <option value="15">15 Minutes (Strict)</option>
-                                <option value="30">30 Minutes (Standard)</option>
-                                <option value="60">1 Hour (Relaxed)</option>
-                                <option value="1440">24 Hours</option>
-                            </select>
-                        </div>
+                    <div className="form-field">
+                        <label>Base Consultation Fee (₹)</label>
+                        <input 
+                            type="number"
+                            name="consultation_fee" 
+                            value={formData.consultation_fee} 
+                            onChange={handleChange}
+                            className="premium-input"
+                            min="0" step="50"
+                        />
                     </div>
                 </div>
 
