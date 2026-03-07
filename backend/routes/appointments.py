@@ -129,6 +129,8 @@ def get_all_doctors():
         if not _is_patient():
             return jsonify({"error": "Patient access required"}), 403
 
+        from database.models import DoctorPrivacySetting, DoctorConsultationSetting
+
         doctors_query = (
             db.session.query(User, DoctorProfile)
             .join(DoctorProfile, User.id == DoctorProfile.user_id)
@@ -138,13 +140,26 @@ def get_all_doctors():
 
         result = []
         for user, profile in doctors_query:
+            # Enforce Privacy Settings
+            privacy = DoctorPrivacySetting.query.filter_by(doctor_user_id=user.id).first()
+            if privacy and not privacy.show_profile_publicly:
+                continue # Skip this doctor entirely from public lists
+            
+            # Enforce Consultation Setting details (Fee)
+            consultation = DoctorConsultationSetting.query.filter_by(doctor_user_id=user.id).first()
+            actual_fee = consultation.consultation_fee if consultation else (profile.consultation_fee or 500.0)
+            
+            # If the doctor wants to hide the fee, we set it to None
+            if privacy and not privacy.show_consultation_fee:
+                actual_fee = None
+            
             result.append(
                 {
                     "id": user.id,
                     "full_name": user.full_name,
                     "specialization": profile.specialization or "General Physician",
                     "consultation_mode": profile.consultation_mode or "Both",
-
+                    "consultation_fee": actual_fee
                 }
             )
 

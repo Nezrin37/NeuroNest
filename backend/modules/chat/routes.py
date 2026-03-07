@@ -119,9 +119,6 @@ def start_conversation():
 
     # Check if conversation already exists
     # Find conversation where BOTH are participants
-    # SQL: Select c.id from conversations c join participants p1 on c.id=p1.conv_id join participants p2 on c.id=p2.conv_id where p1.user=me and p2.user=target
-    
-    # Simplistic approach: intersection of conversation IDs
     my_convs = [p.conversation_id for p in Participant.query.filter_by(user_id=current_user_id).all()]
     their_convs = [p.conversation_id for p in Participant.query.filter_by(user_id=target_user_id).all()]
     
@@ -133,6 +130,18 @@ def start_conversation():
         conv = Conversation.query.get(conv_id)
         if conv:
              return jsonify({"message": "Conversation exists", "conversation_id": conv.id}), 200
+
+    # Before creating a new conversation, check Doctor Privacy settings (if current is patient and target is doctor)
+    current_user = User.query.get(current_user_id)
+    target_user = User.query.get(target_user_id)
+    if current_user and target_user and current_user.role == "patient" and target_user.role == "doctor":
+        from database.models import Appointment, DoctorPrivacySetting
+        # Check if patient has any appointment history with this doctor
+        has_appointment = Appointment.query.filter_by(patient_id=current_user_id, doctor_id=target_user_id).first()
+        if not has_appointment:
+            privacy = DoctorPrivacySetting.query.filter_by(doctor_user_id=target_user_id).first()
+            if privacy and not privacy.allow_chat_before_booking:
+                return jsonify({"error": "This doctor does not allow pre-booking chats. Please book an appointment first."}), 403
 
     # Create new
     new_conv = Conversation(type="direct")
