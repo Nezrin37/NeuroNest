@@ -9,14 +9,14 @@
   --nn-primary:        #2563EB;
   --nn-primary-hover:  #1D4ED8;
   --nn-primary-light:  #DBEAFE;
-  --nn-accent:         #6366f1;
+  --nn-accent:         #2563EB;
 
   /* --- STATUS COLORS (Same in both themes) --- */
   --nn-success:        #16A34A;
   --nn-success-bg:     #DCFCE7;
   --nn-success-text:   #166534;
   --nn-warning:        #F59E0B;
-  --nn-warning-bg:     #FEF9C3;
+  --nn-warning-bg:     #FFFBEB;
   --nn-danger:         #EF4444;
   --nn-danger-bg:      #FEE2E2;
   --nn-danger-text:    #DC2626;
@@ -39,6 +39,20 @@
   --nn-card-shadow:         0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   --nn-nav-bg:              rgba(255, 255, 255, 0.95);
   --nn-nav-border:          #E2E8F0;
+  --nn-nav-active:          #2563EB;
+  --nn-nav-inactive:        #64748B;
+
+  /* --- BUTTON TOKENS (Light) --- */
+  --nn-btn-primary-bg:      #2563EB;
+  --nn-btn-primary-hover:   #1D4ED8;
+  --nn-btn-primary-text:    #FFFFFF;
+  --nn-btn-secondary-bg:    #F1F5F9;
+  --nn-btn-secondary-hover: #E2E8F0;
+  --nn-btn-secondary-text:  #334155;
+  --nn-btn-secondary-border:#CBD5E1;
+  --nn-btn-danger-bg:       #FEE2E2;
+  --nn-btn-danger-hover:    #FECACA;
+  --nn-btn-danger-text:     #DC2626;
 
   /* --- URGENT CASE (Light) --- */
   --nn-urgent-bg:           #FEE2E2;
@@ -69,6 +83,8 @@
   --nn-card-shadow:         0 4px 24px rgba(0, 0, 0, 0.35);
   --nn-nav-bg:              rgba(17, 24, 39, 0.97);
   --nn-nav-border:          #1F2937;
+  --nn-nav-active:          #3B82F6;
+  --nn-nav-inactive:        #94A3B8;
 
   /* --- OVERRIDE STATUS COLORS (Dark) --- */
   --nn-success-bg:          #14532D;
@@ -95,4 +111,16 @@
   --nn-primary-light:       #1E3A8A;
   --nn-primary:             #3B82F6;
   --nn-primary-hover:       #2563EB;
+
+  /* --- BUTTON TOKENS (Dark) --- */
+  --nn-btn-primary-bg:      #3B82F6;
+  --nn-btn-primary-hover:   #2563EB;
+  --nn-btn-primary-text:    #FFFFFF;
+  --nn-btn-secondary-bg:    #1E293B;
+  --nn-btn-secondary-hover: #334155;
+  --nn-btn-secondary-text:  #E2E8F0;
+  --nn-btn-secondary-border:#475569;
+  --nn-btn-danger-bg:       #7F1D1D;
+  --nn-btn-danger-hover:    #991B1B;
+  --nn-btn-danger-text:     #FCA5A5;
 }

@@ -106,8 +106,8 @@ const FeedbackForm = ({ appointments, onSubmit }) => {
           </div>
           {!hasAppointments && (
             <div className="ff-no-pending">
-              <span style={{ color: '#10b981', fontWeight: 800, fontSize: '0.85rem' }}>✓ All caught up!</span>
-              <span style={{ color: '#64748b', fontSize: '0.8rem' }}> All your completed appointments have been reviewed. Thank you!</span>
+              <span style={{ color: 'var(--nn-success)', fontWeight: 800, fontSize: '0.85rem' }}>✓ All caught up!</span>
+              <span style={{ color: 'var(--nn-text-muted)', fontSize: '0.8rem' }}> All your completed appointments have been reviewed. Thank you!</span>
             </div>
           )}
           <button
@@ -159,7 +159,7 @@ const FeedbackForm = ({ appointments, onSubmit }) => {
               rows={4}
               maxLength={600}
             />
-            <div style={{ fontSize: '0.72rem', color: '#94a3b8', textAlign: 'right' }}>
+            <div style={{ fontSize: '0.72rem', color: 'var(--nn-text-disabled)', textAlign: 'right' }}>
               {textCount}/600
             </div>
           </div>
@@ -180,9 +180,9 @@ const FeedbackForm = ({ appointments, onSubmit }) => {
             className={`ff-serious-toggle ${isSerious ? 'active' : ''}`}
             onClick={() => setIsSerious(!isSerious)}
           >
-            <AlertTriangle size={16} color={isSerious ? '#ef4444' : '#94a3b8'} />
+            <AlertTriangle size={16} color={isSerious ? 'var(--nn-danger)' : 'var(--nn-text-disabled)'} />
             <div>
-              <div className="ff-serious-label" style={{ color: isSerious ? '#ef4444' : '#64748b' }}>
+              <div className="ff-serious-label" style={{ color: isSerious ? 'var(--nn-danger)' : 'var(--nn-text-muted)' }}>
                 This is a serious complaint
               </div>
               <div className="ff-serious-hint">Will be escalated to the admin governance team</div>
@@ -193,14 +193,14 @@ const FeedbackForm = ({ appointments, onSubmit }) => {
           {/* Complaint reason box */}
           {isSerious && (
             <div className="ff-field ff-complaint-box">
-              <label className="ff-label" style={{ color: '#ef4444' }}>Describe the serious issue <span className="ff-required">*</span></label>
+              <label className="ff-label" style={{ color: 'var(--nn-danger)' }}>Describe the serious issue <span className="ff-required">*</span></label>
               <textarea
                 className="ff-textarea"
                 placeholder="Please describe what happened in detail so the governance team can investigate…"
                 value={complaintReason}
                 onChange={e => setComplaint(e.target.value)}
                 rows={3}
-                style={{ borderColor: 'rgba(239,68,68,0.3)' }}
+                style={{ borderColor: 'color-mix(in srgb, var(--nn-danger) 35%, transparent)' }}
               />
             </div>
           )}

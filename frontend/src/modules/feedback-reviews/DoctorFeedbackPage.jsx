@@ -114,23 +114,23 @@ const DoctorFeedbackPage = () => {
 
       <style>{`
         :root {
-          --df-bg: #f5f7fb;
-          --df-panel: #ffffff;
-          --df-text: #0f172a;
-          --df-muted: #64748b;
-          --df-border: #e2e8f0;
-          --df-accent: #6366f1;
-          --df-accent-soft: rgba(99,102,241,0.08);
-          --df-shadow: 0 4px 20px rgba(0,0,0,0.06);
+          --df-bg: var(--nn-bg);
+          --df-panel: var(--nn-surface);
+          --df-text: var(--nn-text-main);
+          --df-muted: var(--nn-text-muted);
+          --df-border: var(--nn-border);
+          --df-accent: var(--nn-primary);
+          --df-accent-soft: color-mix(in srgb, var(--nn-primary) 10%, transparent);
+          --df-shadow: var(--nn-shadow);
           --df-radius: 16px;
         }
         body.dark {
-          --df-bg: #0b0e14;
-          --df-panel: #11141d;
-          --df-text: #f1f5f9;
-          --df-muted: #94a3b8;
-          --df-border: rgba(255,255,255,0.07);
-          --df-shadow: 0 4px 30px rgba(0,0,0,0.35);
+          --df-bg: var(--nn-bg);
+          --df-panel: var(--nn-surface);
+          --df-text: var(--nn-text-main);
+          --df-muted: var(--nn-text-muted);
+          --df-border: var(--nn-border);
+          --df-shadow: var(--nn-shadow);
         }
 
         .df-page {
@@ -167,9 +167,10 @@ const DoctorFeedbackPage = () => {
         /* Alert */
         .df-alert-banner {
           display: flex; align-items: flex-start; gap: 1rem;
-          background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.25);
-          border-left: 4px solid #ef4444; border-radius: var(--df-radius);
-          padding: 1rem 1.25rem; margin-bottom: 1.5rem; color: #ef4444;
+          background: color-mix(in srgb, var(--nn-danger) 12%, transparent);
+          border: 1px solid color-mix(in srgb, var(--nn-danger) 25%, transparent);
+          border-left: 4px solid var(--nn-danger); border-radius: var(--df-radius);
+          padding: 1rem 1.25rem; margin-bottom: 1.5rem; color: var(--nn-danger);
           animation: dfFadeIn 0.3s ease;
         }
         .df-alert-title { font-weight: 900; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -234,8 +235,13 @@ const DoctorFeedbackPage = () => {
 
         /* AI block */
         .df-ai-block {
-          background: linear-gradient(135deg, rgba(99,102,241,0.08) 0%, rgba(124,58,237,0.06) 100%);
-          border: 1px solid rgba(99,102,241,0.2); border-radius: var(--df-radius);
+          background: linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--nn-primary) 12%, transparent) 0%,
+            color-mix(in srgb, var(--nn-info) 8%, transparent) 100%
+          );
+          border: 1px solid color-mix(in srgb, var(--nn-primary) 25%, transparent);
+          border-radius: var(--df-radius);
           padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
         }
         .df-ai-header { display: flex; align-items: center; gap: 0.5rem; color: var(--df-accent); font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
@@ -254,7 +260,7 @@ const DoctorFeedbackPage = () => {
         .df-review-text p { font-size: 0.87rem; line-height: 1.65; color: var(--df-text); margin: 0 0 0.4rem; opacity: 0.85; }
         .df-expand-btn { background: none; border: none; color: var(--df-accent); font-size: 0.72rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; }
         .df-review-tags { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.6rem; }
-        .df-review-tag { background: var(--df-accent-soft, rgba(99,102,241,0.08)); color: var(--df-accent); font-size: 0.62rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid rgba(99,102,241,0.2); }
+        .df-review-tag { background: var(--df-accent-soft); color: var(--df-accent); font-size: 0.62rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--nn-primary) 28%, transparent); }
 
         /* Misc */
         .df-btn { background: var(--df-accent); color: #fff; border: none; padding: 0.7rem 1.5rem; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.85rem; }

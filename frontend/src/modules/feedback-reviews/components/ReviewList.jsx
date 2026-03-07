@@ -2,15 +2,15 @@ import React, { useMemo, useState } from 'react';
 import { Calendar, Hash, ChevronDown, ChevronUp, Search } from 'lucide-react';
 
 const SENTIMENT_STYLE = {
-  positive: { bg: 'rgba(16,185,129,0.1)', color: '#10b981' },
-  neutral:  { bg: 'rgba(245,158,11,0.1)', color: '#f59e0b' },
-  negative: { bg: 'rgba(239,68,68,0.1)',  color: '#ef4444' },
+  positive: { bg: 'var(--nn-success-bg)', color: 'var(--nn-success)' },
+  neutral:  { bg: 'var(--nn-warning-bg)', color: 'var(--nn-warning)' },
+  negative: { bg: 'var(--nn-danger-bg)',  color: 'var(--nn-danger)' },
 };
 
 const StarRow = ({ rating }) => (
   <div style={{ display: 'flex', gap: 2 }}>
     {[1,2,3,4,5].map(i => (
-      <span key={i} style={{ fontSize: '0.85rem', color: i <= rating ? '#f59e0b' : 'rgba(255,255,255,0.15)' }}>★</span>
+      <span key={i} style={{ fontSize: '0.85rem', color: i <= rating ? 'var(--nn-warning)' : 'color-mix(in srgb, var(--nn-text-disabled) 30%, transparent)' }}>★</span>
     ))}
   </div>
 );
@@ -102,7 +102,7 @@ const ReviewList = ({ reviews }) => {
         <>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto auto auto', gap: '0.55rem', marginBottom: '0.9rem' }}>
             <div style={{ position: 'relative' }}>
-              <Search size={14} style={{ position: 'absolute', left: 10, top: 10, color: '#94a3b8' }} />
+              <Search size={14} style={{ position: 'absolute', left: 10, top: 10, color: 'var(--nn-text-disabled)' }} />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}

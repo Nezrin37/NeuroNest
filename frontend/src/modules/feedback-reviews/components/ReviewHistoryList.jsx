@@ -4,9 +4,9 @@ import RatingStars from './RatingStars';
 import TagSelector from './TagSelector';
 
 const SENTIMENT_STYLE = {
-  positive: { bg: 'rgba(16,185,129,0.1)', color: '#10b981', label: 'Positive' },
-  neutral:  { bg: 'rgba(245,158,11,0.1)', color: '#f59e0b', label: 'Neutral' },
-  negative: { bg: 'rgba(239,68,68,0.1)',  color: '#ef4444', label: 'Negative' },
+  positive: { bg: 'var(--nn-success-bg)', color: 'var(--nn-success)', label: 'Positive' },
+  neutral:  { bg: 'var(--nn-warning-bg)', color: 'var(--nn-warning)', label: 'Neutral' },
+  negative: { bg: 'var(--nn-danger-bg)',  color: 'var(--nn-danger)', label: 'Negative' },
 };
 
 const ReviewCard = ({ review, onEdit }) => {
@@ -58,7 +58,7 @@ const ReviewCard = ({ review, onEdit }) => {
       ) : (
         <div style={{ display: 'flex', gap: 2, margin: '0.5rem 0' }}>
           {[1,2,3,4,5].map(i => (
-            <span key={i} style={{ fontSize: '1rem', color: i <= review.rating ? '#f59e0b' : 'rgba(0,0,0,0.1)' }}>★</span>
+            <span key={i} style={{ fontSize: '1rem', color: i <= review.rating ? 'var(--nn-warning)' : 'color-mix(in srgb, var(--nn-text-disabled) 35%, transparent)' }}>★</span>
           ))}
         </div>
       )}
@@ -95,7 +95,7 @@ const ReviewCard = ({ review, onEdit }) => {
         </div>
       ) : review.tags && review.tags.length > 0 && (
         <div className="rhl-tags">
-          <Tag size={11} style={{ color: '#94a3b8' }} />
+          <Tag size={11} style={{ color: 'var(--nn-text-disabled)' }} />
           {review.tags.map((t, i) => <span key={i} className="rhl-tag">{t}</span>)}
         </div>
       )}
@@ -103,7 +103,7 @@ const ReviewCard = ({ review, onEdit }) => {
       {/* Edit actions */}
       {editing && (
         <div className="rhl-edit-actions">
-          {err && <span style={{ color: '#ef4444', fontSize: '0.78rem' }}>{err}</span>}
+          {err && <span style={{ color: 'var(--nn-danger)', fontSize: '0.78rem' }}>{err}</span>}
           <button className="rhl-save-btn" onClick={handleSave} disabled={saving}>
             <Check size={13} /> {saving ? 'Saving…' : 'Save'}
           </button>
@@ -161,21 +161,21 @@ const ReviewHistoryList = ({ reviews, onEdit }) => {
         <>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr auto auto', gap: '0.6rem', marginBottom: '0.85rem' }}>
             <div style={{ position: 'relative' }}>
-              <Search size={14} style={{ position: 'absolute', left: 10, top: 10, color: '#94a3b8' }} />
+              <Search size={14} style={{ position: 'absolute', left: 10, top: 10, color: 'var(--nn-text-disabled)' }} />
               <input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search doctor, text, or tags"
-                style={{ width: '100%', padding: '0.5rem 0.75rem 0.5rem 2rem', borderRadius: 10, border: '1px solid #e2e8f0', fontSize: '0.82rem' }}
+                style={{ width: '100%', padding: '0.5rem 0.75rem 0.5rem 2rem', borderRadius: 10, border: '1px solid var(--nn-border)', fontSize: '0.82rem', background: 'var(--nn-surface)', color: 'var(--nn-text-main)' }}
               />
             </div>
-            <select value={sentiment} onChange={(e) => setSentiment(e.target.value)} style={{ borderRadius: 10, border: '1px solid #e2e8f0', padding: '0 0.6rem', fontSize: '0.82rem' }}>
+            <select value={sentiment} onChange={(e) => setSentiment(e.target.value)} style={{ borderRadius: 10, border: '1px solid var(--nn-border)', padding: '0 0.6rem', fontSize: '0.82rem', background: 'var(--nn-surface)', color: 'var(--nn-text-main)' }}>
               <option value="all">All</option>
               <option value="positive">Positive</option>
               <option value="neutral">Neutral</option>
               <option value="negative">Negative</option>
             </select>
-            <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ borderRadius: 10, border: '1px solid #e2e8f0', padding: '0 0.6rem', fontSize: '0.82rem' }}>
+            <select value={sort} onChange={(e) => setSort(e.target.value)} style={{ borderRadius: 10, border: '1px solid var(--nn-border)', padding: '0 0.6rem', fontSize: '0.82rem', background: 'var(--nn-surface)', color: 'var(--nn-text-main)' }}>
               <option value="newest">Newest</option>
               <option value="highest">Highest ★</option>
               <option value="lowest">Lowest ★</option>
