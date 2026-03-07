@@ -120,6 +120,7 @@ def create_app():
     # ================= Home Route =================
     @app.route("/")
     def home():
+        # Updated to V10 to verify deployment
         return {"status": "NeuroNest-V10-RESEND-LIVE"}
 
     from apscheduler.schedulers.background import BackgroundScheduler
