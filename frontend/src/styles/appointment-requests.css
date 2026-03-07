@@ -7,7 +7,7 @@
   border-radius: 48px;
   border: 1px solid var(--nn-border);
   margin-bottom: 24px;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .ar-main-container {
