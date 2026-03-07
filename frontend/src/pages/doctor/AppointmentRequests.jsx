@@ -17,9 +17,11 @@ import "../../styles/appointment-requests.css";
 // --- Clinical Utilities ---
 function isCloseDate(dateStr) {
   if (!dateStr) return false;
-  const d = new Date(dateStr);
+  // Use local midnight to avoid UTC timezone offset issues (e.g. IST = UTC+5:30)
+  const apptDate = new Date(dateStr + 'T00:00:00');
   const today = new Date();
-  const diff = (d - today) / (1000 * 60 * 60 * 24);
+  today.setHours(0, 0, 0, 0);
+  const diff = (apptDate - today) / (1000 * 60 * 60 * 24);
   return diff >= 0 && diff <= 2;
 }
 
@@ -422,7 +424,10 @@ const AppointmentRequests = () => {
     if (activeTriage === "High Priority") {
       return list.filter(req => {
         const reason = (req.reason || "").toLowerCase();
-        return reason.includes("urgent") || 
+        const priority = (req.priority_level || "").toLowerCase();
+        return priority === "urgent" ||
+               priority === "emergency" ||
+               reason.includes("urgent") || 
                reason.includes("emergency") || 
                reason.includes("severe") || 
                reason.includes("pain") || 
