@@ -1,8 +1,6 @@
-import os
-from datetime import datetime, timedelta
-from database.models import Appointment, DoctorNotificationSetting, NotificationLog, db
+from datetime import datetime
+from database.models import Appointment, DoctorNotificationSetting
 from services.notification_service import NotificationService
-from database.models import User
 
 def check_upcoming_consultations(app):
     """
@@ -14,8 +12,6 @@ def check_upcoming_consultations(app):
             # We want to check appointments that are today, and approved
             now = datetime.now()
             today_date = now.date()
-            current_time = now.time()
-            
             # Find all approved appointments for today
             upcoming_appointments = Appointment.query.filter(
                 Appointment.status == "approved",
@@ -41,11 +37,9 @@ def check_upcoming_consultations(app):
             print(f"[SCHEDULER ERROR] Failed to check upcoming consultations: {e}")
 
 def _trigger_upcoming_consultation_alert(appt, minutes_until):
-    # Prevent duplicate sending by checking NotificationLog or we can rely on in-memory/cache for robust implementation.
-    # To keep it simple and stateless relying on exact minute match:
+    # Keep it simple and stateless by relying on exact minute matching.
     doctor = appt.doctor
     patient = appt.patient
-    doc_profile = doctor.doctor_profile
 
     title = f"Upcoming Consultation in {minutes_until} mins"
     message = f"Your appointment with patient {patient.full_name} is starting in {minutes_until} minutes."
@@ -72,5 +66,6 @@ def _trigger_upcoming_consultation_alert(appt, minutes_until):
         )
     
     # 3. SMS Notification
-    if doc_settings and doc_settings.sms_on_booking and doctor.phone_number:
-         NotificationService.send_sms(doctor.phone_number, f"NevroNest Alert: {message}")
+    doctor_phone = doctor.doctor_profile.phone if doctor.doctor_profile else None
+    if doc_settings and doc_settings.sms_on_booking and doctor_phone:
+        NotificationService.send_sms(doctor_phone, f"NevroNest Alert: {message}")
