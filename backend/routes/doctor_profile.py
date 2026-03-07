@@ -72,6 +72,21 @@ def update_my_doctor_profile():
     if "consultation_fee" in data: profile.consultation_fee = data["consultation_fee"]
     if "consultation_mode" in data: profile.consultation_mode = data["consultation_mode"]
     
+    # Sync with DoctorConsultationSetting
+    if "consultation_fee" in data or "consultation_mode" in data:
+        from database.models import DoctorConsultationSetting
+        consultation = DoctorConsultationSetting.query.filter_by(doctor_user_id=user_id).first()
+        if not consultation:
+            consultation = DoctorConsultationSetting(doctor_user_id=user_id)
+            db.session.add(consultation)
+        if "consultation_fee" in data:
+            try:
+                consultation.consultation_fee = float(data["consultation_fee"])
+            except:
+                pass
+        if "consultation_mode" in data:
+            consultation.consultation_mode = data["consultation_mode"]
+    
     # Update Expertise Tags
     if "expertise_tags" in data:
         # Clear existing tags first

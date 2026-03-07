@@ -124,12 +124,16 @@ const AppointmentForm = ({ onSubmit, loading }) => {
     if (name === "doctor_id") {
       setIsDoctorPaused(false);
       const selectedDoc = doctorsList.find(d => d.id === parseInt(value));
+      const docMode = selectedDoc ? (selectedDoc.consultation_mode || "Both").toLowerCase() : "both";
       setFormData({ 
         ...formData, 
         doctor_id: value, 
         doctor_name: selectedDoc ? selectedDoc.full_name : "",
         slot_id: "",
         time: "",
+        consultation_type: docMode.includes("online") && !docMode.includes("offline") && !docMode.includes("both") && !docMode.includes("clinic") ? "online" : 
+                           docMode.includes("offline") || docMode.includes("clinic") ? "in_person" : 
+                           "in_person",
       });
       if (formData.date) fetchAvailableSlots(value, formData.date, true);
     } else if (name === "date") {
@@ -293,36 +297,51 @@ const AppointmentForm = ({ onSubmit, loading }) => {
                   <div className="form-group full-width">
                     <label>Consultation Mode</label>
                     <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
-                      <button
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, consultation_type: 'in_person' }))}
-                        style={{
-                          flex: 1, padding: '12px', borderRadius: '12px', border: '2px solid',
-                          borderColor: formData.consultation_type === 'in_person' ? 'var(--nn-primary)' : 'var(--nn-border)',
-                          background: formData.consultation_type === 'in_person' ? 'var(--nn-primary-light)' : 'var(--nn-surface)',
-                          color: formData.consultation_type === 'in_person' ? 'var(--nn-primary)' : 'var(--nn-text-muted)',
-                          fontWeight: 700, fontSize: '14px', cursor: 'pointer',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        🏥 In-Person
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setFormData(prev => ({ ...prev, consultation_type: 'online' }))}
-                        style={{
-                          flex: 1, padding: '12px', borderRadius: '12px', border: '2px solid',
-                          borderColor: formData.consultation_type === 'online' ? '#0EA5E9' : 'var(--nn-border)',
-                          background: formData.consultation_type === 'online' ? '#E0F2FE' : 'var(--nn-surface)',
-                          color: formData.consultation_type === 'online' ? '#0369A1' : 'var(--nn-text-muted)',
-                          fontWeight: 700, fontSize: '14px', cursor: 'pointer',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
-                          transition: 'all 0.2s'
-                        }}
-                      >
-                        💻 Online
-                      </button>
+                      {(() => {
+                        const selectedDocInfo = doctorsList.find(d => String(d.id) === String(formData.doctor_id));
+                        const docModeStr = selectedDocInfo ? (selectedDocInfo.consultation_mode || "Both").toLowerCase() : "both";
+                        const allowOnline = docModeStr.includes("online") || docModeStr.includes("both") || docModeStr.includes("hybrid");
+                        const allowOffline = docModeStr.includes("offline") || docModeStr.includes("clinic") || docModeStr.includes("both") || docModeStr.includes("hybrid");
+                        
+                        return (
+                          <>
+                            {allowOffline && (
+                              <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, consultation_type: 'in_person' }))}
+                                style={{
+                                  flex: 1, padding: '12px', borderRadius: '12px', border: '2px solid',
+                                  borderColor: formData.consultation_type === 'in_person' ? 'var(--nn-primary)' : 'var(--nn-border)',
+                                  background: formData.consultation_type === 'in_person' ? 'var(--nn-primary-light)' : 'var(--nn-surface)',
+                                  color: formData.consultation_type === 'in_person' ? 'var(--nn-primary)' : 'var(--nn-text-muted)',
+                                  fontWeight: 700, fontSize: '14px', cursor: 'pointer',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                  transition: 'all 0.2s'
+                                }}
+                              >
+                                🏥 In-Person
+                              </button>
+                            )}
+                            {allowOnline && (
+                              <button
+                                type="button"
+                                onClick={() => setFormData(prev => ({ ...prev, consultation_type: 'online' }))}
+                                style={{
+                                  flex: 1, padding: '12px', borderRadius: '12px', border: '2px solid',
+                                  borderColor: formData.consultation_type === 'online' ? '#0EA5E9' : 'var(--nn-border)',
+                                  background: formData.consultation_type === 'online' ? '#E0F2FE' : 'var(--nn-surface)',
+                                  color: formData.consultation_type === 'online' ? '#0369A1' : 'var(--nn-text-muted)',
+                                  fontWeight: 700, fontSize: '14px', cursor: 'pointer',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+                                  transition: 'all 0.2s'
+                                }}
+                              >
+                                💻 Online
+                              </button>
+                            )}
+                          </>
+                        );
+                      })()}
                     </div>
                     {formData.consultation_type === 'online' && (
                       <p style={{ fontSize: '12px', color: '#0369A1', marginTop: '6px', marginBottom: 0 }}>

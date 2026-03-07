@@ -143,6 +143,8 @@ def get_all_doctors():
                     "id": user.id,
                     "full_name": user.full_name,
                     "specialization": profile.specialization or "General Physician",
+                    "consultation_mode": profile.consultation_mode or "Both",
+
                 }
             )
 

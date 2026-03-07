@@ -180,6 +180,13 @@ def update_consultation_settings():
     if "auto_cancel_unpaid_minutes" in data:
         consultation.auto_cancel_unpaid_minutes = int(data["auto_cancel_unpaid_minutes"])
 
+    # Sync with DoctorProfile
+    from database.models import DoctorProfile
+    profile = DoctorProfile.query.filter_by(user_id=doctor_id).first()
+    if profile:
+        profile.consultation_fee = consultation.consultation_fee
+        profile.consultation_mode = consultation.consultation_mode
+
     db.session.commit()
     return jsonify({"message": "Consultation settings updated", "settings": consultation.to_dict()}), 200
 
