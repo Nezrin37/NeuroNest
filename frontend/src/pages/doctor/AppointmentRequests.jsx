@@ -97,16 +97,9 @@ function StatusBadge({ status }) {
 
 function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory }) {
   const isHighPriority = useMemo(() => {
-    const reason = (req.reason || "").toLowerCase();
     const priority = (req.priority_level || "").toLowerCase();
-    return priority === "urgent" || 
-           priority === "emergency" ||
-           reason.includes("urgent") || 
-           reason.includes("emergency") || 
-           reason.includes("severe") || 
-           reason.includes("pain") || 
-           isCloseDate(req.appointment_date);
-  }, [req.reason, req.appointment_date, req.priority_level]);
+    return priority === "urgent" || priority === "emergency";
+  }, [req.priority_level]);
 
   return (
     <div className={`ar-triage-row ${isHighPriority ? 'ar-priority-row' : ''}`}>
