@@ -120,7 +120,7 @@ def create_app():
     # ================= Home Route =================
     @app.route("/")
     def home():
-        return {"status": "NeuroNest-V6-RESEND-LIVE"}
+        return {"status": "NeuroNest-V10-RESEND-LIVE"}
 
     from apscheduler.schedulers.background import BackgroundScheduler
     from services.scheduler_service import check_upcoming_consultations
