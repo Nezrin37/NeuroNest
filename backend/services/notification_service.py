@@ -12,17 +12,20 @@ class NotificationService:
     @staticmethod
     def notify_appointment_event(appointment_id, event_type):
         """
-        event_type: 'new_booking', 'cancelled', 'rescheduled', 'approved', 'rejected'
+        event_type: 'new_booking', 'cancelled', 'rescheduled', 'approved', 'rejected', 'completed'
+        Email is ALWAYS sent for every event. In-app and SMS respect user settings.
         """
         from database.models import db, Appointment, DoctorNotificationSetting, NotificationPreference
         appointment = Appointment.query.get(appointment_id)
         if not appointment:
             return
 
-        doctor_id = appointment.doctor_id
+        doctor_id  = appointment.doctor_id
         patient_id = appointment.patient_id
-        
-        # 1. NOTIFY DOCTOR
+
+        subject = f"NeuroNest — {event_type.replace('_', ' ').title()} Notification"
+
+        # ── 1. DOCTOR ────────────────────────────────────────────────
         doctor_settings = DoctorNotificationSetting.query.filter_by(doctor_user_id=doctor_id).first()
         if not doctor_settings:
             doctor_settings = DoctorNotificationSetting(doctor_user_id=doctor_id)
@@ -31,6 +34,7 @@ class NotificationService:
 
         doctor_msg = NotificationService._generate_message(appointment, event_type, recipient_role="doctor")
 
+        # In-app (respects setting)
         if doctor_settings.in_app_notifications:
             NotificationService.send_in_app(
                 user_id=doctor_id,
@@ -39,19 +43,19 @@ class NotificationService:
                 payload={"appointment_id": appointment.id, "event_type": event_type}
             )
 
-        if doctor_settings.email_on_booking:
-            NotificationService.send_email(
-                appointment.doctor.email, 
-                f"NeuroNest Appointment Update - {event_type.replace('_', ' ').title()}", 
-                doctor_msg
-            )
+        # Email — ALWAYS send
+        try:
+            NotificationService.send_email(appointment.doctor.email, subject, doctor_msg)
+        except Exception as e:
+            print(f"[NOTIFICATION] Doctor email failed: {e}")
 
+        # SMS (respects setting)
         if doctor_settings.sms_on_booking:
             phone = appointment.doctor.doctor_profile.phone if appointment.doctor.doctor_profile else None
             if phone:
                 NotificationService.send_sms(phone, doctor_msg)
 
-        # 2. NOTIFY PATIENT
+        # ── 2. PATIENT ───────────────────────────────────────────────
         patient_settings = NotificationPreference.query.filter_by(user_id=patient_id).first()
         if not patient_settings:
             patient_settings = NotificationPreference(user_id=patient_id)
@@ -60,6 +64,7 @@ class NotificationService:
 
         patient_msg = NotificationService._generate_message(appointment, event_type, recipient_role="patient")
 
+        # In-app (respects setting)
         if patient_settings.inapp_appointments:
             NotificationService.send_in_app(
                 user_id=patient_id,
@@ -68,13 +73,13 @@ class NotificationService:
                 payload={"appointment_id": appointment.id, "event_type": event_type}
             )
 
-        if patient_settings.email_appointments:
-            NotificationService.send_email(
-                appointment.patient.email,
-                f"NeuroNest Appointment Update - {event_type.replace('_', ' ').title()}",
-                patient_msg
-            )
+        # Email — ALWAYS send
+        try:
+            NotificationService.send_email(appointment.patient.email, subject, patient_msg)
+        except Exception as e:
+            print(f"[NOTIFICATION] Patient email failed: {e}")
 
+        # SMS (respects setting)
         if patient_settings.sms_appointments:
             phone = appointment.patient.patient_profile.phone if appointment.patient.patient_profile else None
             if phone:
