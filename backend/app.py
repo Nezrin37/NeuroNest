@@ -1,7 +1,7 @@
-from pathlib import Path
 import eventlet
 eventlet.monkey_patch()
 
+from pathlib import Path
 import os
 
 from flask import Flask
