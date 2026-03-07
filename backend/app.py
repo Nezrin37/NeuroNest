@@ -1,8 +1,8 @@
-import eventlet
-eventlet.monkey_patch()
+import gevent.monkey
+gevent.monkey.patch_all()
 
-from pathlib import Path
 import os
+from pathlib import Path
 
 from flask import Flask
 from flask_cors import CORS
@@ -120,8 +120,8 @@ def create_app():
     # ================= Home Route =================
     @app.route("/")
     def home():
-        # Updated to V10 to verify deployment
-        return {"status": "NeuroNest-V10-RESEND-LIVE"}
+        # Updated to V12 with GEVENT fix
+        return {"status": "NeuroNest-V12-GEVENT-LIVE"}
 
     from apscheduler.schedulers.background import BackgroundScheduler
     from services.scheduler_service import check_upcoming_consultations
@@ -136,4 +136,5 @@ def create_app():
 app = create_app()
 
 if __name__ == "__main__":
-    socketio.run(app, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    socketio.run(app, host="0.0.0.0", port=port, debug=True)
