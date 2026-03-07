@@ -129,28 +129,35 @@ def get_all_doctors():
         if not _is_patient():
             return jsonify({"error": "Patient access required"}), 403
 
-        from database.models import DoctorPrivacySetting, DoctorConsultationSetting
+        from database.models import User, DoctorProfile, DoctorPrivacySetting, DoctorConsultationSetting
 
-        doctors_query = (
-            db.session.query(User, DoctorProfile)
+        # Use and outer join to get everything in one query. This is more efficient and reliable.
+        doctors_data = (
+            db.session.query(User, DoctorProfile, DoctorPrivacySetting, DoctorConsultationSetting)
             .join(DoctorProfile, User.id == DoctorProfile.user_id)
+            .outerjoin(DoctorPrivacySetting, User.id == DoctorPrivacySetting.doctor_user_id)
+            .outerjoin(DoctorConsultationSetting, User.id == DoctorConsultationSetting.doctor_user_id)
             .filter(User.role == "doctor")
             .all()
         )
 
         result = []
-        for user, profile in doctors_query:
-            # Enforce Privacy Settings
-            privacy = DoctorPrivacySetting.query.filter_by(doctor_user_id=user.id).first()
-            if privacy and not privacy.show_profile_publicly:
-                continue # Skip this doctor entirely from public lists
+        for user, profile, privacy, consultation in doctors_data:
+            # ENFORCE PRIVACY: Hide doctor if show_profile_publicly is False.
+            # Default to visible (True) if no privacy setting record exists.
+            is_visible = getattr(privacy, 'show_profile_publicly', True)
+            
+            if is_visible is False:
+                # Log this for debugging in production logs if needed
+                print(f"[PRIVACY ENFORCED] Hiding doctor {user.id} ({user.full_name}) from patient search")
+                continue
             
             # Enforce Consultation Setting details (Fee)
-            consultation = DoctorConsultationSetting.query.filter_by(doctor_user_id=user.id).first()
-            actual_fee = consultation.consultation_fee if consultation else (profile.consultation_fee or 500.0)
+            actual_fee = (consultation.consultation_fee if (consultation and consultation.consultation_fee is not None) 
+                         else (profile.consultation_fee or 500.0))
             
             # If the doctor wants to hide the fee, we set it to None
-            if privacy and not privacy.show_consultation_fee:
+            if privacy and privacy.show_consultation_fee is False:
                 actual_fee = None
             
             result.append(
@@ -158,7 +165,8 @@ def get_all_doctors():
                     "id": user.id,
                     "full_name": user.full_name,
                     "specialization": profile.specialization or "General Physician",
-                    "consultation_mode": profile.consultation_mode or "Both",
+                    "consultation_mode": (consultation.consultation_mode if consultation and consultation.consultation_mode 
+                                         else (profile.consultation_mode or "Both")),
                     "consultation_fee": actual_fee
                 }
             )
