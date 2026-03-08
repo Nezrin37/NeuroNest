@@ -212,7 +212,7 @@ const MyPatients = () => {
                         type="text"
                         placeholder="Search roster by name or email..."
                         className="form-control rounded-pill border-0 shadow-sm"
-                        style={{ paddingLeft: '44px', height: '48px', fontSize: '0.9rem', backgroundColor: '#fff' }}
+                        style={{ paddingLeft: '44px', height: '48px', fontSize: '0.9rem', backgroundColor: 'var(--nn-surface)' }}
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -221,7 +221,7 @@ const MyPatients = () => {
                 <div className="d-flex align-items-center gap-2 justify-content-end" style={{ flexShrink: 0 }}>
                     
                     {/* Status Dropdown */}
-                    <div className="input-group shadow-sm border-0 rounded-pill overflow-hidden" style={{ minWidth: '160px', backgroundColor: '#fff' }}>
+                    <div className="input-group shadow-sm border-0 rounded-pill overflow-hidden" style={{ minWidth: '160px', backgroundColor: 'var(--nn-surface)' }}>
                         <span className="input-group-text bg-white border-0 text-secondary pe-1 ps-3">
                             <Filter size={14} />
                         </span>
@@ -238,7 +238,7 @@ const MyPatients = () => {
                     </div>
 
                     {/* Sort Dropdown */}
-                    <div className="input-group shadow-sm border-0 rounded-pill overflow-hidden" style={{ minWidth: '160px', backgroundColor: '#fff' }}>
+                    <div className="input-group shadow-sm border-0 rounded-pill overflow-hidden" style={{ minWidth: '160px', backgroundColor: 'var(--nn-surface)' }}>
                         <span className="input-group-text bg-white border-0 text-secondary pe-1 ps-3">
                             <ArrowUpDown size={14} />
                         </span>
@@ -281,13 +281,13 @@ const MyPatients = () => {
                                         minWidth: '200px', 
                                         transformOrigin: 'top right', 
                                         animation: 'fadeInScale 0.2s ease-out',
-                                        backgroundColor: isDark ? '#1a1f26' : '#ffffff',
-                                        borderColor: isDark ? '#2d333b' : '#f1f5f9'
+                                        backgroundColor: isDark ? 'var(--nn-surface-secondary)' : 'var(--nn-surface)',
+                                        borderColor: isDark ? 'var(--nn-border)' : 'var(--nn-surface-secondary)'
                                     }}
                                 >
                                     <button 
                                         className="w-100 text-start btn border-0 d-flex align-items-center gap-3 p-3 rounded-3 mb-1 export-item"
-                                        style={{ color: isDark ? '#e2e8f0' : '#0f172a', fontWeight: '600', fontSize: '0.85rem' }}
+                                        style={{ color: isDark ? 'var(--nn-text-secondary)' : 'var(--nn-text-main)', fontWeight: '600', fontSize: '0.85rem' }}
                                         onClick={handleExport}
                                     >
                                         <div className="bg-success bg-opacity-10 p-2 rounded-3 text-success">
@@ -297,7 +297,7 @@ const MyPatients = () => {
                                     </button>
                                     <button 
                                         className="w-100 text-start btn border-0 d-flex align-items-center gap-3 p-3 rounded-3 export-item"
-                                        style={{ color: isDark ? '#e2e8f0' : '#0f172a', fontWeight: '600', fontSize: '0.85rem' }}
+                                        style={{ color: isDark ? 'var(--nn-text-secondary)' : 'var(--nn-text-main)', fontWeight: '600', fontSize: '0.85rem' }}
                                         onClick={handleExportPDF}
                                     >
                                         <div className="bg-danger bg-opacity-10 p-2 rounded-3 text-danger">
@@ -376,9 +376,13 @@ const MyPatients = () => {
                                         <td>
                                             <span className={`badge rounded-pill px-3 py-1 text-uppercase fw-bold`} style={{ 
                                                 fontSize: '0.65rem', 
-                                                backgroundColor: patient.status === 'Active' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(100, 116, 139, 0.1)',
-                                                color: patient.status === 'Active' ? '#10b981' : '#64748b',
-                                                border: `1px solid ${patient.status === 'Active' ? 'rgba(16, 185, 129, 0.2)' : 'rgba(100, 116, 139, 0.2)'}`
+                                                backgroundColor: patient.status === 'Active'
+                                                    ? 'color-mix(in srgb, var(--nn-success) 12%, transparent)'
+                                                    : 'color-mix(in srgb, var(--nn-text-muted) 12%, transparent)',
+                                                color: patient.status === 'Active' ? 'var(--nn-success)' : 'var(--nn-text-muted)',
+                                                border: `1px solid ${patient.status === 'Active'
+                                                    ? 'color-mix(in srgb, var(--nn-success) 22%, transparent)'
+                                                    : 'color-mix(in srgb, var(--nn-text-muted) 22%, transparent)'}`
                                             }}>
                                                 {patient.status || 'Active'}
                                             </span>

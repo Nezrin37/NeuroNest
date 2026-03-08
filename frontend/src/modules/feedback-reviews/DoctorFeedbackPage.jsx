@@ -48,7 +48,7 @@ const DoctorFeedbackPage = () => {
 
   if (error) return (
     <div className="df-page df-center">
-      <AlertTriangle size={44} color="#ef4444" />
+      <AlertTriangle size={44} color="var(--nn-danger)" />
       <h2 style={{ marginTop: '1rem', color: 'var(--df-text)' }}>Unable to load feedback</h2>
       <p style={{ color: 'var(--df-muted)', marginBottom: '1.5rem' }}>{error}</p>
       <button className="df-btn" onClick={refresh}>Retry</button>
@@ -187,7 +187,7 @@ const DoctorFeedbackPage = () => {
           gap: 1rem; align-items: flex-start; box-shadow: var(--df-shadow);
           transition: transform 0.2s, box-shadow 0.2s;
         }
-        .df-card:hover { transform: translateY(-3px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .df-card:hover { transform: translateY(-3px); box-shadow: var(--nn-shadow-hover); }
         .df-card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .df-card-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--df-muted); margin-bottom: 0.35rem; }
         .df-card-value { font-size: 1.65rem; font-weight: 900; font-family: 'JetBrains Mono', monospace; line-height: 1; }
@@ -263,7 +263,7 @@ const DoctorFeedbackPage = () => {
         .df-review-tag { background: var(--df-accent-soft); color: var(--df-accent); font-size: 0.62rem; font-weight: 800; padding: 0.15rem 0.5rem; border-radius: 6px; border: 1px solid color-mix(in srgb, var(--nn-primary) 28%, transparent); }
 
         /* Misc */
-        .df-btn { background: var(--df-accent); color: #fff; border: none; padding: 0.7rem 1.5rem; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
+        .df-btn { background: var(--df-accent); color: var(--nn-surface); border: none; padding: 0.7rem 1.5rem; border-radius: 10px; font-weight: 700; cursor: pointer; font-size: 0.85rem; }
         .df-spin { animation: spin 1s linear infinite; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .df-loading-overlay { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; padding: 8rem; color: var(--df-muted); }

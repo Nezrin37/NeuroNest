@@ -28,12 +28,14 @@
   --nn-bg:                  #F8FAFC;
   --nn-surface:             #FFFFFF;
   --nn-surface-secondary:   #F1F5F9;
+  --nn-surface-card-alt:    #F9FAFB;
   --nn-border:              #E2E8F0;
   --nn-border-strong:       #CBD5E1;
+  --nn-divider:             #CBD5E1;
   --nn-text-main:           #0F172A;
   --nn-text-secondary:      #334155;
   --nn-text-muted:          #64748B;
-  --nn-text-disabled:       #94A3B8;
+  --nn-text-disabled:       #CBD5E1;
   --nn-glass:               rgba(255, 255, 255, 0.85);
   --nn-shadow:              0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
   --nn-card-shadow:         0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
@@ -61,10 +63,22 @@
   /* --- ONLINE CONSULT (Light) --- */
   --nn-online-bg:           #DBEAFE;
   --nn-online-text:         #1D4ED8;
+  --nn-followup:            #8B5CF6;
+  --nn-online-consult:      #06B6D4;
 
   /* --- COMPLETED (Light) --- */
   --nn-completed-bg:        #DCFCE7;
   --nn-completed-text:      #166534;
+
+  /* --- CHAT (Light) --- */
+  --nn-chat-doctor-bg:      #2563EB;
+  --nn-chat-patient-bg:     #E2E8F0;
+  --nn-chat-bg:             #F8FAFC;
+
+  /* --- SHADOWS --- */
+  --nn-shadow-soft:         0 4px 12px rgba(0, 0, 0, 0.05);
+  --nn-shadow-hover:        0 8px 20px rgba(0, 0, 0, 0.08);
+  --nn-gradient-primary:    linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
 }
 
 /* --- DARK THEME (Slate-based, soft on eyes) --- */
@@ -72,12 +86,14 @@
   --nn-bg:                  #0F172A;
   --nn-surface:             #1E293B;
   --nn-surface-secondary:   #111827;
+  --nn-surface-card-alt:    #273449;
   --nn-border:              #334155;
   --nn-border-strong:       #475569;
+  --nn-divider:             #475569;
   --nn-text-main:           #F1F5F9;
   --nn-text-secondary:      #E2E8F0;
   --nn-text-muted:          #94A3B8;
-  --nn-text-disabled:       #64748B;
+  --nn-text-disabled:       #475569;
   --nn-glass:               rgba(30, 41, 59, 0.85);
   --nn-shadow:              0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
   --nn-card-shadow:         0 4px 24px rgba(0, 0, 0, 0.35);
@@ -102,10 +118,17 @@
   /* --- ONLINE CONSULT (Dark) --- */
   --nn-online-bg:           #1E3A8A;
   --nn-online-text:         #93C5FD;
+  --nn-followup:            #A78BFA;
+  --nn-online-consult:      #22D3EE;
 
   /* --- COMPLETED (Dark) --- */
   --nn-completed-bg:        #14532D;
   --nn-completed-text:      #86EFAC;
+
+  /* --- CHAT (Dark) --- */
+  --nn-chat-doctor-bg:      #3B82F6;
+  --nn-chat-patient-bg:     #334155;
+  --nn-chat-bg:             #0F172A;
 
   /* Override primary-light for dark context */
   --nn-primary-light:       #1E3A8A;
@@ -123,4 +146,9 @@
   --nn-btn-danger-bg:       #7F1D1D;
   --nn-btn-danger-hover:    #991B1B;
   --nn-btn-danger-text:     #FCA5A5;
+
+  /* --- SHADOWS --- */
+  --nn-shadow-soft:         0 8px 24px rgba(0, 0, 0, 0.4);
+  --nn-shadow-hover:        0 14px 34px rgba(0, 0, 0, 0.4);
+  --nn-gradient-primary:    linear-gradient(135deg, #3B82F6 0%, #22D3EE 100%);
 }

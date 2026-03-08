@@ -202,7 +202,7 @@ const Profile = () => {
                             <span className="dark-verified-badge">&#10003;</span>
                             {isEditing && (
                                 <div className="editing-overlay">
-                                    <Camera color="#fff" size={24} />
+                                    <Camera color="var(--nn-surface)" size={24} />
                                 </div>
                             )}
                             <input type="file" ref={fileInputRef} className="d-none" accept="image/*" onChange={handleFileChange} />
@@ -233,21 +233,21 @@ const Profile = () => {
                         <div className="dark-section-title mt-2">Contact & Info</div>
                         <div className="dark-sidebar-list">
                             <div className="dark-sidebar-item">
-                                <div className="dark-sidebar-icon"><Phone size={14} color="#00d2ff"/></div>
+                                <div className="dark-sidebar-icon"><Phone size={14} color="var(--nn-online-consult)"/></div>
                                 <div className="dark-sidebar-text">
                                     <span className="title">{formData.phone || "Not provided"}</span>
                                     <span className="subtitle">Phone Number</span>
                                 </div>
                             </div>
                             <div className="dark-sidebar-item">
-                                <div className="dark-sidebar-icon"><Hospital size={14} color="#00d2ff"/></div>
+                                <div className="dark-sidebar-icon"><Hospital size={14} color="var(--nn-online-consult)"/></div>
                                 <div className="dark-sidebar-text">
                                     <span className="title">{formData.hospital_name || "Independent"}</span>
                                     <span className="subtitle">Facility / Network</span>
                                 </div>
                             </div>
                             <div className="dark-sidebar-item">
-                                <div className="dark-sidebar-icon"><Globe size={14} color="#00d2ff"/></div>
+                                <div className="dark-sidebar-icon"><Globe size={14} color="var(--nn-online-consult)"/></div>
                                 <div className="dark-sidebar-text">
                                     <span className="title">{formData.consultation_mode === 'Both' ? 'Online and Offline Consultation' : (formData.consultation_mode || "Mixed")}</span>
                                     <span className="subtitle">Modality</span>
@@ -274,7 +274,7 @@ const Profile = () => {
                                 {/* Card 1: Senior credentials */}
                                 <div className="dark-card">
                                     <div className="dark-card-header">
-                                        <div className="dark-card-icon"><Briefcase size={20} color="#0055ff"/></div>
+                                        <div className="dark-card-icon"><Briefcase size={20} color="var(--nn-primary)"/></div>
                                         <div className="dark-card-title-wrap">
                                             <span className="dark-card-title">Professional Background</span>
                                             <span className="dark-card-sub">Clinical Roles</span>
@@ -291,7 +291,7 @@ const Profile = () => {
                                 {/* Card 2: Regulatory Identity */}
                                 <div className="dark-card">
                                     <div className="dark-card-header">
-                                        <div className="dark-card-icon"><Shield size={20} color="#0055ff"/></div>
+                                        <div className="dark-card-icon"><Shield size={20} color="var(--nn-primary)"/></div>
                                         <div className="dark-card-title-wrap">
                                             <span className="dark-card-title">Regulatory Identity</span>
                                             <span className="dark-card-sub">Accreditations</span>
@@ -308,7 +308,7 @@ const Profile = () => {
                                 {/* Card 3: Consultation Format */}
                                 <div className="dark-card">
                                     <div className="dark-card-header">
-                                        <div className="dark-card-icon"><DollarSign size={20} color="#0055ff"/></div>
+                                        <div className="dark-card-icon"><DollarSign size={20} color="var(--nn-primary)"/></div>
                                         <div className="dark-card-title-wrap">
                                             <span className="dark-card-title">Consultation Params</span>
                                             <span className="dark-card-sub">Monetization & Modes</span>
@@ -325,7 +325,7 @@ const Profile = () => {
                                 <div className="dark-card">
                                     <div className="dark-card-header">
                                         <div className="dark-card-icon" style={{ cursor: 'pointer' }} onClick={() => setIsAvailabilityModalOpen(true)}>
-                                            <Clock size={20} color="#0055ff"/>
+                                            <Clock size={20} color="var(--nn-primary)"/>
                                         </div>
                                         <div className="dark-card-title-wrap">
                                             <span className="dark-card-title">Active Schedule</span>
@@ -378,7 +378,7 @@ const Profile = () => {
                                         </select>
                                     </div>
 
-                                    <div className="col-12"><hr style={{borderColor:'#333', margin:'10px 0 25px 0'}}/></div>
+                                    <div className="col-12"><hr style={{borderColor:'var(--nn-border)', margin:'10px 0 25px 0'}}/></div>
 
                                     <div className="col-12 col-md-6 dark-input-group">
                                         <label className="dark-label">License Reference</label>
@@ -403,7 +403,7 @@ const Profile = () => {
                                         <input type="number" name="experience_years" className="dark-input" value={formData.experience_years || ''} onChange={handleChange} />
                                     </div>
 
-                                    <div className="col-12"><hr style={{borderColor:'#333', margin:'10px 0 25px 0'}}/></div>
+                                    <div className="col-12"><hr style={{borderColor:'var(--nn-border)', margin:'10px 0 25px 0'}}/></div>
 
                                     <div className="col-12 dark-input-group">
                                         <label className="dark-label">Hospital Cluster</label>
@@ -423,7 +423,7 @@ const Profile = () => {
                                     </div>
                                 </div>
 
-                                <div className="col-12"><hr style={{borderColor:'#333', margin:'35px 0 25px 0'}}/></div>
+                                <div className="col-12"><hr style={{borderColor:'var(--nn-border)', margin:'35px 0 25px 0'}}/></div>
                                 
                                 {/* Experience Builder */}
                                 <div className="mt-2">
@@ -527,7 +527,7 @@ const Profile = () => {
                                 </div>
 
                                 <div className="dark-form-actions">
-                                    <button className="dark-btn-secondary" style={{ backgroundColor: '#222', color: '#fff', border: '1px solid #444' }} onClick={() => { cancelEdit(); setActiveTab('overview'); }}>Cancel Sequence</button>
+                                    <button className="dark-btn-secondary" style={{ backgroundColor: 'var(--nn-surface-secondary)', color: '#fff', border: '1px solid var(--nn-divider)' }} onClick={() => { cancelEdit(); setActiveTab('overview'); }}>Cancel Sequence</button>
                                     <button className="dark-btn-primary" onClick={handleSave}>Execute Changes</button>
                                 </div>
                             </div>
@@ -543,7 +543,7 @@ const Profile = () => {
                         <div className="col-lg-8">
                             <div className="dark-card h-100">
                                 <div className="dark-card-header mb-2">
-                                    <div className="dark-card-icon"><Award size={20} color="#0055ff"/></div>
+                                    <div className="dark-card-icon"><Award size={20} color="var(--nn-primary)"/></div>
                                     <div className="dark-card-title-wrap">
                                         <span className="dark-card-title">Clinical Experience Timeline</span>
                                         <span className="dark-card-sub">Career Progression & Roles</span>
@@ -573,22 +573,22 @@ const Profile = () => {
                                                     top: '4px', 
                                                     width: '14px', 
                                                     height: '14px', 
-                                                    backgroundColor: idx === 0 ? '#0055ff' : (isDark ? '#333' : '#e0e0e0'),
-                                                    border: `3px solid ${isDark ? '#1a1a1a' : '#ffffff'}`,
+                                                    backgroundColor: idx === 0 ? 'var(--nn-primary)' : (isDark ? 'var(--nn-border)' : 'var(--nn-divider)'),
+                                                    border: `3px solid ${isDark ? 'var(--nn-bg)' : 'var(--nn-surface)'}`,
                                                     zIndex: 2,
-                                                    boxShadow: idx === 0 ? '0 0 0 3px rgba(0, 85, 255, 0.2)' : 'none'
+                                                    boxShadow: idx === 0 ? '0 0 0 3px color-mix(in srgb, var(--nn-primary) 20%, transparent)' : 'none'
                                                 }}
                                             />
                                             <h5 className={`fw-bold mb-1 ${isDark ? 'text-white' : 'text-dark'}`} style={{ fontSize: '1.05rem', letterSpacing: '0.3px' }}>{exp.title}</h5>
                                             <div className="d-flex align-items-center mb-2 gap-2">
-                                                <h6 className="mb-0" style={{ color: '#0055ff', fontSize: '0.9rem', fontWeight: '600' }}>{exp.hospital}</h6>
-                                                <span className="px-2 py-1 rounded-pill" style={{ fontSize: '0.7rem', fontWeight: '600', backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', color: isDark ? '#a0a0a0' : '#666' }}>{exp.period}</span>
+                                                <h6 className="mb-0" style={{ color: 'var(--nn-primary)', fontSize: '0.9rem', fontWeight: '600' }}>{exp.hospital}</h6>
+                                                <span className="px-2 py-1 rounded-pill" style={{ fontSize: '0.7rem', fontWeight: '600', backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)', color: isDark ? 'var(--nn-text-muted)' : 'var(--nn-text-muted)' }}>{exp.period}</span>
                                             </div>
-                                            <p className="mb-0 mt-2" style={{ color: isDark ? '#a0a0a0' : '#555', fontSize: '0.85rem', lineHeight: '1.6' }}>{exp.description}</p>
+                                            <p className="mb-0 mt-2" style={{ color: isDark ? 'var(--nn-text-muted)' : 'var(--nn-text-secondary)', fontSize: '0.85rem', lineHeight: '1.6' }}>{exp.description}</p>
                                         </div>
                                     )) : (
                                         <div className="text-center py-4">
-                                            <p className="mb-0" style={{ color: isDark ? '#666' : '#999', fontSize: '0.9rem' }}>No clinical experience records mapped to this profile module.</p>
+                                            <p className="mb-0" style={{ color: isDark ? 'var(--nn-text-muted)' : 'var(--nn-text-disabled)', fontSize: '0.9rem' }}>No clinical experience records mapped to this profile module.</p>
                                         </div>
                                     )}
                                 </div>
@@ -599,14 +599,14 @@ const Profile = () => {
                         <div className="col-lg-4">
                             <div className="dark-card h-100">
                                 <div className="dark-card-header mb-2">
-                                    <div className="dark-card-icon"><Briefcase size={20} color="#0055ff"/></div>
+                                    <div className="dark-card-icon"><Briefcase size={20} color="var(--nn-primary)"/></div>
                                     <div className="dark-card-title-wrap">
                                         <span className="dark-card-title">Professional Summary</span>
                                         <span className="dark-card-sub">Clinical Philosophy</span>
                                     </div>
                                 </div>
                                 <div className="mt-3">
-                                    <p style={{ color: isDark ? '#a0a0a0' : '#555', fontSize: '0.9rem', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>
+                                    <p style={{ color: isDark ? 'var(--nn-text-muted)' : 'var(--nn-text-secondary)', fontSize: '0.9rem', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>
                                         {profile.bio || "No professional summary added yet. Focuses on creating scalable clinical experiences and elevating patient journeys."}
                                     </p>
                                 </div>

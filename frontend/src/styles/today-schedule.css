@@ -51,7 +51,7 @@
 .ts-view-all {
   font-size: 0.75rem;
   font-weight: 700;
-  color: #facc15;
+  color: var(--nn-warning);
   text-decoration: none;
   cursor: pointer;
 }
@@ -136,16 +136,16 @@
 }
 
 .ts-pin-checkbox.checked {
-  background: #facc15;
-  border-color: #facc15;
+  background: var(--nn-warning);
+  border-color: var(--nn-warning);
   box-shadow: 0 4px 10px rgba(250, 204, 21, 0.3);
 }
 
 .ts-pin-icon {
   width: 36px;
   height: 36px;
-  background: #fef9c3;
-  color: #ca8a04;
+  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface));
+  color: var(--nn-warning);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -189,14 +189,14 @@
 }
 
 .ts-add-pin-btn:hover {
-  background: #fef9c330;
-  color: #ca8a04;
+  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface))30;
+  color: var(--nn-warning);
 }
 
 .ts-add-pin-icon {
   width: 28px;
   height: 28px;
-  background: #facc15;
+  background: var(--nn-warning);
   color: white;
   border-radius: 8px;
   display: flex;
@@ -229,7 +229,7 @@
 .ts-date-sub {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #facc15;
+  color: var(--nn-warning);
   margin: 0;
 }
 
@@ -253,7 +253,7 @@
 
 .ts-nav-btn:hover {
   background: var(--nn-surface-secondary);
-  border-color: #facc15;
+  border-color: var(--nn-warning);
 }
 
 .ts-schedule-list {
@@ -295,12 +295,12 @@
 .ts-appointment-card:hover {
   transform: translateX(8px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.06);
-  border-color: #facc1530;
+  border-color: color-mix(in srgb, var(--nn-warning) 30%, transparent);
 }
 
 .ts-appointment-card.ongoing {
-  background: #fef9c3; /* Yellow-ish ongoing */
-  border-color: #facc1540;
+  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface)); /* Yellow-ish ongoing */
+  border-color: color-mix(in srgb, var(--nn-warning) 40%, transparent);
 }
 
 .ts-card-info {
@@ -313,7 +313,7 @@
   width: 48px;
   height: 48px;
   border-radius: 16px;
-  background: #f1f5f9;
+  background: var(--nn-surface-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -410,7 +410,7 @@
 .ts-clinic-time-value {
   font-size: 1.1rem;
   font-weight: 900;
-  color: #facc15;
+  color: var(--nn-warning);
 }
 
 .ts-summary-card {
@@ -445,8 +445,8 @@
 }
 
 .ts-summary-value.risk-high {
-  background: #fef2f2;
-  color: #ef4444;
+  background: var(--nn-danger-bg);
+  color: var(--nn-danger);
   padding: 4px 12px;
   border-radius: 10px;
   font-size: 0.75rem;
@@ -578,7 +578,7 @@
 }
 
 .ts-modal-input:focus {
-  border-color: #facc15;
+  border-color: var(--nn-warning);
   box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.1);
 }
 
@@ -609,7 +609,7 @@
 }
 
 .ts-modal-btn.save {
-  background: #facc15;
+  background: var(--nn-warning);
   border: none;
   color: white;
   box-shadow: 0 10px 20px rgba(250, 204, 21, 0.2);
@@ -622,7 +622,7 @@
 
 .ts-page.dark .ts-modal-card {
   background: var(--nn-bg);
-  border-color: #1e1e22;
+  border-color: var(--nn-border);
 }
 
 .ts-page.dark .ts-modal-input {

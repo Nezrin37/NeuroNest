@@ -18,8 +18,8 @@
 }
 
 .roster-page-wrapper.dark .roster-main-card {
-  background-color: #0c0f14;
-  border-color: #1a1f26;
+  background-color: var(--nn-bg);
+  border-color: var(--nn-surface-secondary);
 }
 
 .roster-title {

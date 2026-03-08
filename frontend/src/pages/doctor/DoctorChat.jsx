@@ -291,7 +291,7 @@ const DoctorChat = ({ isEmbedded = false }) => {
                 />
             )}
             <style>{`
-                .hover-btn-back:hover { background-color: #eff6ff !important; border-color: #2563eb !important; color: #2563eb !important; }
+                .hover-btn-back:hover { background-color: var(--nn-primary-light) !important; border-color: var(--nn-primary) !important; color: var(--nn-primary) !important; }
             `}</style>
         </div>
     );

@@ -223,9 +223,9 @@ const TodaySchedule = () => {
                             borderRadius: '12px', border: '1px solid var(--nn-border)'
                         }}>
                             {[
-                                { key: 'all',       label: 'All',       icon: '📋', color: '#64748B', activeBg: 'var(--nn-surface)', count: schedule.length },
-                                { key: 'online',    label: 'Online',    icon: '💻', color: '#0369A1', activeBg: '#E0F2FE',           count: schedule.filter(a => (a.consultation_type || 'in_person') === 'online').length },
-                                { key: 'in_person', label: 'In-Person', icon: '🏥', color: '#1D4ED8', activeBg: '#DBEAFE',           count: schedule.filter(a => (a.consultation_type || 'in_person') === 'in_person').length },
+                                { key: 'all',       label: 'All',       icon: '📋', color: 'var(--nn-text-muted)', activeBg: 'var(--nn-surface)', count: schedule.length },
+                                { key: 'online',    label: 'Online',    icon: '💻', color: 'var(--nn-info)', activeBg: 'var(--nn-info-bg)', count: schedule.filter(a => (a.consultation_type || 'in_person') === 'online').length },
+                                { key: 'in_person', label: 'In-Person', icon: '🏥', color: 'var(--nn-primary-hover)', activeBg: 'var(--nn-primary-light)', count: schedule.filter(a => (a.consultation_type || 'in_person') === 'in_person').length },
                             ].map(tab => (
                                 <button
                                     key={tab.key}
@@ -240,13 +240,13 @@ const TodaySchedule = () => {
                                         fontSize: '13px',
                                         display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                                         transition: 'all 0.2s',
-                                        boxShadow: modeFilter === tab.key ? '0 1px 4px rgba(0,0,0,0.12)' : 'none',
+                                        boxShadow: modeFilter === tab.key ? 'var(--nn-shadow-soft)' : 'none',
                                     }}
                                 >
                                     {tab.icon} {tab.label}
                                     <span style={{
                                         background: modeFilter === tab.key ? tab.color : 'var(--nn-border)',
-                                        color: modeFilter === tab.key ? '#fff' : 'var(--nn-text-muted)',
+                                        color: modeFilter === tab.key ? 'var(--nn-surface)' : 'var(--nn-text-muted)',
                                         borderRadius: '999px', padding: '1px 7px', fontSize: '11px', fontWeight: 800
                                     }}>{tab.count}</span>
                                 </button>
@@ -303,8 +303,8 @@ const TodaySchedule = () => {
                                                         display: 'inline-flex', alignItems: 'center', gap: '4px',
                                                         fontSize: '11px', fontWeight: 700, marginTop: '4px',
                                                         padding: '2px 8px', borderRadius: '6px',
-                                                        background: isOnline ? '#E0F2FE' : '#DBEAFE',
-                                                        color: isOnline ? '#0369A1' : '#1D4ED8',
+                                                        background: isOnline ? 'var(--nn-info-bg)' : 'var(--nn-primary-light)',
+                                                        color: isOnline ? 'var(--nn-info)' : 'var(--nn-primary-hover)',
                                                     }}>
                                                         {isOnline ? '💻 Online' : '🏥 In-Person'}
                                                     </span>

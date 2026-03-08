@@ -90,13 +90,13 @@ function TriageKPI({ title, value, trend, color, percent }) {
 
 function StatusBadge({ status }) {
   const s = (status || "").toLowerCase();
-  let color = "#666";
-  let bg = "#232327";
+  let color = "var(--nn-text-muted)";
+  let bg = "var(--nn-surface-secondary)";
   
-  if (s === "approved") { color = "#4ade80"; bg = "#4ade8020"; }
-  else if (s === "rejected") { color = "#f87171"; bg = "#f8717120"; }
-  else if (s === "completed") { color = "#2b70ff"; bg = "#2b70ff20"; }
-  else if (s === "cancelled") { color = "#fbbf24"; bg = "#fbbf2420"; }
+  if (s === "approved") { color = "var(--nn-success)"; bg = "color-mix(in srgb, var(--nn-success) 15%, transparent)"; }
+  else if (s === "rejected") { color = "var(--nn-danger)"; bg = "color-mix(in srgb, var(--nn-danger) 15%, transparent)"; }
+  else if (s === "completed") { color = "var(--nn-primary)"; bg = "color-mix(in srgb, var(--nn-primary) 15%, transparent)"; }
+  else if (s === "cancelled") { color = "var(--nn-warning)"; bg = "color-mix(in srgb, var(--nn-warning) 15%, transparent)"; }
 
   return (
     <span style={{ 
@@ -117,7 +117,7 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
        <div className="ar-patient-cell">
           <div className="ar-avatar-container">
              <img src={`https://api.dicebear.com/7.x/initials/svg?seed=${req.patient_name}`} className="ar-avatar-img" alt="" />
-             <div className="ar-risk-indicator" style={{ backgroundColor: isHighPriority ? '#f87171' : '#4ade80' }}></div>
+             <div className="ar-risk-indicator" style={{ backgroundColor: isHighPriority ? 'var(--nn-danger)' : 'var(--nn-success)' }}></div>
           </div>
           <div className="ar-details">
              <span className="ar-p-name">{req.patient_name}</span>
@@ -163,7 +163,7 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
               <button 
                 className="ar-triage-btn ar-btn-suggest" 
                 onClick={() => onRescheduleClick(req)}
-                style={{ color: '#8b5cf6', borderColor: '#8b5cf620' }}
+                style={{ color: 'var(--nn-followup)', borderColor: 'color-mix(in srgb, var(--nn-followup) 20%, transparent)' }}
                 title="Suggest Alternate Time"
               >
                  <Clock size={18} />
@@ -585,9 +585,9 @@ const AppointmentRequests = () => {
         </div>
 
         <div className="ar-kpi-row">
-           <TriageKPI title="Total Requests" value={stats.total} trend="+12% vs week" color="#2b70ff" percent={75} />
-           <TriageKPI title="Urgent Triage" value={stats.highPriority} trend="Requires Action" color="#f87171" percent={40} />
-           <TriageKPI title="Avg. Approval" value={stats.avgTime} trend="Optimal" color="#4ade80" percent={60} />
+           <TriageKPI title="Total Requests" value={stats.total} trend="+12% vs week" color="var(--nn-primary)" percent={75} />
+           <TriageKPI title="Urgent Triage" value={stats.highPriority} trend="Requires Action" color="var(--nn-danger)" percent={40} />
+           <TriageKPI title="Avg. Approval" value={stats.avgTime} trend="Optimal" color="var(--nn-success)" percent={60} />
         </div>
 
         <div className="ar-triage-controls">
@@ -629,10 +629,10 @@ const AppointmentRequests = () => {
                  style={{
                    padding: '5px 14px', borderRadius: '8px', cursor: 'pointer',
                    background: modeFilter === tab.key
-                     ? (tab.key === 'online' ? '#E0F2FE' : tab.key === 'in_person' ? '#DBEAFE' : 'var(--nn-surface)')
+                     ? (tab.key === 'online' ? 'var(--nn-info-bg)' : tab.key === 'in_person' ? 'var(--nn-primary-light)' : 'var(--nn-surface)')
                      : 'transparent',
                    color: modeFilter === tab.key
-                     ? (tab.key === 'online' ? '#0369A1' : tab.key === 'in_person' ? '#1D4ED8' : 'var(--nn-primary)')
+                     ? (tab.key === 'online' ? 'var(--nn-info)' : tab.key === 'in_person' ? 'var(--nn-primary-hover)' : 'var(--nn-primary)')
                      : 'var(--nn-text-muted)',
                    fontWeight: modeFilter === tab.key ? 700 : 500,
                    fontSize: '12px', transition: 'all 0.18s',
@@ -641,7 +641,7 @@ const AppointmentRequests = () => {
                >
                  {tab.icon} {tab.label}
                  <span style={{
-                   marginLeft: '5px', background: 'rgba(0,0,0,0.08)',
+                   marginLeft: '5px', background: 'color-mix(in srgb, var(--nn-text-main) 8%, transparent)',
                    borderRadius: '999px', padding: '0 6px', fontSize: '10px', fontWeight: 800
                  }}>{cnt}</span>
                </button>
