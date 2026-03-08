@@ -160,6 +160,23 @@ def reschedule_appointment(appointment_id):
     except ValueError:
         return jsonify({"message": "Invalid date or time format"}), 400
 
+    requested_consultation_type = data.get("consultation_type")
+    if requested_consultation_type is not None and requested_consultation_type not in ("online", "in_person"):
+        return jsonify({"message": "consultation_type must be online or in_person"}), 400
+
+    priority = (appointment.priority_level or "").lower()
+    reason = (appointment.reason or "").lower()
+    is_critical = (
+        priority in ("urgent", "emergency")
+        or "urgent" in reason
+        or "emergency" in reason
+    )
+
+    if requested_consultation_type is not None:
+        if is_critical and requested_consultation_type != (appointment.consultation_type or "in_person"):
+            return jsonify({"message": "Consultation mode cannot be changed for urgent/emergency requests"}), 400
+        appointment.consultation_type = requested_consultation_type
+
     appointment.appointment_date = new_date
     appointment.appointment_time = new_time
     appointment.status = "rescheduled" # Indicates doctor suggested a new time

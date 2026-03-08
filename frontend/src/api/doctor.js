@@ -15,11 +15,15 @@ export const rejectAppointment = async (id) => {
   return response.data;
 };
 
-export const rescheduleAppointment = async (id, date, time) => {
-  const response = await axios.patch(`/doctor/appointments/${id}/reschedule`, {
+export const rescheduleAppointment = async (id, date, time, consultationType = null) => {
+  const payload = {
     appointment_date: date,
-    appointment_time: time
-  });
+    appointment_time: time,
+  };
+  if (consultationType) {
+    payload.consultation_type = consultationType;
+  }
+  const response = await axios.patch(`/doctor/appointments/${id}/reschedule`, payload);
   return response.data;
 };
 

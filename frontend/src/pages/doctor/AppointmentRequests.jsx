@@ -25,6 +25,20 @@ function isCloseDate(dateStr) {
   return diff >= 0 && diff <= 2;
 }
 
+function isUrgentRequest(req, includeCloseDate = true) {
+  const reason = (req?.reason || "").toLowerCase();
+  const priority = (req?.priority_level || "").toLowerCase();
+  return (
+    priority === "urgent" ||
+    priority === "emergency" ||
+    reason.includes("urgent") ||
+    reason.includes("emergency") ||
+    reason.includes("severe") ||
+    reason.includes("pain") ||
+    (includeCloseDate && isCloseDate(req?.appointment_date))
+  );
+}
+
 function calculateAge(dob) {
   if (!dob) return "N/A";
   const birthDate = new Date(dob);
@@ -96,10 +110,7 @@ function StatusBadge({ status }) {
 }
 
 function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory }) {
-  const isHighPriority = useMemo(() => {
-    const priority = (req.priority_level || "").toLowerCase();
-    return priority === "urgent" || priority === "emergency";
-  }, [req.priority_level]);
+  const isHighPriority = useMemo(() => isUrgentRequest(req, true), [req]);
 
   return (
     <div className={`ar-triage-row ${isHighPriority ? 'ar-priority-row' : ''}`}>
@@ -121,7 +132,7 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
           <div className="ar-clinical-tags">
              {isHighPriority && (
                <span className={`ar-clin-badge ar-priority-badge ${req.priority_level === 'emergency' ? 'bg-danger' : ''}`}>
-                  {req.priority_level === 'emergency' ? 'EMERGENCY' : req.priority_level === 'urgent' ? 'URGENT' : 'Priority Case'}
+                  {req.priority_level === 'emergency' ? 'EMERGENCY' : 'URGENT'}
                </span>
              )}
              <span className={`ar-clin-badge ${(req.consultation_type || 'in_person') === 'online' ? 'ar-online-badge' : 'ar-inperson-badge'}`}>
@@ -179,16 +190,28 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
 const RescheduleModal = ({ isOpen, onClose, onSubmit, appointment, loading }) => {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
+  const [consultationType, setConsultationType] = useState("in_person");
   const [availableSlots, setAvailableSlots] = useState([]);
   const [useManualTime, setUseManualTime] = useState(false);
   const [fetchingSlots, setFetchingSlots] = useState(false);
   const [errorStatus, setErrorStatus] = useState("");
+  const isCritical = useMemo(() => {
+    const priority = (appointment?.priority_level || "").toLowerCase();
+    const reason = (appointment?.reason || "").toLowerCase();
+    return (
+      priority === "urgent" ||
+      priority === "emergency" ||
+      reason.includes("urgent") ||
+      reason.includes("emergency")
+    );
+  }, [appointment]);
 
   useEffect(() => {
     if (appointment && isOpen) {
       setDate(appointment.appointment_date || "");
       const timeStr = appointment.appointment_time;
       setTime(timeStr ? timeStr.substring(0, 5) : "");
+      setConsultationType(appointment.consultation_type || "in_person");
       setErrorStatus("");
       setAvailableSlots([]);
       setUseManualTime(false);
@@ -300,7 +323,39 @@ const RescheduleModal = ({ isOpen, onClose, onSubmit, appointment, loading }) =>
                     <input type="time" value={time} onChange={(e) => setTime(e.target.value)} />
                     <Clock className="ar-field-icon" size={16} />
                   </div>
-                  <p className="ar-field-hint">Enter any time you'd like to propose to the patient.</p>
+                 <p className="ar-field-hint">Enter any time you'd like to propose to the patient.</p>
+               </div>
+             )}
+
+             {!isCritical && (
+               <div className="ar-modal-field">
+                  <label>Consultation Mode</label>
+                  <div className="d-flex gap-2">
+                    <button
+                      type="button"
+                      className={`ar-slot-btn ${consultationType === 'in_person' ? 'active' : ''}`}
+                      onClick={() => setConsultationType('in_person')}
+                    >
+                      🏥 In-Person
+                    </button>
+                    <button
+                      type="button"
+                      className={`ar-slot-btn ${consultationType === 'online' ? 'active' : ''}`}
+                      onClick={() => setConsultationType('online')}
+                    >
+                      💻 Online
+                    </button>
+                  </div>
+                  <p className="ar-field-hint">You can switch mode only for regular checkups.</p>
+               </div>
+             )}
+
+             {isCritical && (
+               <div className="ar-modal-field">
+                  <label>Consultation Mode</label>
+                  <div className="ar-field-hint" style={{ marginTop: 0 }}>
+                    Locked for urgent/emergency requests ({(appointment?.consultation_type || 'in_person') === 'online' ? '💻 Online' : '🏥 In-Person'}).
+                  </div>
                </div>
              )}
           </div>
@@ -309,7 +364,7 @@ const RescheduleModal = ({ isOpen, onClose, onSubmit, appointment, loading }) =>
              <button 
                 onClick={(e) => {
                   e.stopPropagation();
-                  onSubmit(appointment.id, date, time);
+                  onSubmit(appointment.id, date, time, consultationType);
                 }} 
                 className="ar-btn-primary"
                 disabled={loading || !date || !time}
@@ -331,6 +386,8 @@ const AppointmentRequests = () => {
   const { isDark }                    = useTheme();
   const [activeTriage, setActiveTriage] = useState("Needs Review");
   const [modeFilter, setModeFilter]     = useState("all");  // all / online / in_person
+  const [currentPage, setCurrentPage]   = useState(1);
+  const [pageSize, setPageSize]         = useState(8);
 
   const [rescheduleTarget, setRescheduleTarget] = useState(null);
 
@@ -370,11 +427,11 @@ const AppointmentRequests = () => {
     }
   };
 
-  const handleRescheduleSubmit = async (id, date, time) => {
-    console.log("Submitting reschedule:", { id, date, time });
+  const handleRescheduleSubmit = async (id, date, time, consultationType) => {
+    console.log("Submitting reschedule:", { id, date, time, consultationType });
     setActionLoading(id + "reschedule");
     try {
-      await rescheduleAppointment(id, date, time);
+      await rescheduleAppointment(id, date, time, consultationType);
       setRequests(prev => prev.filter(r => r.id !== id));
       setRescheduleTarget(null);
       // Optional: Add a small success state/toast here
@@ -408,17 +465,7 @@ const AppointmentRequests = () => {
     });
 
     if (activeTriage === "High Priority") {
-      return list.filter(req => {
-        const reason = (req.reason || "").toLowerCase();
-        const priority = (req.priority_level || "").toLowerCase();
-        return priority === "urgent" ||
-               priority === "emergency" ||
-               reason.includes("urgent") ||
-               reason.includes("emergency") ||
-               reason.includes("severe") ||
-               reason.includes("pain") ||
-               isCloseDate(req.appointment_date);
-      });
+      return list.filter(req => isUrgentRequest(req, true));
     }
 
     if (modeFilter !== "all") {
@@ -428,12 +475,12 @@ const AppointmentRequests = () => {
     return list;
   }, [processedRequests, history, searchTerm, activeTriage, modeFilter]);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTriage, modeFilter, searchTerm, pageSize]);
+
   const stats = useMemo(() => {
-    const highP = processedRequests.filter(req => {
-      const reason = (req.reason || "").toLowerCase();
-      const priority = (req.priority_level || "").toLowerCase();
-      return priority === "urgent" || priority === "emergency" || reason.includes("urgent") || reason.includes("emergency") || isCloseDate(req.appointment_date);
-    }).length;
+    const highP = processedRequests.filter(req => isUrgentRequest(req, true)).length;
 
     return {
       total: processedRequests.length,
@@ -451,11 +498,7 @@ const AppointmentRequests = () => {
     { 
       name: "High Priority", 
       id: "High Priority",
-      count: processedRequests.filter(req => {
-        const reason = (req.reason || "").toLowerCase();
-        const priority = (req.priority_level || "").toLowerCase();
-        return priority === "urgent" || priority === "emergency" || reason.includes("urgent") || reason.includes("emergency") || reason.includes("severe") || reason.includes("pain") || isCloseDate(req.appointment_date);
-      }).length
+      count: processedRequests.filter(req => isUrgentRequest(req, true)).length
     },
     { 
       name: "History", 
@@ -464,22 +507,37 @@ const AppointmentRequests = () => {
     }
   ];
 
-  const groupedRequestsByDate = useMemo(() => {
+  const sortedRequests = useMemo(() => {
     const isHistoryTab = activeTriage === "History";
-    // For history, we want reverse chronological (newest first). For triage, chronological (closest first).
-    const sorted = [...filteredRequests].sort((a,b) => {
+    return [...filteredRequests].sort((a,b) => {
       const dA = new Date(a.appointment_date + 'T' + a.appointment_time);
       const dB = new Date(b.appointment_date + 'T' + b.appointment_time);
       return isHistoryTab ? dB - dA : dA - dB;
     });
+  }, [filteredRequests, activeTriage]);
 
-    return sorted.reduce((acc, req) => {
+  const totalPages = useMemo(() => {
+    return Math.max(1, Math.ceil(sortedRequests.length / pageSize));
+  }, [sortedRequests.length, pageSize]);
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages);
+  }, [currentPage, totalPages]);
+
+  const pagedRequests = useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    const end = start + pageSize;
+    return sortedRequests.slice(start, end);
+  }, [sortedRequests, currentPage, pageSize]);
+
+  const groupedRequestsByDate = useMemo(() => {
+    return pagedRequests.reduce((acc, req) => {
       const dateKey = req.appointment_date;
       if (!acc[dateKey]) acc[dateKey] = [];
       acc[dateKey].push(req);
       return acc;
     }, {});
-  }, [filteredRequests, activeTriage]);
+  }, [pagedRequests]);
 
   const sortedDates = useMemo(() => {
     const dates = Object.keys(groupedRequestsByDate);
@@ -617,6 +675,77 @@ const AppointmentRequests = () => {
                   ))}
               </div>
            ))}
+
+           {filteredRequests.length > 0 && (
+              <div className="d-flex flex-wrap justify-content-between align-items-center mt-3 gap-2">
+                 <div className="text-muted small">
+                    Showing {(currentPage - 1) * pageSize + 1}
+                    {" - "}
+                    {Math.min(currentPage * pageSize, sortedRequests.length)}
+                    {" of "}
+                    {sortedRequests.length}
+                 </div>
+                 <div className="d-flex align-items-center gap-2">
+                    <select
+                      value={pageSize}
+                      onChange={(e) => setPageSize(parseInt(e.target.value, 10))}
+                      style={{
+                        borderRadius: '8px',
+                        padding: '4px 8px',
+                        background: 'var(--nn-surface-secondary)',
+                        color: 'var(--nn-text-main)',
+                        border: '1px solid var(--nn-border)',
+                        fontSize: '12px',
+                        fontWeight: 700
+                      }}
+                    >
+                      <option value={6}>6 / page</option>
+                      <option value={8}>8 / page</option>
+                      <option value={10}>10 / page</option>
+                      <option value={12}>12 / page</option>
+                    </select>
+
+                    <button
+                      className="ar-action-btn"
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      style={{ padding: '6px 10px', opacity: currentPage === 1 ? 0.5 : 1 }}
+                    >
+                      Prev
+                    </button>
+
+                    {Array.from({ length: totalPages }, (_, i) => i + 1)
+                      .slice(Math.max(0, currentPage - 3), Math.min(totalPages, currentPage + 2))
+                      .map((p) => (
+                        <button
+                          key={p}
+                          onClick={() => setCurrentPage(p)}
+                          style={{
+                            minWidth: '34px',
+                            height: '34px',
+                            borderRadius: '10px',
+                            border: currentPage === p ? '1px solid var(--nn-primary)' : '1px solid var(--nn-border)',
+                            background: currentPage === p ? 'var(--nn-primary-light)' : 'var(--nn-surface-secondary)',
+                            color: currentPage === p ? 'var(--nn-primary)' : 'var(--nn-text-main)',
+                            fontWeight: 800,
+                            fontSize: '12px'
+                          }}
+                        >
+                          {p}
+                        </button>
+                      ))}
+
+                    <button
+                      className="ar-action-btn"
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage === totalPages}
+                      style={{ padding: '6px 10px', opacity: currentPage === totalPages ? 0.5 : 1 }}
+                    >
+                      Next
+                    </button>
+                 </div>
+              </div>
+           )}
 
            {filteredRequests.length === 0 && (
               <div className="ar-kpi-card text-center py-5">
