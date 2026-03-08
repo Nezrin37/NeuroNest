@@ -2,7 +2,8 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { 
     getPatientDossier, 
-    saveClinicalRemark
+    saveClinicalRemark,
+    getPatients
 } from "../../api/doctor";
 import { 
     Calendar, User, Clock, Mail, Phone, Info, 
@@ -23,6 +24,7 @@ const PatientRecords = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [imageError, setImageError] = useState(false);
+    const [usingFallbackDossier, setUsingFallbackDossier] = useState(false);
     
     // Remarks State
     const [showRemarkModal, setShowRemarkModal] = useState(false);
@@ -33,12 +35,48 @@ const PatientRecords = () => {
         try {
             setLoading(true);
             setImageError(false);
+            setUsingFallbackDossier(false);
             const data = await getPatientDossier(patientId);
             setDossier(data);
             setError(null);
         } catch (err) {
             console.error("Error fetching dossier:", err);
-            setError("Access restricted. Clinical relationship required.");
+            try {
+                // Fallback: if patient exists in doctor's roster, allow a minimal dossier view.
+                const roster = await getPatients();
+                const rosterMatch = (roster || []).find((p) => String(p.id) === String(patientId));
+
+                if (rosterMatch) {
+                    setDossier({
+                        identity: {
+                            id: rosterMatch.id,
+                            full_name: rosterMatch.full_name || "Unknown Patient",
+                            email: rosterMatch.email || "N/A",
+                            phone: "N/A",
+                            gender: "Not Specified",
+                            dob: "N/A",
+                            profile_image: rosterMatch.patient_image || null,
+                            blood_group: "N/A",
+                            height_cm: null,
+                            weight_kg: null,
+                            bmi: null,
+                            allergies_summary: "None",
+                            chronic_conditions_summary: "None",
+                        },
+                        allergies: [],
+                        conditions: [],
+                        medications: [],
+                        timeline: [],
+                    });
+                    setUsingFallbackDossier(true);
+                    setError(null);
+                    return;
+                }
+            } catch (fallbackErr) {
+                console.error("Fallback roster lookup failed:", fallbackErr);
+            }
+
+            setError(err?.response?.data?.message || "Access restricted. Clinical relationship required.");
         } finally {
             setLoading(false);
         }
@@ -100,6 +138,11 @@ const PatientRecords = () => {
             <div className="mx-auto" style={{ maxWidth: '1440px' }}>
                 
                 {/* MATERIALLY MATCHED IDENTITY CARD */}
+                {usingFallbackDossier && (
+                    <div className="alert alert-warning border-0 rounded-4 shadow-sm mb-4" role="alert">
+                        Limited profile mode: full dossier could not be loaded for this patient.
+                    </div>
+                )}
                 <div className="card clinical-panel mb-4 border-0">
                     <div className="d-flex flex-wrap flex-lg-nowrap gap-4">
                         {/* Avatar Col */}

@@ -4,14 +4,14 @@
    ========================================================= */
 
 .ts-page {
-  padding: 48px;
-  padding-bottom: 80px;
-  background-color: var(--nn-surface);
-  border-radius: 48px;
+  padding: 24px;
+  padding-bottom: 32px;
+  background-color: var(--nn-bg);
+  border-radius: 20px;
   border: 1px solid var(--nn-border);
-  margin: 0 24px 48px 24px;
+  margin: 0 24px 32px 24px;
   font-family: 'Inter', sans-serif;
-  min-height: calc(100vh - 48px);
+  min-height: calc(100vh - 32px);
   display: block;
   overflow: visible;
   height: auto;
@@ -49,16 +49,16 @@
 }
 
 .ts-view-all {
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--nn-warning);
+  color: var(--nn-primary);
   text-decoration: none;
   cursor: pointer;
 }
 
 .ts-pinned-main-container {
   background: var(--nn-surface);
-  border-radius: 36px;
+  border-radius: 16px;
   border: 1px solid var(--nn-border);
   display: flex;
   flex-direction: column;
@@ -86,7 +86,7 @@
 
 .ts-pin-item {
   background: var(--nn-surface-secondary);
-  border-radius: 24px;
+  border-radius: 12px;
   padding: 20px;
   border: 1px solid transparent;
   transition: all 0.2s ease;
@@ -136,16 +136,16 @@
 }
 
 .ts-pin-checkbox.checked {
-  background: var(--nn-warning);
-  border-color: var(--nn-warning);
-  box-shadow: 0 4px 10px rgba(250, 204, 21, 0.3);
+  background: var(--nn-primary);
+  border-color: var(--nn-primary);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
 }
 
 .ts-pin-icon {
   width: 36px;
   height: 36px;
-  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface));
-  color: var(--nn-warning);
+  background: color-mix(in srgb, var(--nn-primary) 20%, var(--nn-surface));
+  color: var(--nn-primary);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -189,14 +189,14 @@
 }
 
 .ts-add-pin-btn:hover {
-  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface))30;
-  color: var(--nn-warning);
+  background: color-mix(in srgb, var(--nn-primary) 12%, var(--nn-surface));
+  color: var(--nn-primary);
 }
 
 .ts-add-pin-icon {
   width: 28px;
   height: 28px;
-  background: var(--nn-warning);
+  background: var(--nn-primary);
   color: white;
   border-radius: 8px;
   display: flex;
@@ -219,17 +219,17 @@
 }
 
 .ts-today-title {
-  font-size: 2.2rem;
-  font-weight: 900;
+  font-size: 28px;
+  font-weight: 700;
   color: var(--nn-text-main);
   letter-spacing: -0.04em;
   margin: 0;
 }
 
 .ts-date-sub {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--nn-warning);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--nn-text-secondary);
   margin: 0;
 }
 
@@ -253,7 +253,7 @@
 
 .ts-nav-btn:hover {
   background: var(--nn-surface-secondary);
-  border-color: var(--nn-warning);
+  border-color: var(--nn-primary);
 }
 
 .ts-schedule-list {
@@ -281,7 +281,7 @@
 .ts-appointment-card {
   flex: 1;
   background: var(--nn-surface);
-  border-radius: 28px;
+  border-radius: 16px;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
@@ -295,12 +295,12 @@
 .ts-appointment-card:hover {
   transform: translateX(8px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.06);
-  border-color: color-mix(in srgb, var(--nn-warning) 30%, transparent);
+  border-color: color-mix(in srgb, var(--nn-primary) 30%, transparent);
 }
 
 .ts-appointment-card.ongoing {
-  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface)); /* Yellow-ish ongoing */
-  border-color: color-mix(in srgb, var(--nn-warning) 40%, transparent);
+  background: color-mix(in srgb, var(--nn-primary) 12%, var(--nn-surface));
+  border-color: color-mix(in srgb, var(--nn-primary) 40%, transparent);
 }
 
 .ts-card-info {
@@ -369,7 +369,7 @@
 .ts-widget-square {
   flex: 1;
   background: var(--nn-surface);
-  border-radius: 32px;
+  border-radius: 16px;
   aspect-ratio: 1/1;
   padding: 24px;
   display: flex;
@@ -410,12 +410,12 @@
 .ts-clinic-time-value {
   font-size: 1.1rem;
   font-weight: 900;
-  color: var(--nn-warning);
+  color: var(--nn-primary);
 }
 
 .ts-summary-card {
   background: var(--nn-surface);
-  border-radius: 36px;
+  border-radius: 16px;
   padding: 28px;
   border: 1px solid var(--nn-border);
   box-shadow: 0 10px 40px rgba(0,0,0,0.02);
@@ -493,8 +493,8 @@
   background: var(--nn-surface);
   width: 100%;
   max-width: 460px;
-  border-radius: 40px;
-  padding: 40px;
+  border-radius: 16px;
+  padding: 24px;
   border: 1px solid var(--nn-border);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -578,8 +578,8 @@
 }
 
 .ts-modal-input:focus {
-  border-color: var(--nn-warning);
-  box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.1);
+  border-color: var(--nn-primary);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .ts-modal-footer {
@@ -609,15 +609,15 @@
 }
 
 .ts-modal-btn.save {
-  background: var(--nn-warning);
+  background: var(--nn-primary);
   border: none;
   color: white;
-  box-shadow: 0 10px 20px rgba(250, 204, 21, 0.2);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
 }
 
 .ts-modal-btn.save:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(250, 204, 21, 0.3);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.26);
 }
 
 .ts-page.dark .ts-modal-card {

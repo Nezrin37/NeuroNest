@@ -153,7 +153,7 @@ const TodaySchedule = () => {
                                         </div>
                                     </div>
                                     {item.category && (
-                                        <span className={`badge ${isDark ? 'bg-secondary' : 'bg-warning'} bg-opacity-10 text-warning px-2 py-1 rounded-pill`} style={{ fontSize: '0.6rem', width: 'fit-content', marginLeft: '34px' }}>
+                                        <span className="badge px-2 py-1 rounded-pill" style={{ fontSize: '0.6rem', width: 'fit-content', marginLeft: '34px', color: 'var(--nn-primary)', background: 'color-mix(in srgb, var(--nn-primary) 14%, transparent)', border: '1px solid color-mix(in srgb, var(--nn-primary) 26%, transparent)' }}>
                                             {item.category}
                                         </span>
                                     )}
@@ -172,7 +172,7 @@ const TodaySchedule = () => {
 
                     <div className="ts-widget-row">
                         <div className="ts-widget-square">
-                            <div className="ts-widget-icon bg-danger-subtle text-danger">
+                            <div className="ts-widget-icon bg-primary-subtle text-primary">
                                 <Zap size={24} />
                             </div>
                             <div>
@@ -255,7 +255,7 @@ const TodaySchedule = () => {
 
                         {loading ? (
                             <div className="ts-appointment-card justify-content-center p-5 border-0">
-                                <div className="spinner-border text-warning" role="status"></div>
+                                <div className="spinner-border text-primary" role="status"></div>
                             </div>
                         ) : (() => {
                             const filtered = modeFilter === 'all'
@@ -315,7 +315,7 @@ const TodaySchedule = () => {
                                                 {appointment.status === 'approved' && (
                                                     <div className="d-flex gap-2">
                                                         <button
-                                                            className="btn btn-warning rounded-circle p-0 d-flex align-items-center justify-content-center text-white shadow-sm"
+                                                            className="btn btn-primary rounded-circle p-0 d-flex align-items-center justify-content-center text-white shadow-sm"
                                                             style={{ width: '32px', height: '32px' }}
                                                             onClick={(e) => { e.stopPropagation(); handleAction(appointment.id, 'complete'); }}
                                                         >
@@ -370,7 +370,7 @@ const TodaySchedule = () => {
                                 return (
                                     <div 
                                         key={i} 
-                                        className={`text-center py-1 rounded-circle fw-bold transition-all ${isSelected ? 'bg-warning text-white shadow-sm' : isDark ? 'text-light hover-bg-dark' : 'text-dark hover-bg-light'}`} 
+                                        className={`text-center py-1 rounded-circle fw-bold transition-all ${isSelected ? 'bg-primary text-white shadow-sm' : isDark ? 'text-light hover-bg-dark' : 'text-dark hover-bg-light'}`} 
                                         style={{ fontSize: '0.75rem', cursor: 'pointer' }}
                                         onClick={() => {
                                             const newDate = new Date(selectedDate);
@@ -397,7 +397,7 @@ const TodaySchedule = () => {
                          </div>
                          <div className="ts-summary-item">
                              <span className="ts-summary-label">Pending</span>
-                             <span className="ts-summary-value text-warning">{schedule.filter(a => a.status === 'approved').length}</span>
+                             <span className="ts-summary-value text-primary">{schedule.filter(a => a.status === 'approved').length}</span>
                          </div>
                          <div className="ts-summary-item pt-2 border-top">
                              <span className="ts-summary-label">Overtime Risk</span>

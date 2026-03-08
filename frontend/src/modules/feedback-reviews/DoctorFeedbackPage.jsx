@@ -118,43 +118,62 @@ const DoctorFeedbackPage = () => {
         :root {
           --df-bg: var(--nn-bg);
           --df-panel: var(--nn-surface);
+          --df-shell: var(--nn-surface-secondary);
           --df-text: var(--nn-text-main);
           --df-muted: var(--nn-text-muted);
           --df-border: var(--nn-border);
           --df-accent: var(--nn-primary);
           --df-accent-soft: color-mix(in srgb, var(--nn-primary) 10%, transparent);
-          --df-shadow: var(--nn-shadow);
-          --df-radius: 16px;
+          --df-shadow: 0 1px 3px rgba(15, 23, 42, 0.08);
+          --df-space-1: 4px;
+          --df-space-2: 8px;
+          --df-space-3: 12px;
+          --df-space-4: 16px;
+          --df-space-5: 20px;
+          --df-space-6: 24px;
+          --df-space-7: 32px;
+          --df-radius-sm: 12px;
+          --df-radius-md: 16px;
+          --df-radius-lg: 20px;
+          --df-font-title: 28px;
+          --df-font-section: 20px;
+          --df-font-card: 16px;
+          --df-font-body: 14px;
+          --df-font-label: 12px;
         }
         body.dark {
           --df-bg: var(--nn-bg);
           --df-panel: var(--nn-surface);
+          --df-shell: var(--nn-surface-secondary);
           --df-text: var(--nn-text-main);
           --df-muted: var(--nn-text-muted);
           --df-border: var(--nn-border);
-          --df-shadow: var(--nn-shadow);
+          --df-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
         }
 
         .df-page {
-          padding: 2rem 2.5rem;
+          padding: var(--df-space-7);
           background: var(--df-bg);
+          border-radius: 28px;
+          overflow: hidden;
           min-height: calc(100vh - 70px);
-          font-family: 'Inter', system-ui, sans-serif;
+          font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
           color: var(--df-text);
           animation: dfFadeIn 0.4s ease-out;
         }
         .df-shell {
-          background: color-mix(in srgb, var(--nn-primary) 6%, var(--nn-surface));
+          background: var(--df-shell);
           border: 1px solid var(--nn-border);
-          border-radius: 24px;
-          box-shadow: var(--nn-shadow-soft);
-          padding: 1.75rem;
+          border-radius: var(--df-radius-lg);
+          box-shadow: var(--df-shadow);
+          padding: var(--df-space-6);
           min-height: calc(100vh - 140px);
         }
         @media (max-width: 768px) {
+          .df-page { padding: var(--df-space-4); }
           .df-shell {
-            padding: 1rem;
-            border-radius: 16px;
+            padding: var(--df-space-4);
+            border-radius: var(--df-radius-md);
           }
         }
         @keyframes dfFadeIn { from { opacity:0; transform: translateY(8px); } to { opacity:1; transform: translateY(0); } }
@@ -164,18 +183,17 @@ const DoctorFeedbackPage = () => {
         /* Header */
         .df-header {
           display: flex; justify-content: space-between; align-items: flex-start;
-          margin-bottom: 1.75rem;
+          margin-bottom: var(--df-space-6);
         }
         .df-heading {
-          font-size: 1.7rem; font-weight: 900; letter-spacing: -0.02em;
-          margin: 0; background: linear-gradient(135deg, var(--df-text) 0%, var(--df-accent) 100%);
-          -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+          font-size: var(--df-font-title); font-weight: 700; letter-spacing: -0.02em;
+          margin: 0; color: var(--df-text);
         }
-        .df-subheading { margin: 0.3rem 0 0; font-size: 0.72rem; font-weight: 600; color: var(--df-muted); letter-spacing: 0.08em; text-transform: uppercase; }
+        .df-subheading { margin: var(--df-space-1) 0 0; font-size: var(--df-font-label); font-weight: 600; color: var(--df-muted); letter-spacing: 0.04em; text-transform: uppercase; }
 
         .df-icon-btn {
           background: var(--df-panel); border: 1px solid var(--df-border); color: var(--df-muted);
-          width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex;
+          width: 40px; height: 40px; border-radius: var(--df-radius-sm); cursor: pointer; display: flex;
           align-items: center; justify-content: center; transition: all 0.2s;
         }
         .df-icon-btn:hover { color: var(--df-accent); border-color: var(--df-accent); }
@@ -185,47 +203,47 @@ const DoctorFeedbackPage = () => {
           display: flex; align-items: flex-start; gap: 1rem;
           background: color-mix(in srgb, var(--nn-danger) 12%, transparent);
           border: 1px solid color-mix(in srgb, var(--nn-danger) 25%, transparent);
-          border-left: 4px solid var(--nn-danger); border-radius: var(--df-radius);
-          padding: 1rem 1.25rem; margin-bottom: 1.5rem; color: var(--nn-danger);
+          border-left: 4px solid var(--nn-danger); border-radius: var(--df-radius-md);
+          padding: var(--df-space-4) var(--df-space-5); margin-bottom: var(--df-space-6); color: var(--nn-danger);
           animation: dfFadeIn 0.3s ease;
         }
-        .df-alert-title { font-weight: 900; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; }
-        .df-alert-msg { font-size: 0.85rem; margin-top: 0.2rem; opacity: 0.9; }
+        .df-alert-title { font-weight: 700; font-size: var(--df-font-label); text-transform: uppercase; letter-spacing: 0.06em; }
+        .df-alert-msg { font-size: var(--df-font-body); margin-top: var(--df-space-1); opacity: 0.95; }
 
         /* Cards */
         .df-cards-grid {
           display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 1.25rem; margin-bottom: 1.5rem;
+          gap: var(--df-space-4); margin-bottom: var(--df-space-6);
         }
         .df-card {
           background: var(--df-panel); border: 1px solid var(--df-border);
-          border-radius: var(--df-radius); padding: 1.4rem; display: flex;
-          gap: 1rem; align-items: flex-start; box-shadow: var(--df-shadow);
+          border-radius: var(--df-radius-md); padding: var(--df-space-6); display: flex;
+          gap: var(--df-space-4); align-items: flex-start; box-shadow: var(--df-shadow);
           transition: transform 0.2s, box-shadow 0.2s;
         }
-        .df-card:hover { transform: translateY(-3px); box-shadow: var(--nn-shadow-hover); }
-        .df-card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-        .df-card-label { font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.1em; color: var(--df-muted); margin-bottom: 0.35rem; }
-        .df-card-value { font-size: 1.65rem; font-weight: 900; font-family: 'JetBrains Mono', monospace; line-height: 1; }
-        .df-card-sub { font-size: 0.65rem; color: var(--df-muted); margin-top: 0.4rem; font-weight: 600; }
+        .df-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08); }
+        .df-card-icon { width: 44px; height: 44px; border-radius: var(--df-radius-sm); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .df-card-label { font-size: var(--df-font-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--df-muted); margin-bottom: var(--df-space-1); }
+        .df-card-value { font-size: var(--df-font-section); font-weight: 700; line-height: 1.15; }
+        .df-card-sub { font-size: var(--df-font-label); color: var(--df-muted); margin-top: var(--df-space-1); font-weight: 600; }
         .df-card.skeleton { background: linear-gradient(90deg, var(--df-border) 25%, var(--df-panel) 50%, var(--df-border) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; height: 100px; }
         @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 
         /* Charts row */
-        .df-charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+        .df-charts-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--df-space-4); margin-bottom: var(--df-space-4); }
         @media (max-width: 768px) { .df-charts-row { grid-template-columns: 1fr; } }
 
         /* Panel */
         .df-panel {
           background: var(--df-panel); border: 1px solid var(--df-border);
-          border-radius: var(--df-radius); padding: 1.4rem; box-shadow: var(--df-shadow);
-          margin-bottom: 1.25rem;
+          border-radius: var(--df-radius-md); padding: var(--df-space-6); box-shadow: var(--df-shadow);
+          margin-bottom: var(--df-space-4);
         }
         .df-panel.skeleton { animation: shimmer 1.5s infinite; background: linear-gradient(90deg, var(--df-border) 25%, var(--df-panel) 50%, var(--df-border) 75%); background-size: 200% 100%; }
-        .df-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; }
-        .df-panel-title { font-size: 0.95rem; font-weight: 900; color: var(--df-text); margin: 0; letter-spacing: -0.01em; }
-        .df-panel-sub { font-size: 0.65rem; color: var(--df-muted); font-weight: 700; }
-        .df-empty-msg { color: var(--df-muted); font-size: 0.85rem; text-align: center; padding: 2rem 0; }
+        .df-panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--df-space-4); }
+        .df-panel-title { font-size: var(--df-font-card); font-weight: 600; color: var(--df-text); margin: 0; letter-spacing: -0.01em; }
+        .df-panel-sub { font-size: var(--df-font-label); color: var(--df-muted); font-weight: 600; }
+        .df-empty-msg { color: var(--df-muted); font-size: var(--df-font-body); text-align: center; padding: var(--df-space-7) 0; }
 
         /* Distribution */
         .df-dist-bars { display: flex; flex-direction: column; gap: 0.7rem; }
@@ -251,21 +269,17 @@ const DoctorFeedbackPage = () => {
 
         /* AI block */
         .df-ai-block {
-          background: linear-gradient(
-            135deg,
-            color-mix(in srgb, var(--nn-primary) 12%, transparent) 0%,
-            color-mix(in srgb, var(--nn-info) 8%, transparent) 100%
-          );
+          background: color-mix(in srgb, var(--nn-primary) 6%, var(--df-panel));
           border: 1px solid color-mix(in srgb, var(--nn-primary) 25%, transparent);
-          border-radius: var(--df-radius);
-          padding: 1.25rem 1.4rem; margin-bottom: 1.25rem;
+          border-radius: var(--df-radius-md);
+          padding: var(--df-space-5) var(--df-space-6); margin-bottom: var(--df-space-4);
         }
-        .df-ai-header { display: flex; align-items: center; gap: 0.5rem; color: var(--df-accent); font-size: 0.7rem; font-weight: 900; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.75rem; }
-        .df-ai-text { font-size: 0.9rem; line-height: 1.7; color: var(--df-text); margin: 0; opacity: 0.85; }
+        .df-ai-header { display: flex; align-items: center; gap: var(--df-space-2); color: var(--df-accent); font-size: var(--df-font-label); font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: var(--df-space-3); }
+        .df-ai-text { font-size: var(--df-font-body); line-height: 1.65; color: var(--df-text); margin: 0; opacity: 0.9; }
 
         /* Review list */
-        .df-review-list { display: flex; flex-direction: column; gap: 1rem; }
-        .df-review-card { background: var(--df-bg); border: 1px solid var(--df-border); border-radius: 12px; padding: 1.1rem 1.25rem; transition: border-color 0.2s; }
+        .df-review-list { display: flex; flex-direction: column; gap: var(--df-space-4); }
+        .df-review-card { background: var(--df-panel); border: 1px solid var(--df-border); border-radius: var(--df-radius-md); padding: var(--df-space-5); transition: border-color 0.2s; }
         .df-review-card:hover { border-color: var(--df-accent); }
         .df-review-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; margin-bottom: 0.6rem; flex-wrap: wrap; }
         .df-review-meta { display: flex; flex-direction: column; gap: 0.35rem; }

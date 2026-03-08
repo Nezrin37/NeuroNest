@@ -163,7 +163,6 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
               <button 
                 className="ar-triage-btn ar-btn-suggest" 
                 onClick={() => onRescheduleClick(req)}
-                style={{ color: 'var(--nn-followup)', borderColor: 'color-mix(in srgb, var(--nn-followup) 20%, transparent)' }}
                 title="Suggest Alternate Time"
               >
                  <Clock size={18} />
@@ -554,8 +553,8 @@ const AppointmentRequests = () => {
        <div className="ar-page border-0">
          <div className="ar-main-container text-center py-5">
             <RefreshCw className="ar-spin text-primary mb-3" size={56} />
-            <h3 className="text-white fw-bold">Clinical Triage Engine</h3>
-            <p className="text-muted">Synchronizing pending requests...</p>
+            <h3 className="fw-bold" style={{ color: 'var(--nn-text-main)' }}>Clinical Triage Engine</h3>
+            <p style={{ color: 'var(--nn-text-muted)' }}>Synchronizing pending requests...</p>
          </div>
        </div>
      );
@@ -750,8 +749,8 @@ const AppointmentRequests = () => {
            {filteredRequests.length === 0 && (
               <div className="ar-kpi-card text-center py-5">
                  <ShieldAlert size={64} className="text-primary mb-4 opacity-10" />
-                 <h2 className="text-white fw-bold">Queue Clear</h2>
-                 <p className="text-muted">No pending triage requests at this moment.</p>
+                 <h2 className="fw-bold" style={{ color: 'var(--nn-text-main)' }}>Queue Clear</h2>
+                 <p style={{ color: 'var(--nn-text-muted)' }}>No pending triage requests at this moment.</p>
               </div>
            )}
         </div>
