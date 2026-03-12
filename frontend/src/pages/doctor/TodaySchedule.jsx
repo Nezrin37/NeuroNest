@@ -391,11 +391,7 @@ const TodaySchedule = () => {
                                 <span className="ts-stat-dash"></span>
                                 <span className="ts-stat-val text-success">{schedule.filter(a => a.status === 'completed').length}</span>
                             </div>
-                            <div className="ts-stat-tag">
-                                <span className="ts-stat-key">Cancelled</span>
-                                <span className="ts-stat-dash"></span>
-                                <span className="ts-stat-val text-danger">{schedule.filter(a => a.status === 'cancelled').length}</span>
-                            </div>
+
                         </div>
                     </div>
                 </div>
