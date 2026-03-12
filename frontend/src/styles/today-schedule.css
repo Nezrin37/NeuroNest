@@ -44,7 +44,7 @@
 .ts-left-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 
 .ts-section-header {

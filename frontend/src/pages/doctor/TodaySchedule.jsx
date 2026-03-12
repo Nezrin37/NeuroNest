@@ -134,7 +134,7 @@ const TodaySchedule = () => {
                 <div className="ts-left-panel">
 
 
-                    <div className="ts-pinned-main-container mb-4">
+                    <div className="ts-pinned-main-container">
                         <div className="ts-pinned-scroller">
                             {pinnedItems.map(item => (
                                 <div key={item.id} className={`ts-pin-item ${item.completed ? 'completed' : ''}`}>
