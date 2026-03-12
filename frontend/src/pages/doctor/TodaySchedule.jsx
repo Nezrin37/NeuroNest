@@ -163,33 +163,11 @@ const TodaySchedule = () => {
                         </div>
 
                         <div className="ts-add-pin-btn" onClick={() => setIsAddingPin(true)}>
-                            <div className="ts-add-pin-icon">
-                                <Plus size={18} />
-                            </div>
-                            <span>Add new clinical pin</span>
+                            <Plus size={16} /> Add Clinical Note
                         </div>
                     </div>
 
-                    <div className="ts-widget-row">
-                        <div className="ts-widget-square">
-                            <div className="ts-widget-icon bg-primary-subtle text-primary">
-                                <Zap size={24} />
-                            </div>
-                            <div>
-                                <h4 className="fw-bolder fs-3 mb-0">{schedule.filter(a => a.status === 'approved').length}</h4>
-                                <span className="text-muted small fw-bold">Pending Slots</span>
-                            </div>
-                        </div>
-                        <div className="ts-widget-square">
-                            <div className="ts-widget-icon bg-info-subtle text-info">
-                                <UserCheck size={24} />
-                            </div>
-                            <div>
-                                <h4 className="fw-bolder fs-3 mb-0">{schedule.filter(a => a.status === 'completed').length}</h4>
-                                <span className="text-muted small fw-bold">Completed</span>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 {/* --- CENTER: Schedule --- */}
@@ -212,6 +190,36 @@ const TodaySchedule = () => {
                             </select>
                             <div className="ts-nav-btn" onClick={() => handleDateStep(-1)}><ChevronLeft size={20} /></div>
                             <div className="ts-nav-btn" onClick={() => handleDateStep(1)}><ChevronRight size={20} /></div>
+                        </div>
+                    </div>
+
+                    <div className="ts-widget-row mb-4">
+                        <div className="ts-widget-square">
+                            <div className="ts-widget-icon bg-primary-subtle text-primary">
+                                <Zap size={20} />
+                            </div>
+                            <div>
+                                <h4 className="fw-bolder fs-3 mb-0">{schedule.filter(a => a.status === 'approved').length}</h4>
+                                <span className="text-muted small fw-bold">Pending Slots</span>
+                            </div>
+                        </div>
+                        <div className="ts-widget-square">
+                            <div className="ts-widget-icon bg-success-subtle text-success">
+                                <Check size={20} />
+                            </div>
+                            <div>
+                                <h4 className="fw-bolder fs-3 mb-0">{schedule.filter(a => a.status === 'completed').length}</h4>
+                                <span className="text-muted small fw-bold">Completed</span>
+                            </div>
+                        </div>
+                        <div className="ts-widget-square">
+                            <div className="ts-widget-icon bg-danger-subtle text-danger">
+                                <X size={20} />
+                            </div>
+                            <div>
+                                <h4 className="fw-bolder fs-3 mb-0">{schedule.filter(a => a.status === 'cancelled').length}</h4>
+                                <span className="text-muted small fw-bold">Cancelled</span>
+                            </div>
                         </div>
                     </div>
 
@@ -263,16 +271,13 @@ const TodaySchedule = () => {
                                 : schedule.filter(a => (a.consultation_type || 'in_person') === modeFilter);
                             if (filtered.length === 0) return (
                                 <div className="nn-card d-flex flex-column align-items-center justify-content-center p-8 text-center" style={{ minHeight: '300px', borderStyle: 'dashed' }}>
-                                    <div className="mb-4 text-muted" style={{ opacity: 0.5 }}>
-                                        <Calendar size={48} strokeWidth={1} />
+                                    <div className="mb-4 d-flex align-items-center justify-content-center" style={{ width: '64px', height: '64px', borderRadius: '20px', background: 'var(--nn-surface-secondary)', color: 'var(--nn-primary)' }}>
+                                        <Calendar size={32} strokeWidth={2} />
                                     </div>
-                                    <h3 className="text-section-title mb-2">
-                                        {modeFilter === 'online' ? 'No Online Consultations' : modeFilter === 'in_person' ? 'No In-Person Consultations' : 'No consultations today'}
-                                    </h3>
-                                    <p className="text-body mb-6">Your schedule is completely clear for this view.</p>
-                                    <button className="nn-btn nn-btn-secondary" onClick={() => navigate('/doctor/schedule-settings')}>
-                                        <Plus size={16} className="me-2" />
-                                        Add new availability
+                                    <h3 className="text-section-title mb-2">No appointments scheduled</h3>
+                                    <p className="text-body mb-4" style={{ color: 'var(--nn-text-secondary)' }}>You are free today.</p>
+                                    <button className="btn btn-primary rounded-pill fw-bold shadow-sm d-flex align-items-center" style={{ padding: '10px 24px', fontSize: '0.9rem' }} onClick={() => navigate('/doctor/schedule-settings')}>
+                                        Add availability
                                     </button>
                                 </div>
                             );
@@ -348,7 +353,7 @@ const TodaySchedule = () => {
                 {/* --- RIGHT: Widgets --- */}
                 <div className="ts-right-panel">
                     <div className="ts-section-header">
-                        <span className="ts-section-title">Focus & Metrics</span>
+                        <span className="ts-section-title">Today's Overview</span>
                     </div>
 
                     <div className="ts-clinic-time-card shadow-sm">
@@ -373,11 +378,12 @@ const TodaySchedule = () => {
                             {Array.from({length: 31}).map((_, i) => {
                                 const dayNum = i + 1;
                                 const isSelected = dayNum === displayDate.day;
+                                const hasAppointment = schedule.some(a => new Date(a.appointment_time).getDate() === dayNum);
                                 return (
                                     <div 
                                         key={i} 
-                                        className={`text-center py-1 rounded-circle fw-bold transition-all ${isSelected ? 'bg-primary text-white shadow-sm' : isDark ? 'text-light hover-bg-dark' : 'text-dark hover-bg-light'}`} 
-                                        style={{ fontSize: '0.75rem', cursor: 'pointer' }}
+                                        className={`text-center py-1 rounded-circle fw-bold transition-all position-relative ${isSelected ? 'bg-primary text-white shadow-sm' : isDark ? 'text-light hover-bg-dark' : 'text-dark hover-bg-light'}`} 
+                                        style={{ fontSize: '0.75rem', cursor: 'pointer', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                         onClick={() => {
                                             const newDate = new Date(selectedDate);
                                             newDate.setDate(dayNum);
@@ -385,6 +391,12 @@ const TodaySchedule = () => {
                                         }}
                                     >
                                         {dayNum}
+                                        {hasAppointment && !isSelected && (
+                                            <div style={{ position: 'absolute', bottom: '2px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '50%', background: 'var(--nn-primary)' }} />
+                                        )}
+                                        {hasAppointment && isSelected && (
+                                            <div style={{ position: 'absolute', bottom: '2px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '50%', background: 'white' }} />
+                                        )}
                                     </div>
                                 );
                             })}
@@ -392,22 +404,21 @@ const TodaySchedule = () => {
                     </div>
 
                     <div className="ts-summary-card">
-                         <h3 className="h6 fw-bolder text-dark mb-1">Today's Summary</h3>
                          <div className="ts-summary-item">
+                             <h2 className="ts-summary-value">{schedule.length}</h2>
                              <span className="ts-summary-label">Total Appointments</span>
-                             <span className="ts-summary-value">{schedule.length}</span>
                          </div>
                          <div className="ts-summary-item">
+                             <h2 className="ts-summary-value text-success">{schedule.filter(a => a.status === 'completed').length}</h2>
                              <span className="ts-summary-label">Completed</span>
-                             <span className="ts-summary-value text-success">{schedule.filter(a => a.status === 'completed').length}</span>
                          </div>
                          <div className="ts-summary-item">
+                             <h2 className="ts-summary-value text-primary">{schedule.filter(a => a.status === 'approved').length}</h2>
                              <span className="ts-summary-label">Pending</span>
-                             <span className="ts-summary-value text-primary">{schedule.filter(a => a.status === 'approved').length}</span>
                          </div>
-                         <div className="ts-summary-item pt-2 border-top">
-                             <span className="ts-summary-label">Overtime Risk</span>
-                             <span className={`ts-summary-value ${schedule.filter(a => a.status === 'approved').length > 5 ? 'risk-high' : 'text-success'}`}>
+                         <div className="ts-summary-item pt-3 border-top d-flex flex-row align-items-center justify-content-between w-100">
+                             <span className="ts-summary-label" style={{ marginBottom: 0 }}>Overtime Risk</span>
+                             <span className={`ts-summary-value ts-summary-value-sm ${schedule.filter(a => a.status === 'approved').length > 5 ? 'risk-high' : 'text-success'}`}>
                                  {schedule.filter(a => a.status === 'approved').length > 5 ? 'High Risk' : 'Low Risk'}
                              </span>
                          </div>

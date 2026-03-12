@@ -4,7 +4,7 @@ import PatientFeedbackPage from './PatientFeedbackPage';
 
 const feedbackReviewsModule = {
   key: 'feedbackReviews',
-  label: 'Feedback / Reviews',
+  label: 'Reviews',
   icon: MessageSquareHeart,
   route: '/feedback-reviews',
   rolesAllowed: ['doctor', 'patient'],
@@ -13,7 +13,7 @@ const feedbackReviewsModule = {
     doctor: DoctorFeedbackPage,
     patient: PatientFeedbackPage,
   },
-  orderByRole: { doctor: 95, patient: 82 },
+  orderByRole: { doctor: 40, patient: 82 },
 };
 
 export default feedbackReviewsModule;

@@ -20,7 +20,7 @@
   max-width: 1560px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 320px 1fr 340px;
+  grid-template-columns: 22% 1fr 28%;
   gap: 32px;
   background-color: transparent;
 }
@@ -172,34 +172,30 @@
 }
 
 .ts-add-pin-btn {
-  padding: 16px;
-  background: var(--nn-surface-secondary);
-  border-top: 1px solid var(--nn-border);
+  padding: 14px 16px;
+  margin: 16px;
+  background: var(--nn-primary);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  color: var(--nn-text-secondary);
+  color: #fff;
   font-weight: 700;
   font-size: 0.85rem;
+  border: none;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
 }
 
 .ts-add-pin-btn:hover {
-  background: color-mix(in srgb, var(--nn-primary) 12%, var(--nn-surface));
-  color: var(--nn-primary);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
 }
 
 .ts-add-pin-icon {
-  width: 28px;
-  height: 28px;
-  background: var(--nn-primary);
-  color: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: none; /* Hide old icon box to make it sleek */
 }
 
 /* --- CENTER PANEL (SCHEDULE) --- */
@@ -368,13 +364,17 @@
   flex: 1;
   background: var(--nn-surface);
   border-radius: 16px;
-  aspect-ratio: 1/1;
   padding: 24px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   border: 1px solid var(--nn-border);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.ts-widget-square .fs-3 {
+  font-size: 1.5rem !important;
+  margin-bottom: 2px !important;
 }
 
 .ts-widget-icon {
@@ -414,9 +414,9 @@
 .ts-summary-card {
   background: var(--nn-surface);
   border-radius: 16px;
-  padding: 28px;
+  padding: 24px;
   border: 1px solid var(--nn-border);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.02);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
   display: flex;
   flex-direction: column;
   gap: 20px;
@@ -426,28 +426,32 @@
 
 .ts-summary-item {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
 }
 
 .ts-summary-label {
-  font-size: 0.85rem;
+  font-size: 0.75rem;
   font-weight: 700;
   color: var(--nn-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .ts-summary-value {
-  font-size: 1rem;
-  font-weight: 800;
+  font-size: 1.5rem;
+  font-weight: 900;
   color: var(--nn-text-main);
 }
 
+.ts-summary-value-sm {
+  font-size: 1.25rem;
+}
+
 .ts-summary-value.risk-high {
-  background: var(--nn-danger-bg);
   color: var(--nn-danger);
-  padding: 4px 12px;
-  border-radius: 10px;
-  font-size: 0.75rem;
+  font-size: 1rem;
 }
 
 .ts-page.dark .ts-summary-value.risk-high {
