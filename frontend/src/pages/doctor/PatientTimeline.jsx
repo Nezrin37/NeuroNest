@@ -298,9 +298,14 @@ const PatientTimelinePage = () => {
                                             </div>
                                         </div>
                                         <div className="col-6">
-                                            <div className="p-3 bg-danger bg-opacity-05 rounded-4 border border-danger border-opacity-10 h-100 shadow-sm-sm">
-                                                <div className="mini-label-xs mb-1 text-danger opacity-75">BLOOD TYPE</div>
-                                                <div className="text-danger fw-black" style={{ fontSize: '0.9rem' }}>{identity?.blood_group} NEG</div>
+                                            <div className="p-3 bg-white rounded-4 border border-danger border-opacity-10 h-100 shadow-sm-sm d-flex align-items-center gap-3">
+                                                <div className="bg-danger rounded-circle d-flex align-items-center justify-content-center text-white fw-black shadow-glow" style={{ width: '42px', height: '42px', minWidth: '42px', fontSize: '0.9rem', '--glow-color': '#dc3545' }}>
+                                                    {identity?.blood_group}
+                                                </div>
+                                                <div>
+                                                    <div className="mini-label-xs mb-0 opacity-50">BLOOD TYPE</div>
+                                                    <div className="text-danger fw-black small text-uppercase" style={{ fontSize: '0.7rem' }}>Negative</div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
