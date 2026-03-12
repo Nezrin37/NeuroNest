@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { 
-    getPatientDossier, getPatients, getPatientRecords, getClinicalRemarks
+    getPatientDossier, getPatients, getPatientRecords, getClinicalRemarks, getAppointmentHistory
 } from "../../api/doctor";
 import { 
     Calendar, User, Mail, Phone, Clock, Bookmark, 
@@ -25,66 +25,99 @@ const PatientTimelinePage = () => {
         try {
             setLoading(true);
             
-            // Parallel fetch for speed
-            const [dossierData, recordsData, remarksData] = await Promise.all([
+            // Parallel fetch for speed across all potential history sources
+            const [dossierData, recordsRes, remarksRes, historyRes] = await Promise.all([
                 getPatientDossier(patientId).catch(() => null),
                 getPatientRecords(patientId).catch(() => []),
-                getClinicalRemarks(patientId).catch(() => [])
+                getClinicalRemarks(patientId).catch(() => []),
+                getAppointmentHistory().catch(() => [])
             ]);
 
-            if (dossierData) {
-                // Merge records and remarks into timeline if they are not already there
-                const existingTimelineIds = new Set((dossierData.timeline || []).map(t => t.id));
-                const mergedTimeline = [...(dossierData.timeline || [])];
+            // De-nest responses if they are objects
+            const recordsData = Array.isArray(recordsRes) ? recordsRes : (recordsRes?.records || []);
+            const remarksData = Array.isArray(remarksRes) ? remarksRes : (remarksRes?.remarks || []);
+            const allHistory = Array.isArray(historyRes) ? historyRes : (historyRes?.appointments || []);
 
-                // Add records that aren't in the timeline
-                (recordsData || []).forEach(record => {
-                    if (!existingTimelineIds.has(record.id)) {
-                        mergedTimeline.push({
-                            id: record.id,
-                            appointment_date: record.appointment_date || record.created_at,
-                            reason: record.reason || record.diagnosis || "Medical Record",
-                            status: record.status || "Completed",
-                            notes: record.notes || record.clinical_notes || record.treatment_plan,
-                            isLegacyRecord: true
-                        });
-                        existingTimelineIds.add(record.id);
+            // Filter history for this specific patient
+            const patientHistory = allHistory.filter(apt => String(apt.patient_id) === String(patientId));
+
+            const existingTimelineIds = new Set();
+            const mergedTimeline = [];
+
+            // 1. Start with Dossier Timeline
+            if (dossierData?.timeline) {
+                (dossierData.timeline || []).forEach(t => {
+                    if (t.id) {
+                        mergedTimeline.push(t);
+                        existingTimelineIds.add(String(t.id));
                     }
                 });
+            }
 
-                // Sort timeline by date descending
-                mergedTimeline.sort((a, b) => new Date(b.appointment_date) - new Date(a.appointment_date));
+            // 2. Add Patient Records (Legacy/Direct)
+            recordsData.forEach(record => {
+                const rid = String(record.id);
+                if (!existingTimelineIds.has(rid)) {
+                    mergedTimeline.push({
+                        id: record.id,
+                        appointment_date: record.appointment_date || record.created_at || record.date,
+                        reason: record.reason || record.diagnosis || "Clinical Record",
+                        status: record.status || "Completed",
+                        notes: record.notes || record.clinical_notes || record.treatment_plan || record.summary,
+                        isLegacyRecord: true
+                    });
+                    existingTimelineIds.add(rid);
+                }
+            });
 
+            // 3. Add Filtered Appointment History
+            patientHistory.forEach(apt => {
+                const aid = String(apt.id);
+                if (!existingTimelineIds.has(aid)) {
+                    mergedTimeline.push({
+                        id: apt.id,
+                        appointment_date: apt.appointment_date || apt.date,
+                        reason: apt.reason || "Appointment History",
+                        status: apt.status || "Matched",
+                        notes: apt.notes || apt.clinical_notes || "Previous visit record."
+                    });
+                    existingTimelineIds.add(aid);
+                }
+            });
+
+            // 4. Add Clinical Remarks
+            remarksData.forEach(rem => {
+                const remId = `rem-${rem.id}`;
+                if (!existingTimelineIds.has(remId)) {
+                    mergedTimeline.push({
+                        id: remId,
+                        appointment_date: rem.created_at || rem.date,
+                        reason: "Clinical Remark",
+                        status: "Pinned",
+                        notes: rem.content || rem.remark
+                    });
+                    existingTimelineIds.add(remId);
+                }
+            });
+
+            // Re-sort items by date (Newest First)
+            mergedTimeline.sort((a, b) => {
+                const dateA = new Date(a.appointment_date || a.date);
+                const dateB = new Date(b.appointment_date || b.date);
+                return dateB - dateA;
+            });
+
+            if (dossierData) {
                 setDossier({
                     ...dossierData,
                     timeline: mergedTimeline
                 });
             } else {
-                // Fallback to roster if dossier fails
-                const roster = await getPatients();
+                // Roster Fallback with constructed timeline
+                const roster = await getPatients().catch(() => []);
                 const match = (roster || []).find(p => String(p.id) === String(patientId));
+                
                 if (match) {
-                    // Try to construct a timeline from records and remarks even without dossier
-                    const combinedTimeline = (recordsData || []).map(r => ({
-                        id: r.id,
-                        appointment_date: r.appointment_date || r.created_at,
-                        reason: r.reason || r.diagnosis || "Medical Record",
-                        status: r.status || "Completed",
-                        notes: r.notes || r.clinical_notes || r.treatment_plan
-                    }));
-
-                    (remarksData || []).forEach(rem => {
-                        combinedTimeline.push({
-                            id: `rem-${rem.id}`,
-                            appointment_date: rem.created_at,
-                            reason: "Clinical Remark",
-                            status: "Recorded",
-                            notes: rem.content
-                        });
-                    });
-
-                    combinedTimeline.sort((a, b) => new Date(b.appointment_date) - new Date(a.appointment_date));
-
                     setDossier({
                         identity: {
                             id: match.id,
@@ -95,16 +128,24 @@ const PatientTimelinePage = () => {
                             gender: match.gender || "Not Specified",
                             dob: match.dob || "N/A"
                         },
-                        timeline: combinedTimeline
+                        timeline: mergedTimeline
                     });
                 } else {
-                    setError("Dossier localized error. Path integrity failure.");
+                    // Even if not in roster, if we have timeline data, show it
+                    if (mergedTimeline.length > 0) {
+                        setDossier({
+                            identity: { id: patientId, full_name: "Patient Archive" },
+                            timeline: mergedTimeline
+                        });
+                    } else {
+                        setError("Patient localized error. Path integrity failure.");
+                    }
                 }
             }
             setError(null);
         } catch (err) {
-            console.error("Error fetching patient records for timeline:", err);
-            setError("Critical failure in medical record retrieval.");
+            console.error("Critical failure in medical record retrieval:", err);
+            setError("Network localized failure. Historical stream interrupted.");
         } finally {
             setLoading(false);
         }
