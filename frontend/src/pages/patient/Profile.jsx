@@ -215,7 +215,7 @@ const Profile = () => {
   const bmi = calculateBMI(profile.weight_kg, profile.height_cm);
 
   return (
-    <>
+    <div className="patient-profile-page-wrapper">
       <div className="background-decoration">
         <div className="blob blob-1"></div>
         <div className="blob blob-2"></div>
@@ -567,7 +567,7 @@ const Profile = () => {
             </div>
         )}
       </div>
-    </>
+    </div>
   );
 };
 
