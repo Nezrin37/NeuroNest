@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { User, Calendar, Bell, Shield, Wallet, Loader2 } from "lucide-react";
 import { getAllDoctorSettings } from "../../../api/doctor";
 import AccountSettings from "./components/AccountSettings";
@@ -17,7 +18,8 @@ const TABS = [
 ];
 
 const DoctorSettingsPage = () => {
-    const [activeTab, setActiveTab] = useState("account");
+    const location = useLocation();
+    const [activeTab, setActiveTab] = useState(location.state?.initialTab || "account");
     const [settings, setSettings] = useState(null);
     const [loading, setLoading] = useState(true);
 

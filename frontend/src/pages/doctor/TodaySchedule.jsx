@@ -247,7 +247,7 @@ const TodaySchedule = () => {
                                     </div>
                                     <h3 className="text-section-title mb-2">No appointments scheduled</h3>
                                     <p className="text-body mb-4" style={{ color: 'var(--nn-text-secondary)' }}>You are free today.</p>
-                                    <button className="btn btn-primary rounded-pill fw-bold shadow-sm d-flex align-items-center" style={{ padding: '14px 32px', fontSize: '0.85rem' }} onClick={() => navigate('/doctor/schedule-settings')}>
+                                    <button className="btn btn-primary rounded-pill fw-bold shadow-sm d-flex align-items-center" style={{ padding: '14px 32px', fontSize: '0.85rem' }} onClick={() => navigate('/doctor/settings', { state: { initialTab: 'schedule' } })}>
                                         Add availability
                                     </button>
                                 </div>
