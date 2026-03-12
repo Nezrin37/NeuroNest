@@ -28,16 +28,13 @@
   flex: 1;
   min-height: 0;
   overflow-y: auto;
-  padding-right: 8px; /* For scrollbar space */
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
 }
 
-/* Custom scrollbar for main dashboard area */
+/* Hide scrollbar for Chrome, Safari and Opera */
 .ts-main-container::-webkit-scrollbar {
-  width: 6px;
-}
-.ts-main-container::-webkit-scrollbar-thumb {
-  background: var(--nn-border);
-  border-radius: 10px;
+  display: none;
 }
 
 /* --- LEFT SIDEBAR (WEEKLY PINNED) --- */
@@ -89,12 +86,12 @@
 }
 
 .ts-pinned-scroller::-webkit-scrollbar {
-  width: 4px;
+  display: none;
 }
 
-.ts-pinned-scroller::-webkit-scrollbar-thumb {
-  background: var(--nn-border);
-  border-radius: 10px;
+.ts-pinned-scroller {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .ts-pin-item {
