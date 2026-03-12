@@ -100,13 +100,13 @@ const PatientHub = () => {
     ];
 
     return (
-        <div className={`patient-hub-root min-vh-100 p-2 p-md-3 ${isDark ? 'dark' : ''}`} style={{ backgroundColor: 'var(--nn-surface-secondary)' }}>
-            <div className="hub-page-container shadow-sm mx-auto bg-white" style={{ 
+        <div className={`patient-hub-root min-vh-100 p-3 p-md-4 pb-5 ${isDark ? 'dark' : ''}`} style={{ backgroundColor: 'var(--nn-surface-secondary)' }}>
+            <div className="hub-page-container shadow-sm mx-auto bg-white mb-4" style={{ 
                 borderRadius: '32px', 
                 border: '1px solid var(--nn-border)',
                 padding: '32px',
                 maxWidth: '1400px',
-                minHeight: 'calc(100vh - 80px)'
+                minHeight: 'calc(100vh - 120px)'
             }}>
                 <div className="container-fluid p-0">
                 
