@@ -650,35 +650,39 @@
 .ts-stat-tag {
   display: flex;
   align-items: center;
-  gap: 8px;
-  background: var(--nn-surface);
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: white;
   border: 1px solid var(--nn-border);
-  padding: 8px 16px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--nn-text-main);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  border-radius: 16px;
   transition: all 0.2s ease;
+  cursor: default;
 }
 
 .ts-stat-tag:hover {
   border-color: var(--nn-primary-light);
-  transform: translateX(4px);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
 
 .ts-stat-key {
-  color: var(--nn-text-secondary);
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--nn-text-main);
 }
 
 .ts-stat-dash {
-  color: var(--nn-border);
-  opacity: 0.6;
+  flex: 1;
+  height: 1px;
+  background: var(--nn-border);
+  margin: 0 16px;
+  opacity: 0.4;
 }
 
 .ts-stat-val {
-  font-family: 'Inter', sans-serif;
+  font-size: 1.1rem;
   font-weight: 800;
+  font-family: 'Inter', sans-serif;
 }
+
 

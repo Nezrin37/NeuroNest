@@ -137,7 +137,7 @@ const TodaySchedule = () => {
                         <span className="ts-view-all">View all</span>
                     </div>
 
-                    <div className="ts-pinned-main-container">
+                    <div className="ts-pinned-main-container mb-4">
                         <div className="ts-pinned-scroller">
                             {pinnedItems.map(item => (
                                 <div key={item.id} className={`ts-pin-item ${item.completed ? 'completed' : ''}`}>
@@ -165,24 +165,23 @@ const TodaySchedule = () => {
                         <div className="ts-add-pin-btn" onClick={() => setIsAddingPin(true)}>
                             <Plus size={16} /> Add Clinical Note
                         </div>
+                    </div>
 
-                        {/* --- COMPACT STATS LIST --- */}
-                        <div className="ts-compact-stats d-flex flex-column gap-2 mt-4">
-                            <div className="ts-stat-tag">
-                                <span className="ts-stat-key">Pending Slots</span>
-                                <span className="ts-stat-dash">—</span>
-                                <span className="ts-stat-val text-primary">{schedule.filter(a => a.status === 'approved').length}</span>
-                            </div>
-                            <div className="ts-stat-tag">
-                                <span className="ts-stat-key">Completed</span>
-                                <span className="ts-stat-dash">—</span>
-                                <span className="ts-stat-val text-success">{schedule.filter(a => a.status === 'completed').length}</span>
-                            </div>
-                            <div className="ts-stat-tag">
-                                <span className="ts-stat-key">Cancelled</span>
-                                <span className="ts-stat-dash">—</span>
-                                <span className="ts-stat-val text-danger">{schedule.filter(a => a.status === 'cancelled').length}</span>
-                            </div>
+                    <div className="ts-compact-stats d-flex flex-column gap-3">
+                        <div className="ts-stat-tag shadow-sm">
+                            <span className="ts-stat-key">Pending Slots</span>
+                            <span className="ts-stat-dash"></span>
+                            <span className="ts-stat-val text-primary">{schedule.filter(a => a.status === 'approved').length}</span>
+                        </div>
+                        <div className="ts-stat-tag shadow-sm">
+                            <span className="ts-stat-key">Completed</span>
+                            <span className="ts-stat-dash"></span>
+                            <span className="ts-stat-val text-success">{schedule.filter(a => a.status === 'completed').length}</span>
+                        </div>
+                        <div className="ts-stat-tag shadow-sm">
+                            <span className="ts-stat-key">Cancelled</span>
+                            <span className="ts-stat-dash"></span>
+                            <span className="ts-stat-val text-danger">{schedule.filter(a => a.status === 'cancelled').length}</span>
                         </div>
                     </div>
 
