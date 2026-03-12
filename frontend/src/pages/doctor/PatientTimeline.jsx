@@ -378,31 +378,31 @@ const PatientTimelinePage = () => {
                         </div>
 
                         {/* Search & Smart Filter Bar (Sticky inside scroll) */}
-                        <div className="sticky-top bg-light-soft pt-2 mb-5" style={{ top: '0px', zIndex: 1000, margin: '0 -1.5rem', padding: '1rem 1.5rem' }}>
-                            <div className="bg-white p-3 rounded-5 border-2 shadow-sm-sm d-flex flex-wrap align-items-center gap-3 border-white">
+                        <div className="sticky-top pt-2 mb-5" style={{ top: '0px', zIndex: 1000, margin: '0 -1.5rem', padding: '1rem 1.5rem', backdropFilter: 'blur(8px)', backgroundColor: 'rgba(248, 250, 252, 0.8)' }}>
+                            <div className="bg-white p-3 rounded-5 border shadow-lg-soft d-flex flex-wrap align-items-center gap-3">
                                 <div className="flex-grow-1 position-relative" style={{ minWidth: '300px' }}>
                                     <div className="position-absolute start-0 top-50 translate-middle-y ms-3 text-primary"><Zap size={18} /></div>
                                     <input 
                                         type="text" 
                                         className="form-control form-control-lg rounded-pill ps-5 bg-light border-0 fw-bold fs-6 shadow-none" 
-                                        placeholder="Search clinical archives..."
+                                        placeholder="Search clinical archives (Diagnosis, Doctor, ID)..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                 </div>
                                 <div className="d-flex gap-2 align-items-center flex-wrap">
-                                    <div className="d-flex bg-light p-1 rounded-pill">
+                                    <div className="d-flex bg-light p-1 rounded-pill border">
                                         {["All", "Visits", "Medications", "Labs"].map(label => (
                                             <button 
                                                 key={label}
                                                 onClick={() => setActiveFilter(label)}
-                                                className={`btn rounded-pill px-4 py-2 fw-black small text-nowrap transition-all border-0 ${activeFilter === label ? 'bg-primary text-white shadow-sm' : 'text-muted hover-lift'}`}
+                                                className={`btn rounded-pill px-4 py-2 fw-black small text-nowrap transition-all border-0 ${activeFilter === label ? 'bg-primary text-white shadow-primary-sm' : 'text-muted hover-lift'}`}
                                             >
                                                 {label}
                                             </button>
                                         ))}
                                     </div>
-                                    <select className="form-select rounded-pill px-4 border-0 bg-light fw-bold text-dark-soft" style={{ height: '44px', width: 'auto' }} onChange={(e) => setDateFilter(e.target.value)}>
+                                    <select className="form-select rounded-pill px-4 border-0 bg-light fw-bold text-dark-soft shadow-none" style={{ height: '44px', width: 'auto' }} onChange={(e) => setDateFilter(e.target.value)}>
                                         <option>All Time</option>
                                         <option>Last 30 Days</option>
                                         <option>Last Year</option>
@@ -413,7 +413,7 @@ const PatientTimelinePage = () => {
 
                         {/* Timeline List */}
                         <div className="timeline-trail position-relative">
-                            <div className="position-absolute start-0 top-0 bottom-0 border-start border-3 opacity-05 d-none d-md-block" style={{ left: '1px' }}></div>
+                            <div className="position-absolute start-0 top-0 bottom-0 border-start border-3 opacity-05 d-none d-md-block" style={{ left: '1px', background: 'linear-gradient(to bottom, transparent, rgba(13,110,253,0.1), transparent)' }}></div>
                             
                             {filteredTimeline.length > 0 ? (
                                 filteredTimeline.map((event, index) => {
@@ -432,43 +432,43 @@ const PatientTimelinePage = () => {
                                                         {eventDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
                                                         <ChevronDown size={14} className={`transition-all ${isCollapsed ? 'rotate-n90' : ''}`} />
                                                     </div>
-                                                    <div className="flex-grow-1 border-top opacity-05"></div>
+                                                    <div className="flex-grow-1 border-top opacity-10"></div>
                                                 </div>
                                             )}
 
                                             {!isCollapsed && (
                                                 <div className="record-card-container position-relative animate-fade-in mb-3">
-                                                    <div className="flex-grow-1 bg-white rounded-5 shadow-sm overflow-hidden border-2 border-transparent transition-all hover-glow" onClick={() => setActiveCard(event.id)}>
-                                                        <div className="position-absolute start-0 top-0 bottom-0" style={{ width: '6px', backgroundColor: event.color }}></div>
+                                                    <div className="flex-grow-1 bg-white rounded-5 shadow-sm-premium overflow-hidden border-2 border-transparent transition-all hover-glow" onClick={() => setActiveCard(event.id)}>
+                                                        <div className="position-absolute start-0 top-0 bottom-0" style={{ width: '6px', background: `linear-gradient(to bottom, ${event.color}, ${event.color}aa)` }}></div>
                                                         <div className="p-4 ps-5">
                                                             <div className="d-flex justify-content-between align-items-start mb-4">
                                                                 <div className="d-flex align-items-center gap-3">
-                                                                    <div className="rounded-circle d-flex align-items-center justify-content-center text-white shadow-sm" style={{ backgroundColor: event.color, width: '40px', height: '40px' }}>
+                                                                    <div className="rounded-circle d-flex align-items-center justify-content-center text-white shadow-glow" style={{ backgroundColor: event.color, width: '42px', height: '42px', '--glow-color': event.color }}>
                                                                         {event.icon}
                                                                     </div>
                                                                     <div>
                                                                         <div className="d-flex align-items-center gap-2 mb-1">
-                                                                            <span className="small fw-black text-uppercase ls-wide op-40" style={{ fontSize: '0.6rem' }}>{event.type}</span>
-                                                                            <span className="badge rounded-pill bg-light text-muted fw-bold" style={{ fontSize: '0.6rem' }}>AUDIT: NN-{String(event.id).substring(0,6)}</span>
+                                                                            <span className="small fw-black text-uppercase ls-wide op-50" style={{ fontSize: '0.62rem' }}>{event.type}</span>
+                                                                            <span className="badge rounded-pill bg-light text-muted fw-bold border" style={{ fontSize: '0.6rem' }}>AUDIT: NN-{String(event.id).substring(0,6).toUpperCase()}</span>
                                                                         </div>
-                                                                        <h5 className="fw-black mb-0 text-dark">{event.reason}</h5>
+                                                                        <h5 className="fw-black mb-0 text-dark ls-tight">{event.reason}</h5>
                                                                     </div>
                                                                 </div>
-                                                                <span className="badge rounded-pill fw-black px-3 py-1.5" style={{ backgroundColor: event.statusColor, color: event.statusTextColor, fontSize: '0.65rem' }}>{event.status}</span>
+                                                                <span className="badge rounded-pill fw-black px-3 py-2 shadow-sm" style={{ backgroundColor: event.statusColor, color: event.statusTextColor, fontSize: '0.68rem', border: `1px solid ${event.color}15` }}>{event.status}</span>
                                                             </div>
 
                                                             <div className="row g-3 mb-4">
                                                                 {[
                                                                     { label: "Diagnosis", val: event.diagnosis || event.reason, icon: <Activity size={12} /> },
-                                                                    { label: "Symptoms", val: event.symptoms || "N/A", icon: <AlertCircle size={12} /> },
+                                                                    { label: "Symptoms", val: event.symptoms || "Regular Checkup", icon: <AlertCircle size={12} /> },
                                                                     { label: "Physician", val: "Dr. Naina", icon: <User size={12} /> }
                                                                 ].map(box => (
                                                                     <div key={box.label} className="col-12 col-md-4">
-                                                                        <div className="p-3 bg-light rounded-4 h-100 border border-white">
-                                                                            <div className="mini-label-xs mb-1 d-flex align-items-center gap-1 opacity-50">
+                                                                        <div className="p-3-5 bg-light-soft rounded-4 h-100 border border-white">
+                                                                            <div className="mini-label-xs mb-1-5 d-flex align-items-center gap-1.5 opacity-60">
                                                                                 {box.icon} {box.label}
                                                                             </div>
-                                                                            <div className="fw-black text-dark-soft small text-truncate">{box.val}</div>
+                                                                            <div className="fw-bold text-dark-soft small text-truncate" style={{ fontSize: '0.82rem' }}>{box.val}</div>
                                                                         </div>
                                                                     </div>
                                                                 ))}
@@ -478,7 +478,7 @@ const PatientTimelinePage = () => {
                                                                 <div className="small fw-bold text-muted op-50 d-flex align-items-center gap-2">
                                                                     <Clock size={12} /> {eventDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                                 </div>
-                                                                <button onClick={() => toggleExpand(event.id)} className="btn btn-link text-decoration-none fw-black small p-0 text-primary">
+                                                                <button onClick={(e) => { e.stopPropagation(); toggleExpand(event.id); }} className="btn btn-outline-primary border-0 rounded-pill fw-black small px-3 py-1 btn-sm hover-lift">
                                                                     {isExpanded ? "Hide Summary ▲" : "Dossier Detail ▼"}
                                                                 </button>
                                                             </div>
@@ -488,21 +488,21 @@ const PatientTimelinePage = () => {
                                                                     <div className="row g-4">
                                                                         <div className="col-12 col-lg-8">
                                                                             <div className="mb-4">
-                                                                                <div className="mini-label-xs mb-2">CLINICAL OBSERVATIONS</div>
-                                                                                <div className="p-4 bg-light rounded-5 small fw-bold lh-lg text-secondary border-start border-primary border-4 shadow-sm-sm">
+                                                                                <div className="mini-label-xs mb-3">CLINICAL OBSERVATIONS</div>
+                                                                                <div className="p-4 bg-white rounded-5 small fw-bold lh-lg text-secondary border border-primary border-opacity-10 shadow-sm-sm" style={{ borderLeftWidth: '5px !important' }}>
                                                                                     {event.notes}
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="p-3 bg-light rounded-4 mb-2 d-flex align-items-center justify-content-between">
+                                                                            <div className="p-3 bg-light rounded-4 d-flex align-items-center justify-content-between border border-white shadow-sm-sm">
                                                                                 <div className="mini-label-xs mb-0">LAST MODIFIED</div>
-                                                                                <div className="fw-black small text-muted">Dr. Naina • {dateStr}</div>
+                                                                                <div className="fw-black small text-muted">Dr. Naina • System Audit {dateStr}</div>
                                                                             </div>
                                                                         </div>
                                                                         <div className="col-12 col-lg-4">
-                                                                            <div className="mini-label-xs mb-2">ATTACHMENTS</div>
+                                                                            <div className="mini-label-xs mb-3">ATTACHMENTS</div>
                                                                             <div className="d-flex flex-column gap-2">
                                                                                 {["Digital_MRI.dcm", "Lab_Report.pdf", "Prescription.pdf"].map(file => (
-                                                                                    <div key={file} className="bg-white border rounded-4 p-3 d-flex align-items-center gap-3 shadow-sm-sm hover-lift cursor-pointer">
+                                                                                    <div key={file} className="bg-white border rounded-4 p-3 d-flex align-items-center gap-3 shadow-sm-sm hover-lift cursor-pointer transition-all border-hover-primary">
                                                                                         <Download size={16} className="text-primary opacity-50" />
                                                                                         <span className="small fw-bold text-dark flex-grow-1 text-truncate">{file}</span>
                                                                                     </div>
@@ -522,8 +522,8 @@ const PatientTimelinePage = () => {
                             ) : (
                                 <div className="text-center py-5 bg-white rounded-5 border shadow-sm p-5">
                                     <Activity size={48} className="text-primary opacity-10 mb-3" />
-                                    <h5 className="fw-black text-dark mb-2">No Records in Filtered Stream</h5>
-                                    <p className="text-muted small fw-bold">Try adjusting filters to view past history.</p>
+                                    <h5 className="fw-black text-dark mb-2 ls-tight">No Records Found in Archive</h5>
+                                    <p className="text-muted small fw-bold mb-0">Please adjust your search or date filters.</p>
                                 </div>
                             )}
                         </div>
@@ -536,8 +536,8 @@ const PatientTimelinePage = () => {
 
             {/* Jump to Top Floating Action */}
             <button 
-                className="btn btn-primary rounded-circle shadow-lg position-fixed d-flex align-items-center justify-content-center floating-add-btn" 
-                style={{ bottom: '40px', right: '40px', width: '64px', height: '64px', zIndex: 1200 }}
+                className="btn btn-primary rounded-circle shadow-glow-primary position-fixed d-flex align-items-center justify-content-center floating-add-btn" 
+                style={{ bottom: '40px', right: '40px', width: '64px', height: '64px', zIndex: 1200, '--glow-color': '#0d6efd' }}
                 onClick={() => document.getElementById('timeline-scroll-root').scrollTo({ top: 0, behavior: 'smooth' })}
             >
                 <ChevronRight size={32} strokeWidth={3} className="rotate-n90" />
@@ -545,31 +545,40 @@ const PatientTimelinePage = () => {
 
             <style>{`
                 .pharma-theme { --primary-h: 221; --primary-s: 83%; --primary-l: 53%; }
-                .fw-black { font-weight: 850; }
+                .fw-black { font-weight: 800; }
                 .ls-wide { letter-spacing: 0.8px; }
-                .ls-tight { letter-spacing: -0.2px; }
+                .ls-tight { letter-spacing: -0.4px; }
                 .ls-1 { letter-spacing: 1px; }
                 .op-40 { opacity: 0.4; }
                 .op-50 { opacity: 0.5; }
+                .op-60 { opacity: 0.6; }
                 .op-80 { opacity: 0.8; }
                 .opacity-02 { opacity: 0.02; }
                 .opacity-05 { opacity: 0.05; }
                 .fs-mini { font-size: 0.65rem; }
-                .p-4-5 { padding: 1.5rem; }
+                .p-4-5 { padding: 1.75rem; }
+                .p-3-5 { padding: 1.15rem; }
                 .p-2-5 { padding: 0.65rem; }
-                .shadow-sm-sm { box-shadow: 0 2px 10px rgba(0,0,0,0.03); }
-                .shadow-primary { box-shadow: 0 10px 25px -5px rgba(13, 110, 253, 0.25); }
-                .bg-light-soft { background: #f8fafc; }
-                .text-dark-soft { color: #334155; }
-                .mini-label-xs { font-size: 0.5rem; font-weight: 950; color: #94a3b8; letter-spacing: 1.2px; text-transform: uppercase; }
-                .border-dashed { border-top-style: dashed !important; border-top-width: 2px !important; border-top-color: #eee !important; }
+                .mb-1-5 { margin-bottom: 0.65rem; }
+                .gap-1-5 { gap: 0.65rem; }
+                .shadow-sm-sm { box-shadow: 0 2px 12px rgba(0,0,0,0.02); }
+                .shadow-lg-soft { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02); }
+                .shadow-sm-premium { box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.02); }
+                .shadow-primary-sm { box-shadow: 0 4px 6px -1px rgba(13, 110, 253, 0.1), 0 2px 4px -1px rgba(13, 110, 253, 0.06); }
+                .shadow-glow { box-shadow: 0 0 15px var(--glow-color) 40; }
+                .shadow-glow-primary { box-shadow: 0 8px 30px rgba(13, 110, 253, 0.4); }
+                .bg-light-soft { background: #f9fbff; }
+                .text-dark-soft { color: #475569; }
+                .mini-label-xs { font-size: 0.52rem; font-weight: 900; color: #94a3b8; letter-spacing: 1.5px; text-transform: uppercase; }
+                .border-dashed { border-top-style: dashed !important; border-top-width: 2px !important; border-top-color: #f1f5f9 !important; }
                 .border-end-lg { border-right: 1px solid #f1f5f9; }
+                .border-hover-primary:hover { border-color: #0d6efd !important; }
                 @media (max-width: 991px) { .border-end-lg { border-right: 0; } }
                 
-                .hover-glow { transition: all 0.3s ease; }
-                .hover-glow:hover { box-shadow: 0 20px 40px rgba(0,0,0,0.06) !important; transform: translateY(-3px); border-color: #e2e8f0 !important; }
+                .hover-glow { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+                .hover-glow:hover { box-shadow: 0 20px 45px rgba(0,0,0,0.08) !important; transform: translateY(-4px); border-color: #e2e8f0 !important; }
                 .hover-lift { transition: all 0.25s ease; }
-                .hover-lift:hover { transform: translateY(-2px); filter: brightness(0.95); }
+                .hover-lift:hover { transform: translateY(-3px); filter: brightness(0.98); }
                 
                 .thin-scrollbar::-webkit-scrollbar { width: 6px; }
                 .thin-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
@@ -577,18 +586,18 @@ const PatientTimelinePage = () => {
                 .animate-pulse-slow { animation: pulse 3s infinite; }
                 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
                 
-                .animate-slide-down { animation: slideDown 0.4s cubic-bezier(0,0,0.2,1); }
-                @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+                .animate-slide-down { animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+                @keyframes slideDown { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
                 
                 .pulsating-loader { width: 44px; height: 44px; background: #0d6efd; border-radius: 50%; animation: pulse-circle 1.5s infinite; }
                 @keyframes pulse-circle { 
-                    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.4); }
-                    70% { transform: scale(1.1); box-shadow: 0 0 0 20px rgba(13, 110, 253, 0); }
+                    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(13, 110, 253, 0.5); }
+                    70% { transform: scale(1.1); box-shadow: 0 0 0 25px rgba(13, 110, 253, 0); }
                     100% { transform: scale(0.95); }
                 }
                 .rotate-n90 { transform: rotate(-90deg); }
-                .floating-add-btn { border: 0 !important; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-                .floating-add-btn:hover { transform: scale(1.15) rotate(10deg); }
+                .floating-add-btn { border: 0 !important; transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+                .floating-add-btn:hover { transform: scale(1.18) rotate(5deg); }
             `}</style>
         </div>
     );
