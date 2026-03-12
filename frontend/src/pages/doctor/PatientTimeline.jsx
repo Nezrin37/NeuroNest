@@ -181,97 +181,147 @@ const PatientTimelinePage = () => {
     const { identity, timeline } = dossier;
 
     return (
-        <div className="premium-dashboard-bg py-4 px-4 px-lg-5">
-            {/* Simple Clean Header */}
-            <div className="d-flex align-items-center gap-3 mb-5 pt-2">
-                <button onClick={() => navigate(-1)} className="btn btn-white shadow-sm rounded-circle p-2 border-0">
-                    <ChevronLeft size={20} />
-                </button>
-                <div>
-                    <h4 className="fw-black mb-0">Clinical Timeline</h4>
-                    <div className="small fw-bold text-muted opacity-75">Historical Visit Log • {identity?.full_name || 'Patient'}</div>
-                </div>
-            </div>
-
-            {/* Content Tabs & Actions */}
-            <div className="d-flex align-items-center justify-content-between mb-4">
-                <h5 className="fw-black mb-0">Medical Timeline History</h5>
-                <div className="d-flex gap-2">
-                    <button className="btn btn-light rounded-pill px-3 py-1 fw-bold small border d-flex align-items-center gap-2">
-                        <Filter size={14} /> Filter
-                    </button>
-                    <div className="btn-group rounded-pill border overflow-hidden shadow-sm">
-                        <button className="btn btn-white btn-sm px-3 fw-bold active">Timeline</button>
-                        <button className="btn btn-white btn-sm px-3 fw-bold">List</button>
-                        <button className="btn btn-white btn-sm px-3 fw-bold">Grid</button>
+        <div className="premium-dashboard-bg min-vh-100 d-flex flex-column">
+            {/* Top Navigation Bar - Reference Style */}
+            <div className="bg-white border-bottom sticky-top shadow-sm" style={{ zIndex: 1020 }}>
+                <div className="px-4 px-lg-5 pt-4 pb-0">
+                    <div className="d-flex align-items-center gap-3 mb-4">
+                        <button onClick={() => navigate(-1)} className="btn btn-white shadow-sm rounded-circle p-2 border-0">
+                            <ChevronLeft size={18} />
+                        </button>
+                        <div>
+                            <h4 className="fw-black mb-0 text-dark">Clinical Records # {identity?.id || '---'}</h4>
+                        </div>
+                    </div>
+                    
+                    <div className="d-flex gap-4 overflow-auto pb-0" style={{ scrollbarWidth: 'none' }}>
+                        {['TIMELINE', 'VISITS', 'MEDICATIONS', 'LABS', 'ALERTS', 'DOCUMENTS'].map((tab, i) => (
+                            <div key={tab} className={`pb-3 fw-black small cursor-pointer position-relative ${i === 0 ? 'text-primary' : 'text-muted opacity-50 text-uppercase'}`} style={{ letterSpacing: '1px', fontSize: '0.7rem', borderBottom: i === 0 ? '3px solid #2b70ff' : '3px solid transparent' }}>
+                                {tab}
+                            </div>
+                        ))}
                     </div>
                 </div>
             </div>
 
-            {/* Visit Timeline Grid */}
-            <div className="row g-4">
-                {timeline && timeline.length > 0 ? (
-                    timeline.map((event) => (
-                        <div key={event.id} className="col-12 col-xl-6">
-                            <div className="card-premium p-4 h-100 bg-white border border-opacity-10 position-relative overflow-visible shadow-sm rounded-4">
-                                <div className="d-flex justify-content-between align-items-start mb-4">
-                                    <div>
-                                        <div className="d-flex align-items-center gap-2 mb-2">
-                                            <div className="bg-light p-2 rounded-circle border">
-                                                <Calendar size={16} className="text-primary" />
-                                            </div>
-                                            <span className="small fw-black text-muted text-uppercase" style={{ letterSpacing: '1px' }}>
-                                                {new Date(event.appointment_date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                            </span>
+            <div className="flex-grow-1 overflow-hidden">
+                <div className="container-fluid h-100 p-0">
+                    <div className="row g-0 h-100">
+                        {/* Main Scrollable Timeline */}
+                        <div className="col-12 col-xl-9 border-end bg-light bg-opacity-50 overflow-auto thin-scrollbar" style={{ height: 'calc(100vh - 145px)' }}>
+                            <div className="p-4 p-lg-5 mx-auto" style={{ maxWidth: '800px' }}>
+                                
+                                {timeline && timeline.length > 0 ? (
+                                    <div className="position-relative ms-5 ps-4">
+                                        {/* Vertical Timeline Stem */}
+                                        <div className="position-absolute start-0 top-0 bottom-0 border-start border-2 opacity-10" style={{ borderColor: '#2b70ff' }}></div>
+
+                                        {timeline.map((event, index) => {
+                                            const eventDate = new Date(event.appointment_date || event.date);
+                                            const showDateHeader = index === 0 || 
+                                                new Date(timeline[index-1].appointment_date || timeline[index-1].date).toLocaleDateString() !== eventDate.toLocaleDateString();
+
+                                            return (
+                                                <div key={event.id} className="mb-4 position-relative">
+                                                    {showDateHeader && (
+                                                        <div className="position-absolute start-0 translate-middle-x ms-n4 ps-1" style={{ top: '-12px' }}>
+                                                            <div className="badge bg-light text-muted border py-2 px-3 rounded-pill fw-bold shadow-sm" style={{ fontSize: '0.7rem' }}>
+                                                                {eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="d-flex align-items-center gap-4 pt-4">
+                                                        {/* Time Label on left */}
+                                                        <div className="position-absolute start-0 translate-middle-x ms-n5 pe-4 text-end" style={{ width: '100px' }}>
+                                                            <span className="text-muted fw-bold small opacity-75">
+                                                                {eventDate.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: true })}
+                                                            </span>
+                                                        </div>
+
+                                                        {/* Timeline Dot/Icon */}
+                                                        <div className="position-absolute start-0 translate-middle-x border-0 bg-transparent" style={{ zIndex: 2 }}>
+                                                            <div className={`rounded-circle d-flex align-items-center justify-content-center shadow-sm border-2 border-white
+                                                                ${event.status === 'Completed' ? 'bg-success text-white' : 
+                                                                  event.status === 'Recorded' ? 'bg-primary text-white' : 
+                                                                  'bg-white text-muted border'}`} 
+                                                                style={{ width: '28px', height: '28px' }}>
+                                                                {event.status === 'Completed' || event.status === 'Recorded' ? <Check size={14} strokeWidth={3} /> : <Clock size={12} />}
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Content Card */}
+                                                        <div className="flex-grow-1 bg-white border border-opacity-10 rounded-3 p-3 shadow-sm hover-reveal transition-all">
+                                                            <div className="d-flex justify-content-between align-items-center mb-1">
+                                                                <h6 className="fw-black text-dark mb-0">{event.reason || "Clinical Encounter"}</h6>
+                                                                {event.isLegacyRecord && <span className="badge bg-light text-muted small border-0 fw-bold">LEGACY</span>}
+                                                            </div>
+                                                            <div className="text-secondary small fw-medium mb-2 opacity-75">{event.notes || "No detailed observations recorded."}</div>
+                                                            
+                                                            {/* Nested details look like reference sub-items */}
+                                                            <div className="bg-light bg-opacity-50 rounded-2 p-2 mt-2 border border-light">
+                                                                <div className="d-flex align-items-center gap-2 small fw-bold text-muted">
+                                                                    <div className="bg-white p-1 rounded border"><Activity size={12} /></div>
+                                                                    Report-ID# NN-{String(event.id).substring(0,6)}
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                ) : (
+                                    <div className="text-center py-5">
+                                        <div className="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: '80px', height: '80px' }}>
+                                            <Calendar size={40} className="text-muted opacity-50" />
                                         </div>
-                                        <h5 className="fw-black mb-0">{event.reason || "Routine Clinical Assessment"}</h5>
+                                        <h4 className="fw-black text-muted">No History Streams Data</h4>
+                                        <p className="text-secondary fw-bold small">Historical records will appear here as they are processed.</p>
                                     </div>
-                                    <div className={`badge rounded-pill px-3 py-2 fw-black text-uppercase shadow-sm border
-                                        ${event.status === 'Completed' ? 'bg-success bg-opacity-10 text-success border-success' : 
-                                          event.status === 'Pending' ? 'bg-warning bg-opacity-10 text-warning border-warning' : 
-                                          'bg-primary bg-opacity-10 text-primary border-primary'}`} 
-                                        style={{ fontSize: '0.65rem' }}>
-                                        {event.status}
-                                    </div>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Right Navigation Sidebar - Reference Style */}
+                        <div className="col-xl-3 d-none d-xl-block bg-white p-5 border-start">
+                            <div className="sticky-top" style={{ top: '180px' }}>
+                                <div className="text-muted fw-bold small text-uppercase mb-4 opacity-50" style={{ letterSpacing: '2px' }}>Navigation</div>
+                                <div className="d-flex flex-column gap-1">
+                                    {[
+                                        'Summary', 'Patient Profile', 'Care Team', 'Vitals History', 'Timeline', 'Audit Log', 'Versions'
+                                    ].map((item, i) => (
+                                        <div key={item} 
+                                            className={`py-2 px-3 rounded-pill cursor-pointer fw-black small border-0 transition-all ${i === 4 ? 'bg-light text-dark' : 'text-muted hover-bg-light opacity-75'}`}
+                                            style={{ fontSize: '0.8rem' }}
+                                        >
+                                            {item}
+                                        </div>
+                                    ))}
                                 </div>
 
-                                <div className="p-3 bg-light rounded-4 border mb-4 fw-medium text-secondary small" style={{ minHeight: '80px' }}>
-                                    <div className="d-flex gap-2 mb-2 opacity-50">
-                                        <AlertCircle size={14} />
-                                        <span className="fw-black text-uppercase" style={{ fontSize: '0.6rem' }}>Clinical Observations</span>
-                                    </div>
-                                    {event.notes || "No additional clinical notes recorded for this encounter."}
-                                </div>
-
-                                <div className="d-flex align-items-center justify-content-between">
-                                    <div className="d-flex align-items-center gap-3">
-                                        <div className="avatar-stack d-flex">
-                                            <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold small border border-white" style={{ width: '32px', height: '32px' }}>D</div>
-                                        </div>
-                                        <div className="small fw-bold text-muted">Clinical Record</div>
-                                    </div>
-                                    <button className="btn btn-link text-dark p-0 small fw-bold text-decoration-none d-flex align-items-center gap-1">
-                                        View Details <ChevronRight size={14} />
+                                <div className="mt-5 pt-5 border-top opacity-50">
+                                    <div className="text-muted fw-bold small text-uppercase mb-3" style={{ letterSpacing: '1px' }}>Quick Actions</div>
+                                    <button className="btn btn-outline-dark btn-sm rounded-pill px-4 py-2 fw-bold w-100 text-start border-2 d-flex align-items-center justify-content-between mb-2">
+                                        Generate Report <Download size={14} />
+                                    </button>
+                                    <button className="btn btn-primary btn-sm rounded-pill px-4 py-2 fw-bold w-100 text-start shadow-sm d-flex align-items-center justify-content-between">
+                                        Sync History <Zap size={14} />
                                     </button>
                                 </div>
                             </div>
                         </div>
-                    ))
-                ) : (
-                    <div className="col-12 text-center py-5">
-                        <div className="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: '80px', height: '80px' }}>
-                            <Calendar size={40} className="text-muted opacity-50" />
-                        </div>
-                        <h4 className="fw-black text-muted">No Visits Recorded</h4>
-                        <p className="text-secondary fw-bold small">There is no documented clinical history for this patient yet.</p>
                     </div>
-                )}
+                </div>
             </div>
 
             <style>{`
-                .fw-black { font-weight: 950; }
-                .ms-n2 { margin-left: -0.5rem; }
-                .last-mb-0:last-child { margin-bottom: 0 !important; }
+                .premium-dashboard-bg { background: #f8fafc; }
+                .hover-reveal:hover { transform: translateX(4px); border-color: #2b70ff !important; box-shadow: 0 4px 12px rgba(0,0,0,0.05) !important; }
+                .hover-bg-light:hover { background-color: #f1f5f9; color: #000 !important; }
+                .thin-scrollbar::-webkit-scrollbar { width: 6px; }
+                .thin-scrollbar::-webkit-scrollbar-track { background: transparent; }
+                .thin-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
             `}</style>
         </div>
     );
