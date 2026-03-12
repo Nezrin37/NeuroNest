@@ -54,7 +54,7 @@ const PatientHub = () => {
             desc: '13 Recorded Encounters',
             icon: <Calendar size={22} />,
             color: '#2b70ff',
-            path: `/doctor/patient-records?patientId=${patientId}`
+            path: `/doctor/patient-timeline?patientId=${patientId}`
         },
         {
             id: 'summary',
@@ -78,7 +78,7 @@ const PatientHub = () => {
             desc: 'Clinical evaluation results',
             icon: <ShieldCheck size={22} />,
             color: '#f59e0b',
-            path: `/doctor/patient-records?patientId=${patientId}`
+            path: `/doctor/assessment-reports?patientId=${patientId}`
         },
         {
             id: 'performance',
@@ -203,7 +203,9 @@ const PatientHub = () => {
 
                             {/* Footer Buttons */}
                             <div className="mt-3">
-                                <button className="btn btn-primary rounded-pill py-3 w-100 fw-black d-flex align-items-center justify-content-center gap-2 shadow-sm" style={{ fontSize: '0.9rem' }}>
+                                <button 
+                                    onClick={() => navigate(`/doctor/patient-records?patientId=${patientId}&openRemark=true`)}
+                                    className="btn btn-primary rounded-pill py-3 w-100 fw-black d-flex align-items-center justify-content-center gap-2 shadow-sm" style={{ fontSize: '0.9rem' }}>
                                     <Edit3 size={18} /> Add Remark
                                 </button>
                             </div>

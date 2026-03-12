@@ -90,6 +90,12 @@ const PatientRecords = () => {
         }
     }, [patientId, fetchDossier]);
 
+    useEffect(() => {
+        if (searchParams.get("openRemark") === "true") {
+            setShowRemarkModal(true);
+        }
+    }, [searchParams]);
+
     const handleSaveRemark = async () => {
         if (!remarkContent.trim()) return;
         try {
