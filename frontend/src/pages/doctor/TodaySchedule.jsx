@@ -408,20 +408,6 @@ const TodaySchedule = () => {
                              <h2 className="ts-summary-value">{schedule.length}</h2>
                              <span className="ts-summary-label">Total Appointments</span>
                          </div>
-                         <div className="ts-summary-item">
-                             <h2 className="ts-summary-value text-success">{schedule.filter(a => a.status === 'completed').length}</h2>
-                             <span className="ts-summary-label">Completed</span>
-                         </div>
-                         <div className="ts-summary-item">
-                             <h2 className="ts-summary-value text-primary">{schedule.filter(a => a.status === 'approved').length}</h2>
-                             <span className="ts-summary-label">Pending</span>
-                         </div>
-                         <div className="ts-summary-item pt-3 border-top d-flex flex-row align-items-center justify-content-between w-100">
-                             <span className="ts-summary-label" style={{ marginBottom: 0 }}>Overtime Risk</span>
-                             <span className={`ts-summary-value ts-summary-value-sm ${schedule.filter(a => a.status === 'approved').length > 5 ? 'risk-high' : 'text-success'}`}>
-                                 {schedule.filter(a => a.status === 'approved').length > 5 ? 'High Risk' : 'Low Risk'}
-                             </span>
-                         </div>
                     </div>
                 </div>
 
