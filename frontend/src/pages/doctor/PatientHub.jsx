@@ -100,8 +100,15 @@ const PatientHub = () => {
     ];
 
     return (
-        <div className={`patient-hub-root min-vh-100 p-3 p-md-4 ${isDark ? 'dark' : ''}`}>
-            <div className="container-fluid p-0">
+        <div className={`patient-hub-root min-vh-100 p-2 p-md-3 ${isDark ? 'dark' : ''}`} style={{ backgroundColor: 'var(--nn-surface-secondary)' }}>
+            <div className="hub-page-container shadow-sm mx-auto bg-white" style={{ 
+                borderRadius: '32px', 
+                border: '1px solid var(--nn-border)',
+                padding: '32px',
+                maxWidth: '1400px',
+                minHeight: 'calc(100vh - 80px)'
+            }}>
+                <div className="container-fluid p-0">
                 
                 {/* Header Section */}
                 <div className="d-flex justify-content-between align-items-center mb-4">
@@ -241,11 +248,7 @@ const PatientHub = () => {
 
             <style>{`
                 .patient-hub-root {
-                    background-color: var(--nn-surface);
-                    border-radius: 24px;
-                    border: 1px solid var(--nn-border);
-                    margin: 10px;
-                    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+                    background-color: var(--nn-surface-secondary);
                 }
                 
                 .hover-primary-text:hover {
@@ -299,6 +302,7 @@ const PatientHub = () => {
                     }
                 }
             `}</style>
+                </div>
         </div>
     );
 };
