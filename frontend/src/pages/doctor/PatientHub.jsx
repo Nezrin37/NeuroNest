@@ -100,7 +100,7 @@ const PatientHub = () => {
     ];
 
     return (
-        <div className={`patient-hub-root d-flex flex-column p-4 p-md-5 mb-5 ${isDark ? 'dark' : ''}`}>
+        <div className={`patient-hub-root min-vh-100 p-3 p-md-4 ${isDark ? 'dark' : ''}`}>
             <div className="container-fluid p-0">
                 
                 {/* Header Section */}
@@ -244,9 +244,8 @@ const PatientHub = () => {
                     background-color: var(--nn-surface);
                     border-radius: 24px;
                     border: 1px solid var(--nn-border);
-                    margin: 20px 20px 80px 20px;
+                    margin: 10px;
                     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-                    min-height: calc(100vh - 160px);
                 }
                 
                 .hover-primary-text:hover {
