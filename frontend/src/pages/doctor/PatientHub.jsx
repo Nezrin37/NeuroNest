@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { 
-    FileText, Folder, ClipboardList, User, ChevronLeft, 
-    Pill, LayoutGrid, ArrowRight, Activity, Clock
+    Calendar, FileText, Edit3, ShieldCheck, Activity, MessageSquare, 
+    ChevronLeft, Mail, Phone, User, Plus, Folder, ArrowRight,
+    Settings, MoreHorizontal
 } from 'lucide-react';
 import { getPatientDossier } from '../../api/doctor';
 import { toAssetUrl } from '../../utils/media';
@@ -14,8 +15,9 @@ const PatientHub = () => {
     const navigate = useNavigate();
     const { isDark } = useTheme();
     
-    const [patient, setPatient] = useState(null);
+    const [dossier, setDossier] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [imageError, setImageError] = useState(false);
 
     useEffect(() => {
         if (!patientId) {
@@ -23,127 +25,275 @@ const PatientHub = () => {
             return;
         }
 
-        const fetchPatient = async () => {
+        const fetchFullDossier = async () => {
             try {
                 const data = await getPatientDossier(patientId);
-                setPatient(data?.identity || null);
+                setDossier(data);
             } catch (err) {
-                console.error("Failed to fetch patient info for hub", err);
+                console.error("Failed to fetch patient dossier for hub", err);
             } finally {
                 setLoading(false);
             }
         };
-        fetchPatient();
+        fetchFullDossier();
     }, [patientId, navigate]);
 
     if (loading) return (
-        <div className="d-flex flex-column align-items-center justify-content-center min-vh-100 bg-light">
+        <div className="d-flex flex-column align-items-center justify-content-center min-vh-100 bg-white">
             <div className="spinner-border text-primary" role="status"></div>
-            <p className="mt-3 fs-6 fw-bold text-muted">Mounting Case File...</p>
+            <p className="mt-3 fs-6 fw-bold text-muted" style={{ letterSpacing: '1px' }}>Synchronizing Clinical Dossier...</p>
         </div>
     );
 
-    const HUB_CARDS = [
+    const identity = dossier?.identity || {};
+    
+    const HUB_ACTIONS = [
         {
-            id: 'records',
-            title: 'Patient Records',
-            desc: 'Complete medical history, vitals, and chronic assessments',
-            icon: <ClipboardList size={32} />,
+            id: 'timeline',
+            title: 'Clinical Timeline',
+            desc: '13 Recorded Encounters',
+            icon: <Calendar size={22} />,
             color: '#2b70ff',
+            path: `/doctor/patient-records?patientId=${patientId}`
+        },
+        {
+            id: 'summary',
+            title: 'Medical Summary',
+            desc: 'Allergies, Meds & Conditions',
+            icon: <FileText size={22} />,
+            color: '#8b5cf6',
             path: `/doctor/patient-records?patientId=${patientId}`
         },
         {
             id: 'prescription',
             title: 'Write Prescription',
-            desc: 'Draft new medication plans and dosage schedules',
-            icon: <Pill size={32} />,
-            color: '#f43f5e',
+            desc: 'Issue high-fidelity scripts',
+            icon: <Edit3 size={22} />,
+            color: '#10b981',
             path: `/doctor/write-prescription?patientId=${patientId}`
         },
         {
-            id: 'archives',
-            title: 'Clinical Archives',
-            desc: 'View past consultation notes and diagnostic files',
-            icon: <Folder size={32} />,
-            color: '#10b981',
-            path: `/doctor/clinical-archives?patientId=${patientId}`
+            id: 'assessments',
+            title: 'Assessment Reports',
+            desc: 'Clinical evaluation results',
+            icon: <ShieldCheck size={22} />,
+            color: '#f59e0b',
+            path: `/doctor/patient-records?patientId=${patientId}`
+        },
+        {
+            id: 'performance',
+            title: 'Performance Analytics',
+            desc: 'Therapeutic outcome data',
+            icon: <Activity size={22} />,
+            color: '#ef4444',
+            path: `/doctor/performance-analytics?patientId=${patientId}`,
+            hoverBlue: true
+        },
+        {
+            id: 'chat',
+            title: 'Patients Chat',
+            desc: 'Clinical consultation threads',
+            icon: <MessageSquare size={22} />,
+            color: '#475569',
+            path: `/doctor/chat?patientId=${patientId}`
         }
     ];
 
     return (
-        <div className={`p-4 p-md-5 ${isDark ? 'bg-darker' : 'bg-light'} min-vh-100`}>
-            {/* Header */}
-            <div className="container-fluid max-width-1200 mx-auto">
-                <button 
-                    onClick={() => navigate('/doctor/patients')}
-                    className="btn btn-link text-decoration-none d-flex align-items-center gap-2 p-0 mb-4 text-muted hover-primary transition-all fw-bold fs-7"
-                >
-                    <ChevronLeft size={16} /> Back to Roster
-                </button>
-
-                <div className="nn-card border-0 mb-5 p-4 d-flex align-items-center gap-4 bg-white shadow-sm rounded-5">
-                    <div className="rounded-4 overflow-hidden shadow-sm d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary" style={{ width: '80px', height: '80px' }}>
-                        {patient?.profile_image ? (
-                            <img src={toAssetUrl(patient.profile_image)} alt="" className="w-100 h-100 object-fit-cover" />
-                        ) : (
-                            <User size={40} />
-                        )}
-                    </div>
-                    <div>
-                        <h1 className="fw-black text-dark mb-1" style={{ fontSize: '1.8rem' }}>{patient?.full_name || "Unknown Patient"}</h1>
-                        <div className="d-flex gap-3 text-muted fw-semi-bold fs-7">
-                            <span className="d-flex align-items-center gap-1"><Clock size={14}/> ID: {patientId}</span>
-                            <span className="d-flex align-items-center gap-1"><Activity size={14}/> {patient?.gender || 'N/A'}</span>
-                        </div>
-                    </div>
+        <div className={`patient-hub-root min-vh-100 p-4 p-md-5 ${isDark ? 'dark' : ''}`}>
+            <div className="container-xl">
+                
+                {/* Header Section */}
+                <div className="mb-5">
+                    <button 
+                        onClick={() => navigate('/doctor/patients')}
+                        className="btn btn-link text-decoration-none d-flex align-items-center gap-2 p-0 mb-4 text-muted hover-primary-text transition-all fw-bold"
+                        style={{ fontSize: '0.9rem' }}
+                    >
+                        <ChevronLeft size={16} /> Back to Roster
+                    </button>
+                    
+                    <h1 className="fw-black text-dark mb-1" style={{ fontSize: '2.4rem', letterSpacing: '-0.02em' }}>Clinical Dossier</h1>
+                    <p className="text-secondary fw-medium fs-6 opacity-75">Comprehensive medical archive and longitudinal engagement timeline.</p>
                 </div>
 
-                {/* Hub Cards Grid */}
-                <div className="row g-4 justify-content-center">
-                    {HUB_CARDS.map(card => (
-                        <div className="col-12 col-md-4" key={card.id}>
-                            <div 
-                                onClick={() => navigate(card.path)}
-                                className="nn-card h-100 p-4 pt-5 border-0 shadow-sm rounded-5 cursor-pointer hover-lift text-center bg-white group"
-                                style={{ transition: 'all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1)' }}
-                            >
-                                <div 
-                                    className="mx-auto mb-4 d-flex align-items-center justify-content-center rounded-circle"
-                                    style={{ 
-                                        width: '80px', height: '80px', 
-                                        backgroundColor: `${card.color}15`, 
-                                        color: card.color,
-                                        transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
-                                    }}
-                                >
-                                    {card.icon}
+                <div className="row g-4 pt-2">
+                    {/* Left Panel: Profile Detail */}
+                    <div className="col-12 col-lg-4">
+                        <div className="hub-identity-card p-4 rounded-5 bg-white border-0 shadow-sm h-100 d-flex flex-column">
+                            
+                            {/* Avatar & Basic Info */}
+                            <div className="d-flex flex-column align-items-center text-center mb-5 mt-3">
+                                <div className="avatar-frame rounded-circle mb-3 overflow-hidden shadow-sm" style={{ width: '120px', height: '120px' }}>
+                                    {identity.profile_image && !imageError ? (
+                                        <img 
+                                            src={toAssetUrl(identity.profile_image)} 
+                                            alt={identity.full_name} 
+                                            className="w-100 h-100 object-fit-cover"
+                                            onError={() => setImageError(true)}
+                                        />
+                                    ) : (
+                                        <div className="w-100 h-100 transition-all d-flex align-items-center justify-content-center bg-light text-muted">
+                                            <User size={64} strokeWidth={1.5} />
+                                        </div>
+                                    )}
                                 </div>
-                                <h3 className="fw-black text-dark mb-3" style={{ fontSize: '1.25rem' }}>{card.title}</h3>
-                                <p className="text-secondary small fw-medium mb-4 lh-base px-2">
-                                    {card.desc}
-                                </p>
-                                <div className="d-flex align-items-center justify-content-center gap-2 text-primary fw-bold small opacity-0 group-hover-opacity-100 transition-all">
-                                    Open Module <ArrowRight size={14} />
+                                <h2 className="fw-black text-dark h3 mb-1">{identity.full_name || "Patient Name"}</h2>
+                                <span className="badge px-3 py-1 rounded-pill text-uppercase fw-black letter-spacing-1 bg-light text-secondary border overflow-hidden" style={{ fontSize: '0.65rem' }}>
+                                    Patient ID #{String(patientId).padStart(3, '0')}
+                                </span>
+                            </div>
+
+                            {/* Detailed Info List */}
+                            <div className="clinical-data-list d-flex flex-column gap-4 mb-auto px-2">
+                                <div className="data-item d-flex align-items-center gap-3">
+                                    <div className="data-icon bg-light rounded-3 d-flex align-items-center justify-content-center" style={{ width: '38px', height: '38px' }}>
+                                        <Mail size={16} className="text-muted" />
+                                    </div>
+                                    <div>
+                                        <p className="m-0 text-uppercase fw-black text-muted mb-0" style={{ fontSize: '0.6rem', letterSpacing: '0.5px' }}>Email Access</p>
+                                        <p className="m-0 fw-black text-dark" style={{ fontSize: '0.85rem' }}>{identity.email || "N/A"}</p>
+                                    </div>
+                                </div>
+
+                                <div className="data-item d-flex align-items-center gap-3">
+                                    <div className="data-icon bg-light rounded-3 d-flex align-items-center justify-content-center" style={{ width: '38px', height: '38px' }}>
+                                        <Phone size={16} className="text-muted" />
+                                    </div>
+                                    <div>
+                                        <p className="m-0 text-uppercase fw-black text-muted mb-0" style={{ fontSize: '0.6rem', letterSpacing: '0.5px' }}>Clinical Contact</p>
+                                        <p className="m-0 fw-black text-dark" style={{ fontSize: '0.85rem' }}>{identity.phone || "1234567890"}</p>
+                                    </div>
+                                </div>
+
+                                <div className="data-item d-flex align-items-center gap-3">
+                                    <div className="data-icon bg-light rounded-3 d-flex align-items-center justify-content-center" style={{ width: '38px', height: '38px' }}>
+                                        <Calendar size={16} className="text-muted" />
+                                    </div>
+                                    <div>
+                                        <p className="m-0 text-uppercase fw-black text-muted mb-0" style={{ fontSize: '0.6rem', letterSpacing: '0.5px' }}>Date of Birth</p>
+                                        <p className="m-0 fw-black text-dark" style={{ fontSize: '0.85rem' }}>{identity.dob || "Unknown"}</p>
+                                    </div>
+                                </div>
+
+                                <div className="data-item d-flex align-items-center gap-3">
+                                    <div className="data-icon bg-light rounded-3 d-flex align-items-center justify-content-center" style={{ width: '38px', height: '38px' }}>
+                                        <User size={16} className="text-muted" />
+                                    </div>
+                                    <div>
+                                        <p className="m-0 text-uppercase fw-black text-muted mb-0" style={{ fontSize: '0.6rem', letterSpacing: '0.5px' }}>Clinical Profile</p>
+                                        <p className="m-0 fw-black text-dark" style={{ fontSize: '0.85rem' }}>{identity.gender || "N/A"} ({identity.blood_group || "O-"})</p>
+                                    </div>
                                 </div>
                             </div>
+
+                            {/* Footer Buttons */}
+                            <div className="d-flex flex-column gap-2 mt-5">
+                                <button className="btn btn-primary rounded-pill py-3 fw-black d-flex align-items-center justify-content-center gap-2 shadow-sm" style={{ fontSize: '0.9rem' }}>
+                                    <Edit3 size={18} /> Add Remark
+                                </button>
+                                <button 
+                                    onClick={() => navigate(`/doctor/clinical-archives?patientId=${patientId}`)}
+                                    className="btn btn-white bg-white border border-light rounded-pill py-3 fw-black d-flex align-items-center justify-content-center gap-2 shadow-sm text-secondary" style={{ fontSize: '0.9rem' }}>
+                                    <Folder size={18} /> Clinical Archives
+                                </button>
+                            </div>
                         </div>
-                    ))}
+                    </div>
+
+                    {/* Right Panel: Action Grid */}
+                    <div className="col-12 col-lg-8">
+                        <div className="row g-4">
+                            {HUB_ACTIONS.map(action => (
+                                <div className="col-12 col-md-6" key={action.id}>
+                                    <div 
+                                        onClick={() => navigate(action.path)}
+                                        className={`action-hub-card p-4 rounded-5 bg-white border-0 shadow-sm d-flex align-items-center gap-4 transition-all group ${action.hoverBlue ? 'hover-blue-glow' : ''}`}
+                                        style={{ cursor: 'pointer', height: '124px' }}
+                                    >
+                                        <div 
+                                            className="action-icon-box rounded-4 d-flex align-items-center justify-content-center"
+                                            style={{ 
+                                                width: '64px', height: '64px', 
+                                                backgroundColor: `${action.color}10`, 
+                                                color: action.color,
+                                                minWidth: '64px'
+                                            }}
+                                        >
+                                            {action.icon}
+                                        </div>
+                                        <div className="flex-grow-1 overflow-hidden">
+                                            <h3 className="fw-black text-dark mb-1 h5 text-truncate">{action.title}</h3>
+                                            <p className="text-secondary small fw-bold opacity-75 mb-0 text-truncate">{action.desc}</p>
+                                        </div>
+                                        {action.hoverBlue && (
+                                            <div className="action-arrow text-primary opacity-0 group-hover-visible transition-all">
+                                                <ArrowRight size={20} />
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <style>{`
-                .bg-darker { background-color: #0f172a; }
-                .hover-lift:hover {
-                    box-shadow: 0 20px 40px rgba(0,0,0,0.08) !important;
-                    transform: translateY(-8px);
+                .patient-hub-root {
+                    background-color: #f8fafc;
                 }
-                .hover-lift:hover > div:first-child {
-                    transform: scale(1.1);
+                
+                .hover-primary-text:hover {
+                    color: #2b70ff !important;
                 }
-                .hover-primary:hover { color: var(--nn-primary) !important; }
-                .cursor-pointer { cursor: pointer; }
-                .group:hover .group-hover-opacity-100 { opacity: 1; }
-                .max-width-1200 { max-width: 1200px; }
+                
+                .letter-spacing-1 {
+                    letter-spacing: 1px;
+                }
+                
+                .action-hub-card {
+                    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+                }
+                
+                .action-hub-card:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 15px 30px rgba(0,0,0,0.06) !important;
+                }
+
+                .hover-blue-glow:hover {
+                    outline: 2px solid #2b70ff;
+                    outline-offset: -2px;
+                }
+                
+                .hub-identity-card {
+                    transition: all 0.4s ease;
+                }
+
+                .group-hover-visible {
+                    opacity: 0;
+                    transform: translateX(-10px);
+                }
+                
+                .action-hub-card:hover .group-hover-visible {
+                    opacity: 1;
+                    transform: translateX(0);
+                }
+
+                .btn-white:hover {
+                    background-color: #f1f5f9;
+                    border-color: #cbd5e1;
+                }
+
+                .fw-black {
+                    font-weight: 800;
+                }
+                
+                @media (max-width: 991.98px) {
+                    .hub-identity-card {
+                        min-height: auto;
+                    }
+                }
             `}</style>
         </div>
     );
