@@ -447,9 +447,12 @@ const PatientTimelinePage = () => {
                                                     {/* Connecting Dot */}
                                                     <div className="position-absolute d-none d-md-block bg-white border border-primary border-3 rounded-circle shadow-sm" style={{ left: '-40.5px', top: '50px', width: '16px', height: '16px', zIndex: 10 }}></div>
                                                     
-                                                    <div className="flex-grow-1 bg-white rounded-5 shadow-sm-premium overflow-hidden border-2 border-transparent transition-all hover-glow" onClick={() => setActiveCard(event.id)}>
-                                                        <div className="position-absolute start-0 top-0 bottom-0" style={{ width: '6px', background: `linear-gradient(to bottom, ${event.color}, ${event.color}aa)` }}></div>
-                                                        <div className="p-4 ps-5">
+                                                    <div 
+                                                        className="flex-grow-1 bg-white rounded-5 shadow-sm-premium overflow-hidden border-2 border-transparent transition-all hover-glow" 
+                                                        style={{ borderLeft: `6px solid ${event.color}` }}
+                                                        onClick={() => setActiveCard(event.id)}
+                                                    >
+                                                        <div className="p-4 ps-4">
                                                             <div className="d-flex justify-content-between align-items-start mb-4">
                                                                 <div className="d-flex align-items-center gap-3">
                                                                     <div className="rounded-circle d-flex align-items-center justify-content-center text-white shadow-glow" style={{ backgroundColor: event.color, width: '42px', height: '42px', '--glow-color': event.color }}>
