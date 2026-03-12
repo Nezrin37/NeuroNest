@@ -330,6 +330,7 @@ const TodaySchedule = () => {
                     <div className="ts-clinic-time-card shadow-sm">
                         <span className="ts-clinic-time-label">Clinic Time</span>
                         <div className="ts-clinic-time-value d-flex align-items-center gap-2">
+                             <span className="ts-live-dot"></span>
                              <Clock size={16} />
                              {liveTime}
                         </div>
@@ -374,21 +375,25 @@ const TodaySchedule = () => {
                         </div>
                     </div>
 
-                    <div className="ts-compact-stats d-flex flex-column gap-4 mt-3">
+                    <div className="ts-compact-stats d-flex flex-column gap-1 mt-3">
                         <div className="ts-stat-tag-simple">
                             <h3 className="ts-stat-label-h3">Total Appointments</h3>
+                            <span className="ts-stat-dash"></span>
                             <span className="ts-stat-val-large">{schedule.length}</span>
                         </div>
                         <div className="ts-stat-tag-simple">
                             <h3 className="ts-stat-label-h3 text-primary">Pending Slots</h3>
+                            <span className="ts-stat-dash"></span>
                             <span className="ts-stat-val-large text-primary">{schedule.filter(a => a.status === 'approved').length}</span>
                         </div>
                         <div className="ts-stat-tag-simple">
                             <h3 className="ts-stat-label-h3 text-success">Completed</h3>
+                            <span className="ts-stat-dash"></span>
                             <span className="ts-stat-val-large text-success">{schedule.filter(a => a.status === 'completed').length}</span>
                         </div>
                         <div className="ts-stat-tag-simple">
                             <h3 className="ts-stat-label-h3 text-danger">Cancelled</h3>
+                            <span className="ts-stat-dash"></span>
                             <span className="ts-stat-val-large text-danger">{schedule.filter(a => a.status === 'cancelled').length}</span>
                         </div>
                     </div>
