@@ -89,78 +89,14 @@ const PatientTimelinePage = () => {
 
     return (
         <div className="premium-dashboard-bg py-4 px-4 px-lg-5">
-            {/* Ultra Premium Header - Image 2 Style */}
-            <div className="d-flex flex-wrap align-items-center justify-content-between gap-4 mb-5 pt-2">
-                <div className="d-flex align-items-center gap-3">
-                    <button onClick={() => navigate(-1)} className="btn btn-white shadow-sm rounded-circle p-2 border-0">
-                        <ChevronLeft size={20} />
-                    </button>
-                    <div>
-                        <h4 className="fw-black mb-0">Patient Dossier</h4>
-                        <div className="small fw-bold text-muted opacity-75">Neurology Specialized View</div>
-                    </div>
-                </div>
-
-                <div className="d-none d-xl-flex align-items-center gap-2 bg-white p-2 rounded-pill shadow-sm">
-                    <button className="action-pill-nav active"><Layers size={16} /> Dynamics</button>
-                    <button className="action-pill-nav"><Calendar size={16} /> Visits</button>
-                    <button className="action-pill-nav"><Pill size={16} /> Meds</button>
-                    <button className="action-pill-nav"><FlaskConical size={16} /> Labs</button>
-                    <button className="action-pill-nav"><AlertTriangle size={16} /> Allergies</button>
-                    <button className="action-pill-nav"><Fingerprint size={16} /> Genetics</button>
-                </div>
-
-                <div className="d-flex align-items-center gap-2">
-                    <button className="btn btn-white shadow-sm rounded-pill px-3 py-2 fw-bold small d-flex align-items-center gap-2 border-0">
-                        <Download size={16} /> Export
-                    </button>
-                    <button className="btn btn-dark shadow-sm rounded-pill px-3 py-2 fw-bold small d-flex align-items-center gap-2 border-0">
-                        <Plus size={16} /> New Record
-                    </button>
-                </div>
-            </div>
-
-            {/* Profile & Vitals Bar - Inspired by Image 2 */}
-            <div className="card-premium p-4 mb-5 bg-white border">
-                <div className="row g-4 align-items-center">
-                    <div className="col-12 col-md-4 col-lg-3">
-                        <div className="d-flex align-items-center gap-3 bg-light p-3 rounded-4 border">
-                            <img 
-                                src={`https://i.pravatar.cc/150?u=${identity.id}`} 
-                                className="rounded-4 shadow-sm border" 
-                                style={{ width: '80px', height: '80px', objectFit: 'cover' }} 
-                                alt="patient" 
-                            />
-                            <div>
-                                <h5 className="fw-black mb-1">{identity.full_name}</h5>
-                                <div className="text-secondary small fw-bold">Female, 24y</div>
-                                <div className="badge bg-primary bg-opacity-10 text-primary rounded-pill small mt-1">#PID-{identity.id}</div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="col-12 col-md-8 col-lg-9">
-                        <div className="d-flex flex-wrap justify-content-between gap-4 px-lg-4">
-                            {[
-                                { label: 'Blood Pressure', value: '120/80', unit: 'mmHg', icon: <Heart className="text-danger" size={18} /> },
-                                { label: 'Heart Rate', value: '72', unit: 'bpm', icon: <Activity className="text-primary" size={18} /> },
-                                { label: 'SpO2', value: '98', unit: '%', icon: <Wind className="text-success" size={18} /> },
-                                { label: 'Temperature', value: '36.8', unit: '°C', icon: <Thermometer className="text-warning" size={18} /> },
-                                { label: 'Weight', value: '62', unit: 'kg', icon: <User className="text-secondary" size={18} /> }
-                            ].map((v, i) => (
-                                <div key={i} className="text-center">
-                                    <div className="d-flex align-items-center justify-content-center gap-2 mb-1">
-                                        {v.icon}
-                                        <span className="small fw-bold text-muted opacity-75 text-uppercase" style={{ letterSpacing: '0.05em', fontSize: '0.6rem' }}>{v.label}</span>
-                                    </div>
-                                    <div className="d-flex align-items-baseline justify-content-center gap-1">
-                                        <span className="fw-black fs-4">{v.value}</span>
-                                        <span className="small fw-bold text-muted">{v.unit}</span>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+            {/* Simple Clean Header */}
+            <div className="d-flex align-items-center gap-3 mb-5 pt-2">
+                <button onClick={() => navigate(-1)} className="btn btn-white shadow-sm rounded-circle p-2 border-0">
+                    <ChevronLeft size={20} />
+                </button>
+                <div>
+                    <h4 className="fw-black mb-0">Clinical Timeline</h4>
+                    <div className="small fw-bold text-muted opacity-75">Historical Visit Log • {identity.full_name}</div>
                 </div>
             </div>
 
