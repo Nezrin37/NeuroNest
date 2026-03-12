@@ -241,7 +241,7 @@ const TodaySchedule = () => {
                                 ? schedule
                                 : schedule.filter(a => (a.consultation_type || 'in_person') === modeFilter);
                             if (filtered.length === 0) return (
-                                <div className="nn-card d-flex flex-column align-items-center justify-content-center p-8 text-center" style={{ minHeight: '400px', borderStyle: 'dashed' }}>
+                                <div className="nn-card d-flex flex-column align-items-center justify-content-center p-8 text-center" style={{ minHeight: '410px', borderStyle: 'dashed' }}>
                                     <div className="mb-4 d-flex align-items-center justify-content-center" style={{ width: '64px', height: '64px', borderRadius: '20px', background: 'var(--nn-surface-secondary)', color: 'var(--nn-primary)' }}>
                                         <Calendar size={32} strokeWidth={2} />
                                     </div>
