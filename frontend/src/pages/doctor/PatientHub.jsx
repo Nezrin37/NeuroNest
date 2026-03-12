@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { 
     Calendar, FileText, Edit3, ShieldCheck, Activity, MessageSquare, 
     ChevronLeft, Mail, Phone, User, Plus, Folder, ArrowRight,
-    Settings, MoreHorizontal
+    Settings, MoreHorizontal, Bell
 } from 'lucide-react';
 import { getPatientDossier } from '../../api/doctor';
 import { toAssetUrl } from '../../utils/media';
@@ -88,6 +88,14 @@ const PatientHub = () => {
             color: '#ef4444',
             path: `/doctor/performance-analytics?patientId=${patientId}`,
             hoverBlue: true
+        },
+        {
+            id: 'alerts',
+            title: 'Clinical Alerts',
+            desc: 'Critical notices & reminders',
+            icon: <Bell size={22} />,
+            color: '#f97316',
+            path: `/doctor/alerts?patientId=${patientId}`
         },
         {
             id: 'archives',
