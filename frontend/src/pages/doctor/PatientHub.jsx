@@ -90,6 +90,14 @@ const PatientHub = () => {
             hoverBlue: true
         },
         {
+            id: 'archives',
+            title: 'Clinical Archives',
+            desc: 'Medical records & historical data',
+            icon: <Folder size={22} />,
+            color: '#64748b',
+            path: `/doctor/clinical-archives?patientId=${patientId}`
+        },
+        {
             id: 'chat',
             title: 'Patients Chat',
             desc: 'Clinical consultation threads',
@@ -194,14 +202,9 @@ const PatientHub = () => {
                             </div>
 
                             {/* Footer Buttons */}
-                            <div className="d-flex flex-column gap-2 mt-3">
-                                <button className="btn btn-primary rounded-pill py-3 fw-black d-flex align-items-center justify-content-center gap-2 shadow-sm" style={{ fontSize: '0.9rem' }}>
+                            <div className="mt-3">
+                                <button className="btn btn-primary rounded-pill py-3 w-100 fw-black d-flex align-items-center justify-content-center gap-2 shadow-sm" style={{ fontSize: '0.9rem' }}>
                                     <Edit3 size={18} /> Add Remark
-                                </button>
-                                <button 
-                                    onClick={() => navigate(`/doctor/clinical-archives?patientId=${patientId}`)}
-                                    className="btn btn-white bg-white border border-light rounded-pill py-3 fw-black d-flex align-items-center justify-content-center gap-2 shadow-sm text-secondary" style={{ fontSize: '0.9rem' }}>
-                                    <Folder size={18} /> Clinical Archives
                                 </button>
                             </div>
                         </div>
