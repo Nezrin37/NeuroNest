@@ -10,9 +10,11 @@
   border: 1px solid var(--nn-border);
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   font-family: 'Inter', sans-serif;
-  flex: 1 0 auto;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .ts-main-container {
@@ -23,6 +25,19 @@
   grid-template-columns: 22% 1fr 28%;
   gap: 32px;
   background-color: transparent;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 8px; /* For scrollbar space */
+}
+
+/* Custom scrollbar for main dashboard area */
+.ts-main-container::-webkit-scrollbar {
+  width: 6px;
+}
+.ts-main-container::-webkit-scrollbar-thumb {
+  background: var(--nn-border);
+  border-radius: 10px;
 }
 
 /* --- LEFT SIDEBAR (WEEKLY PINNED) --- */
@@ -254,7 +269,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-bottom: 100px;
+  padding-bottom: 24px;
 }
 
 .ts-appointment-row {

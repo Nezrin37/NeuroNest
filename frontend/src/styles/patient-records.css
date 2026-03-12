@@ -4,7 +4,18 @@
 
 .patient-dashboard-grid-bg {
     background-color: #f8fafc;
-    min-height: 100vh;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+}
+
+/* Custom scrollbar for patient records */
+.patient-dashboard-grid-bg::-webkit-scrollbar {
+    width: 6px;
+}
+.patient-dashboard-grid-bg::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
 }
 
 .clinical-panel {

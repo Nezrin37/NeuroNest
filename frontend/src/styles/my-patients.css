@@ -1,8 +1,9 @@
-
 .roster-page-wrapper {
   display: flex;
   flex-direction: column;
-  flex: 1 0 auto;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
 }
 
 .roster-main-card {
@@ -11,12 +12,22 @@
   border: 1px solid var(--nn-border);
   padding: 32px;
   width: 100%;
-  flex: 1 0 auto;
+  flex: 1;
+  min-height: 0;
   box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   position: relative;
-  overflow: visible;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
+}
+
+/* Custom scrollbar for patients list */
+.roster-main-card::-webkit-scrollbar {
+  width: 6px;
+}
+.roster-main-card::-webkit-scrollbar-thumb {
+  background: var(--nn-border);
+  border-radius: 10px;
 }
 
 .roster-page-wrapper.dark .roster-main-card {

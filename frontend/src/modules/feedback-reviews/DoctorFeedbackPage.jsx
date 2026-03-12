@@ -155,12 +155,23 @@ const DoctorFeedbackPage = () => {
           border: 1px solid var(--nn-border);
           border-radius: 24px;
           box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-          flex: 1 0 auto;
+          flex: 1;
+          min-height: 0;
+          overflow-y: auto;
           font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
           color: var(--df-text);
           animation: dfFadeIn 0.4s ease-out;
           display: flex;
           flex-direction: column;
+        }
+
+        /* Custom scrollbar for feedback */
+        .df-page::-webkit-scrollbar {
+          width: 6px;
+        }
+        .df-page::-webkit-scrollbar-thumb {
+          background: var(--nn-border);
+          border-radius: 10px;
         }
         @media (max-width: 768px) {
           .df-page { padding: var(--df-space-4); border-radius: 16px; }
