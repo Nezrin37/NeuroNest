@@ -100,8 +100,8 @@ const PatientHub = () => {
     ];
 
     return (
-        <div className={`patient-hub-root min-vh-100 p-3 p-md-4 pb-5 ${isDark ? 'dark' : ''}`}>
-            <div className="hub-main-card bg-white p-4 p-md-5" style={{ 
+        <div className={`patient-hub-root min-vh-100 px-3 px-md-4 pb-5 pt-0 ${isDark ? 'dark' : ''}`}>
+            <div className="hub-main-card bg-white p-4 p-md-5 mt-n3" style={{ 
                 borderRadius: '24px', 
                 border: '1px solid var(--nn-border)',
                 boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
