@@ -379,7 +379,7 @@
   flex: 1;
   background: var(--nn-surface);
   border-radius: 16px;
-  padding: 24px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   gap: 16px;
