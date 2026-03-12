@@ -355,7 +355,7 @@
 .ts-right-panel {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
   overflow-y: auto; /* Internal scroll */
   padding-bottom: 20px;
 }
