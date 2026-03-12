@@ -115,59 +115,64 @@ const PatientTimelinePage = () => {
                 </div>
             </div>
 
-            {/* Experimental Premium Timeline View */}
+            {/* Visit Timeline Grid */}
             <div className="row g-4">
-                {timeline.map((event) => (
-                    <div key={event.id} className="col-12 col-xl-6">
-                        <div className="card-premium p-4 h-100 bg-white border border-opacity-10 position-relative overflow-visible">
-                            <div className="position-absolute top-50 start-0 translate-middle-x ms-n2 d-none d-xl-block">
-                                <div className="bg-primary rounded-circle border border-white border-4" style={{ width: '16px', height: '16px' }}></div>
-                            </div>
-
-                            <div className="d-flex justify-content-between align-items-start mb-4">
-                                <div>
-                                    <div className="d-flex align-items-center gap-2 mb-2">
-                                        <div className="bg-light p-2 rounded-circle border">
-                                            <Calendar size={16} className="text-primary" />
+                {timeline && timeline.length > 0 ? (
+                    timeline.map((event) => (
+                        <div key={event.id} className="col-12 col-xl-6">
+                            <div className="card-premium p-4 h-100 bg-white border border-opacity-10 position-relative overflow-visible shadow-sm rounded-4">
+                                <div className="d-flex justify-content-between align-items-start mb-4">
+                                    <div>
+                                        <div className="d-flex align-items-center gap-2 mb-2">
+                                            <div className="bg-light p-2 rounded-circle border">
+                                                <Calendar size={16} className="text-primary" />
+                                            </div>
+                                            <span className="small fw-black text-muted text-uppercase" style={{ letterSpacing: '1px' }}>
+                                                {new Date(event.appointment_date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                            </span>
                                         </div>
-                                        <span className="small fw-black text-muted text-uppercase" style={{ letterSpacing: '1px' }}>
-                                            {new Date(event.appointment_date).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' })}
-                                        </span>
+                                        <h5 className="fw-black mb-0">{event.reason || "Routine Clinical Assessment"}</h5>
                                     </div>
-                                    <h5 className="fw-black mb-0">{event.reason || "Routine Clinical Assessment"}</h5>
-                                </div>
-                                <div className={`badge rounded-pill px-3 py-2 fw-black text-uppercase shadow-sm border
-                                    ${event.status === 'Completed' ? 'bg-success bg-opacity-10 text-success border-success' : 
-                                      event.status === 'Pending' ? 'bg-warning bg-opacity-10 text-warning border-warning' : 
-                                      'bg-primary bg-opacity-10 text-primary border-primary'}`} 
-                                    style={{ fontSize: '0.65rem' }}>
-                                    {event.status}
-                                </div>
-                            </div>
-
-                            <div className="p-3 bg-light rounded-4 border mb-4 fw-medium text-secondary small" style={{ minHeight: '80px' }}>
-                                <div className="d-flex gap-2 mb-2 opacity-50">
-                                    <AlertCircle size={14} />
-                                    <span className="fw-black text-uppercase" style={{ fontSize: '0.6rem' }}>Clinical Observations</span>
-                                </div>
-                                {event.notes || "No additional clinical notes recorded for this encounter."}
-                            </div>
-
-                            <div className="d-flex align-items-center justify-content-between">
-                                <div className="d-flex align-items-center gap-3">
-                                    <div className="avatar-stack">
-                                        <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold small border border-white" style={{ width: '32px', height: '32px' }}>D</div>
-                                        <div className="bg-light text-muted rounded-circle d-flex align-items-center justify-content-center fw-bold small border border-white ms-n2" style={{ width: '32px', height: '32px' }}>+3</div>
+                                    <div className={`badge rounded-pill px-3 py-2 fw-black text-uppercase shadow-sm border
+                                        ${event.status === 'Completed' ? 'bg-success bg-opacity-10 text-success border-success' : 
+                                          event.status === 'Pending' ? 'bg-warning bg-opacity-10 text-warning border-warning' : 
+                                          'bg-primary bg-opacity-10 text-primary border-primary'}`} 
+                                        style={{ fontSize: '0.65rem' }}>
+                                        {event.status}
                                     </div>
-                                    <div className="small fw-bold text-muted">Consulting Team</div>
                                 </div>
-                                <button className="btn btn-outline-dark rounded-pill px-4 py-2 small fw-bold d-flex align-items-center gap-2 border-2">
-                                    Full Report <ChevronDown size={14} />
-                                </button>
+
+                                <div className="p-3 bg-light rounded-4 border mb-4 fw-medium text-secondary small" style={{ minHeight: '80px' }}>
+                                    <div className="d-flex gap-2 mb-2 opacity-50">
+                                        <AlertCircle size={14} />
+                                        <span className="fw-black text-uppercase" style={{ fontSize: '0.6rem' }}>Clinical Observations</span>
+                                    </div>
+                                    {event.notes || "No additional clinical notes recorded for this encounter."}
+                                </div>
+
+                                <div className="d-flex align-items-center justify-content-between">
+                                    <div className="d-flex align-items-center gap-3">
+                                        <div className="avatar-stack d-flex">
+                                            <div className="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold small border border-white" style={{ width: '32px', height: '32px' }}>D</div>
+                                        </div>
+                                        <div className="small fw-bold text-muted">Clinical Record</div>
+                                    </div>
+                                    <button className="btn btn-link text-dark p-0 small fw-bold text-decoration-none d-flex align-items-center gap-1">
+                                        View Details <ChevronRight size={14} />
+                                    </button>
+                                </div>
                             </div>
                         </div>
+                    ))
+                ) : (
+                    <div className="col-12 text-center py-5">
+                        <div className="bg-light rounded-circle d-flex align-items-center justify-content-center mx-auto mb-4" style={{ width: '80px', height: '80px' }}>
+                            <Calendar size={40} className="text-muted opacity-50" />
+                        </div>
+                        <h4 className="fw-black text-muted">No Visits Recorded</h4>
+                        <p className="text-secondary fw-bold small">There is no documented clinical history for this patient yet.</p>
                     </div>
-                ))}
+                )}
             </div>
 
             <style>{`
