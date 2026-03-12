@@ -132,10 +132,7 @@ const TodaySchedule = () => {
                 
                 {/* --- LEFT: Weekly Pinned --- */}
                 <div className="ts-left-panel">
-                    <div className="ts-section-header">
-                        <span className="ts-section-title">Weekly Pinned</span>
-                        <span className="ts-view-all">View all</span>
-                    </div>
+
 
                     <div className="ts-pinned-main-container mb-4">
                         <div className="ts-pinned-scroller">
