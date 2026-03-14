@@ -44,7 +44,7 @@ const ClinicalArchivesPage = () => {
 
     const handleBack = () => {
         if (patientId) {
-            navigate(`/doctor/patient-records?patientId=${patientId}`);
+            navigate(`/doctor/patient-hub?patientId=${patientId}`);
         } else {
             navigate(-1);
         }

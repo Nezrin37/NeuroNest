@@ -4,17 +4,17 @@
    ========================================================= */
 
 .ts-page {
-  padding: 48px;
-  padding-bottom: 80px;
+  padding: 32px;
   background-color: var(--nn-surface);
-  border-radius: 48px;
+  border-radius: 24px;
   border: 1px solid var(--nn-border);
-  margin: 0 24px 48px 24px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   font-family: 'Inter', sans-serif;
-  min-height: calc(100vh - 48px);
-  display: block;
-  overflow: visible;
-  height: auto;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 .ts-main-container {
@@ -22,16 +22,23 @@
   max-width: 1560px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 320px 1fr 340px;
+  grid-template-columns: 22% 1fr 28%;
   gap: 32px;
   background-color: transparent;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden; /* No scroll on the grid itself */
 }
+
+
 
 /* --- LEFT SIDEBAR (WEEKLY PINNED) --- */
 .ts-left-panel {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
+  overflow-y: auto; /* Internal scroll */
+  padding-bottom: 20px;
 }
 
 .ts-section-header {
@@ -49,45 +56,39 @@
 }
 
 .ts-view-all {
-  font-size: 0.75rem;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--nn-warning);
+  color: var(--nn-primary);
   text-decoration: none;
   cursor: pointer;
 }
 
 .ts-pinned-main-container {
   background: var(--nn-surface);
-  border-radius: 36px;
+  border-radius: 16px;
   border: 1px solid var(--nn-border);
   display: flex;
   flex-direction: column;
   overflow: hidden;
   box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  max-height: 700px;
 }
 
 .ts-pinned-scroller {
-  overflow-y: auto;
-  padding: 12px;
+  padding: 12px 12px 20px 12px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  max-height: 325px; /* Precise height for 2 pins */
+  gap: 22px;
+  overflow-y: auto;
+  flex: 1;
 }
 
-.ts-pinned-scroller::-webkit-scrollbar {
-  width: 4px;
-}
 
-.ts-pinned-scroller::-webkit-scrollbar-thumb {
-  background: var(--nn-border);
-  border-radius: 10px;
-}
 
 .ts-pin-item {
   background: var(--nn-surface-secondary);
-  border-radius: 24px;
-  padding: 20px;
+  border-radius: 12px;
+  padding: 22px;
   border: 1px solid transparent;
   transition: all 0.2s ease;
   cursor: pointer;
@@ -136,16 +137,16 @@
 }
 
 .ts-pin-checkbox.checked {
-  background: var(--nn-warning);
-  border-color: var(--nn-warning);
-  box-shadow: 0 4px 10px rgba(250, 204, 21, 0.3);
+  background: var(--nn-primary);
+  border-color: var(--nn-primary);
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
 }
 
 .ts-pin-icon {
   width: 36px;
   height: 36px;
-  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface));
-  color: var(--nn-warning);
+  background: color-mix(in srgb, var(--nn-primary) 20%, var(--nn-surface));
+  color: var(--nn-primary);
   border-radius: 10px;
   display: flex;
   align-items: center;
@@ -157,7 +158,7 @@
   font-weight: 750;
   color: var(--nn-text-main);
   margin: 0;
-  line-height: 1.2;
+  line-height: 1.4;
 }
 
 .ts-pin-time {
@@ -169,39 +170,38 @@
 .ts-pin-desc {
   font-size: 0.78rem;
   color: var(--nn-text-muted);
-  line-height: 1.4;
-  margin: 8px 0 0 0;
+  line-height: 1.6;
+  margin: 12px 0 0 0;
 }
 
 .ts-add-pin-btn {
-  padding: 16px;
-  background: var(--nn-surface-secondary);
-  border-top: 1px solid var(--nn-border);
+  padding: 14px 16px;
+  margin: 0;
+  background: var(--nn-primary);
+  border-radius: 0 0 16px 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  color: var(--nn-text-secondary);
+  color: #fff;
   font-weight: 700;
   font-size: 0.85rem;
+  border: none;
+  box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+  height: 54px;
+  width: 100%;
 }
 
 .ts-add-pin-btn:hover {
-  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface))30;
-  color: var(--nn-warning);
+  background: var(--nn-primary-dark);
+  filter: brightness(1.1);
+  box-shadow: 0 -6px 20px rgba(37, 99, 235, 0.2);
 }
 
 .ts-add-pin-icon {
-  width: 28px;
-  height: 28px;
-  background: var(--nn-warning);
-  color: white;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: none; /* Hide old icon box to make it sleek */
 }
 
 /* --- CENTER PANEL (SCHEDULE) --- */
@@ -209,6 +209,9 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  overflow-y: auto; /* Internal scroll */
+  padding-right: 4px;
+  padding-bottom: 20px;
 }
 
 .ts-schedule-head {
@@ -219,17 +222,17 @@
 }
 
 .ts-today-title {
-  font-size: 2.2rem;
-  font-weight: 900;
+  font-size: 28px;
+  font-weight: 700;
   color: var(--nn-text-main);
   letter-spacing: -0.04em;
   margin: 0;
 }
 
 .ts-date-sub {
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--nn-warning);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--nn-text-secondary);
   margin: 0;
 }
 
@@ -253,14 +256,14 @@
 
 .ts-nav-btn:hover {
   background: var(--nn-surface-secondary);
-  border-color: var(--nn-warning);
+  border-color: var(--nn-primary);
 }
 
 .ts-schedule-list {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding-bottom: 100px;
+  padding-bottom: 24px;
 }
 
 .ts-appointment-row {
@@ -281,7 +284,7 @@
 .ts-appointment-card {
   flex: 1;
   background: var(--nn-surface);
-  border-radius: 28px;
+  border-radius: 16px;
   padding: 16px 24px;
   display: flex;
   justify-content: space-between;
@@ -295,12 +298,12 @@
 .ts-appointment-card:hover {
   transform: translateX(8px);
   box-shadow: 0 12px 30px rgba(0,0,0,0.06);
-  border-color: color-mix(in srgb, var(--nn-warning) 30%, transparent);
+  border-color: color-mix(in srgb, var(--nn-primary) 30%, transparent);
 }
 
 .ts-appointment-card.ongoing {
-  background: color-mix(in srgb, var(--nn-warning) 20%, var(--nn-surface)); /* Yellow-ish ongoing */
-  border-color: color-mix(in srgb, var(--nn-warning) 40%, transparent);
+  background: color-mix(in srgb, var(--nn-primary) 12%, var(--nn-surface));
+  border-color: color-mix(in srgb, var(--nn-primary) 40%, transparent);
 }
 
 .ts-card-info {
@@ -358,7 +361,9 @@
 .ts-right-panel {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 6px;
+  overflow-y: auto; /* Internal scroll */
+  padding-bottom: 20px;
 }
 
 .ts-widget-row {
@@ -369,14 +374,18 @@
 .ts-widget-square {
   flex: 1;
   background: var(--nn-surface);
-  border-radius: 32px;
-  aspect-ratio: 1/1;
-  padding: 24px;
+  border-radius: 16px;
+  padding: 16px 20px;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   border: 1px solid var(--nn-border);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.ts-widget-square .fs-3 {
+  font-size: 1.5rem !important;
+  margin-bottom: 2px !important;
 }
 
 .ts-widget-icon {
@@ -396,7 +405,7 @@
   align-items: center;
   justify-content: space-between;
   border: 1px solid var(--nn-border);
-  margin-bottom: 8px;
+
 }
 
 .ts-clinic-time-label {
@@ -410,51 +419,10 @@
 .ts-clinic-time-value {
   font-size: 1.1rem;
   font-weight: 900;
-  color: var(--nn-warning);
+  color: var(--nn-primary);
 }
 
-.ts-summary-card {
-  background: var(--nn-surface);
-  border-radius: 36px;
-  padding: 28px;
-  border: 1px solid var(--nn-border);
-  box-shadow: 0 10px 40px rgba(0,0,0,0.02);
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-top: 8px;
-  margin-bottom: 60px;
-}
 
-.ts-summary-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.ts-summary-label {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--nn-text-secondary);
-}
-
-.ts-summary-value {
-  font-size: 1rem;
-  font-weight: 800;
-  color: var(--nn-text-main);
-}
-
-.ts-summary-value.risk-high {
-  background: var(--nn-danger-bg);
-  color: var(--nn-danger);
-  padding: 4px 12px;
-  border-radius: 10px;
-  font-size: 0.75rem;
-}
-
-.ts-page.dark .ts-summary-value.risk-high {
-  background: rgba(239, 68, 68, 0.15);
-}
 
 /* --- ADAPTIVE (MOBILE) --- */
 
@@ -493,8 +461,8 @@
   background: var(--nn-surface);
   width: 100%;
   max-width: 460px;
-  border-radius: 40px;
-  padding: 40px;
+  border-radius: 16px;
+  padding: 24px;
   border: 1px solid var(--nn-border);
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -578,8 +546,8 @@
 }
 
 .ts-modal-input:focus {
-  border-color: var(--nn-warning);
-  box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.1);
+  border-color: var(--nn-primary);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
 }
 
 .ts-modal-footer {
@@ -609,15 +577,15 @@
 }
 
 .ts-modal-btn.save {
-  background: var(--nn-warning);
+  background: var(--nn-primary);
   border: none;
   color: white;
-  box-shadow: 0 10px 20px rgba(250, 204, 21, 0.2);
+  box-shadow: 0 8px 16px rgba(37, 99, 235, 0.2);
 }
 
 .ts-modal-btn.save:hover {
   transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(250, 204, 21, 0.3);
+  box-shadow: 0 12px 24px rgba(37, 99, 235, 0.26);
 }
 
 .ts-page.dark .ts-modal-card {
@@ -628,3 +596,61 @@
 .ts-page.dark .ts-modal-input {
   background: var(--nn-surface);
 }
+
+/* --- SIMPLIFIED OVERVIEW LIST --- */
+.ts-stat-tag-simple {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  width: 100%;
+}
+
+.ts-stat-label-h3 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--nn-text-main);
+  margin: 0;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.ts-stat-val-large {
+  font-size: 1.5rem;
+  font-weight: 900;
+  font-family: 'Inter', sans-serif;
+  line-height: 1;
+}
+
+.ts-live-dot {
+  width: 8px;
+  height: 8px;
+  background: #10b981;
+  border-radius: 50%;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: pulse-green 2s infinite;
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.ts-stat-dash {
+  flex: 1;
+  height: 1px;
+  background: var(--nn-border);
+  margin: 0 16px;
+  opacity: 0.2;
+}
+
+.ts-stat-val {
+  font-size: 1.1rem;
+  font-weight: 800;
+  font-family: 'Inter', sans-serif;
+}
+
+
+

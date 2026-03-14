@@ -71,7 +71,7 @@ def create_app():
     app.register_blueprint(announcements_bp, url_prefix="/api/announcements")
     app.register_blueprint(modules_config_bp, url_prefix="/api/modules")
     app.register_blueprint(vitals_bp)
-
+    
     # New Doctor Profile Route
     app.register_blueprint(doctor_profile_bp, url_prefix="/api/doctor/profile")
     

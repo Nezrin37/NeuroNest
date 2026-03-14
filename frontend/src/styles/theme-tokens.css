@@ -1,7 +1,5 @@
 /* =========================================================
-   NEURONEST DESIGN SYSTEM — PROFESSIONAL MEDICAL PALETTE
-   Slate-based dark mode, WCAG-accessible, optimised for
-   long clinical sessions. Consistent across all modules.
+   NEURONEST DESIGN SYSTEM — PREMIUM ENTERPRISE SAAS PALETTE
    ========================================================= */
 
 :root {
@@ -9,76 +7,74 @@
   --nn-primary:        #2563EB;
   --nn-primary-hover:  #1D4ED8;
   --nn-primary-light:  #DBEAFE;
-  --nn-accent:         #2563EB;
-
+  --nn-secondary:      #4F46E5;
+  --nn-accent:         #F59E0B;
+  
   /* --- STATUS COLORS (Same in both themes) --- */
-  --nn-success:        #16A34A;
+  --nn-success:        #22C55E;
   --nn-success-bg:     #DCFCE7;
-  --nn-success-text:   #166534;
+  --nn-success-text:   #15803D; /* Better contrast than 166534 */
+  
   --nn-warning:        #F59E0B;
-  --nn-warning-bg:     #FFFBEB;
+  --nn-warning-bg:     #FEF3C7;
+  --nn-warning-text:   #B45309;
+
   --nn-danger:         #EF4444;
   --nn-danger-bg:      #FEE2E2;
-  --nn-danger-text:    #DC2626;
-  --nn-info:           #0EA5E9;
+  --nn-danger-text:    #B91C1C;
+
+  --nn-info:           #3B82F6;
   --nn-info-bg:        #DBEAFE;
   --nn-info-text:      #1D4ED8;
 
-  /* --- LIGHT THEME TOKENS --- */
+  /* --- NEUTRAL TOKENS (Light Theme) --- */
   --nn-bg:                  #F8FAFC;
   --nn-surface:             #FFFFFF;
   --nn-surface-secondary:   #F1F5F9;
   --nn-surface-card-alt:    #F9FAFB;
-  --nn-border:              #E2E8F0;
-  --nn-border-strong:       #CBD5E1;
-  --nn-divider:             #CBD5E1;
+  
+  --nn-border:              #E5E7EB;
+  --nn-border-strong:       #D1D5DB;
+  --nn-divider:             #E5E7EB;
+  
   --nn-text-main:           #0F172A;
-  --nn-text-secondary:      #334155;
-  --nn-text-muted:          #64748B;
-  --nn-text-disabled:       #CBD5E1;
+  --nn-text-secondary:      #475569;
+  --nn-text-muted:          #6B7280;
+  --nn-text-disabled:       #9CA3AF;
+  
+  /* --- BORDER RADIUS --- */
+  --nn-radius-sm:           6px;
+  --nn-radius-md:           10px; /* Inputs, Buttons */
+  --nn-radius-lg:           16px; /* Cards */
+  --nn-radius-full:         9999px;
+
+  /* --- SPACING (8px System) --- */
+  --nn-space-1:             4px;
+  --nn-space-2:             8px;
+  --nn-space-3:             12px;
+  --nn-space-4:             16px;
+  --nn-space-6:             24px;
+  --nn-space-8:             32px;
+  --nn-space-10:            40px;
+  --nn-space-12:            48px;
+
+  /* --- SHADOWS --- */
+  --nn-shadow-sm:           0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --nn-shadow-md:           0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --nn-shadow-lg:           0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
   --nn-glass:               rgba(255, 255, 255, 0.85);
-  --nn-shadow:              0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-  --nn-card-shadow:         0 1px 3px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
   --nn-nav-bg:              rgba(255, 255, 255, 0.95);
-  --nn-nav-border:          #E2E8F0;
+  --nn-nav-border:          #E5E7EB;
   --nn-nav-active:          #2563EB;
-  --nn-nav-inactive:        #64748B;
-
-  /* --- BUTTON TOKENS (Light) --- */
-  --nn-btn-primary-bg:      #2563EB;
-  --nn-btn-primary-hover:   #1D4ED8;
-  --nn-btn-primary-text:    #FFFFFF;
-  --nn-btn-secondary-bg:    #F1F5F9;
-  --nn-btn-secondary-hover: #E2E8F0;
-  --nn-btn-secondary-text:  #334155;
-  --nn-btn-secondary-border:#CBD5E1;
-  --nn-btn-danger-bg:       #FEE2E2;
-  --nn-btn-danger-hover:    #FECACA;
-  --nn-btn-danger-text:     #DC2626;
-
-  /* --- URGENT CASE (Light) --- */
-  --nn-urgent-bg:           #FEE2E2;
-  --nn-urgent-text:         #DC2626;
-
-  /* --- ONLINE CONSULT (Light) --- */
-  --nn-online-bg:           #DBEAFE;
-  --nn-online-text:         #1D4ED8;
-  --nn-followup:            #8B5CF6;
-  --nn-online-consult:      #06B6D4;
-
-  /* --- COMPLETED (Light) --- */
-  --nn-completed-bg:        #DCFCE7;
-  --nn-completed-text:      #166534;
+  --nn-nav-inactive:        #6B7280;
 
   /* --- CHAT (Light) --- */
   --nn-chat-doctor-bg:      #2563EB;
-  --nn-chat-patient-bg:     #E2E8F0;
-  --nn-chat-bg:             #F8FAFC;
-
-  /* --- SHADOWS --- */
-  --nn-shadow-soft:         0 4px 12px rgba(0, 0, 0, 0.05);
-  --nn-shadow-hover:        0 8px 20px rgba(0, 0, 0, 0.08);
-  --nn-gradient-primary:    linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+  --nn-chat-doctor-text:    #FFFFFF;
+  --nn-chat-patient-bg:     #F1F5F9;
+  --nn-chat-patient-text:   #0F172A;
+  --nn-chat-bg:             #FFFFFF;
 }
 
 /* --- DARK THEME (Slate-based, soft on eyes) --- */
@@ -87,18 +83,25 @@
   --nn-surface:             #1E293B;
   --nn-surface-secondary:   #111827;
   --nn-surface-card-alt:    #273449;
+  
   --nn-border:              #334155;
   --nn-border-strong:       #475569;
-  --nn-divider:             #475569;
-  --nn-text-main:           #F1F5F9;
-  --nn-text-secondary:      #E2E8F0;
+  --nn-divider:             #334155;
+  
+  --nn-text-main:           #F8FAFC;
+  --nn-text-secondary:      #CBD5E1;
   --nn-text-muted:          #94A3B8;
   --nn-text-disabled:       #475569;
+  
   --nn-glass:               rgba(30, 41, 59, 0.85);
-  --nn-shadow:              0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
-  --nn-card-shadow:         0 4px 24px rgba(0, 0, 0, 0.35);
+
+  /* --- SHADOWS --- */
+  --nn-shadow-sm:           0 1px 2px 0 rgba(0, 0, 0, 0.4);
+  --nn-shadow-md:           0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --nn-shadow-lg:           0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+
   --nn-nav-bg:              rgba(17, 24, 39, 0.97);
-  --nn-nav-border:          #1F2937;
+  --nn-nav-border:          #1E293B;
   --nn-nav-active:          #3B82F6;
   --nn-nav-inactive:        #94A3B8;
 
@@ -107,48 +110,19 @@
   --nn-success-text:        #86EFAC;
   --nn-danger-bg:           #7F1D1D;
   --nn-danger-text:         #FCA5A5;
+  --nn-warning-bg:          #78350F;
+  --nn-warning-text:        #FDE68A;
   --nn-info-bg:             #1E3A8A;
   --nn-info-text:           #93C5FD;
-  --nn-warning-bg:          #78350F;
-
-  /* --- URGENT CASE (Dark) --- */
-  --nn-urgent-bg:           #7F1D1D;
-  --nn-urgent-text:         #FCA5A5;
-
-  /* --- ONLINE CONSULT (Dark) --- */
-  --nn-online-bg:           #1E3A8A;
-  --nn-online-text:         #93C5FD;
-  --nn-followup:            #A78BFA;
-  --nn-online-consult:      #22D3EE;
-
-  /* --- COMPLETED (Dark) --- */
-  --nn-completed-bg:        #14532D;
-  --nn-completed-text:      #86EFAC;
 
   /* --- CHAT (Dark) --- */
   --nn-chat-doctor-bg:      #3B82F6;
+  --nn-chat-doctor-text:    #FFFFFF;
   --nn-chat-patient-bg:     #334155;
+  --nn-chat-patient-text:   #F8FAFC;
   --nn-chat-bg:             #0F172A;
 
-  /* Override primary-light for dark context */
   --nn-primary-light:       #1E3A8A;
   --nn-primary:             #3B82F6;
   --nn-primary-hover:       #2563EB;
-
-  /* --- BUTTON TOKENS (Dark) --- */
-  --nn-btn-primary-bg:      #3B82F6;
-  --nn-btn-primary-hover:   #2563EB;
-  --nn-btn-primary-text:    #FFFFFF;
-  --nn-btn-secondary-bg:    #1E293B;
-  --nn-btn-secondary-hover: #334155;
-  --nn-btn-secondary-text:  #E2E8F0;
-  --nn-btn-secondary-border:#475569;
-  --nn-btn-danger-bg:       #7F1D1D;
-  --nn-btn-danger-hover:    #991B1B;
-  --nn-btn-danger-text:     #FCA5A5;
-
-  /* --- SHADOWS --- */
-  --nn-shadow-soft:         0 8px 24px rgba(0, 0, 0, 0.4);
-  --nn-shadow-hover:        0 14px 34px rgba(0, 0, 0, 0.4);
-  --nn-gradient-primary:    linear-gradient(135deg, #3B82F6 0%, #22D3EE 100%);
 }

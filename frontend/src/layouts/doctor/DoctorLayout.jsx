@@ -9,7 +9,6 @@ import DynamicIslandNav from "../../components/DynamicIslandNav";
 const DoctorLayout = () => {
   const { isDark: darkMode, toggleTheme } = useTheme();
   const location = useLocation();
-  const isFeedbackRoute = location.pathname.includes('/feedback-reviews');
 
   return (
     <div className="vh-100 d-flex flex-column overflow-hidden" style={{ transition: 'all 0.3s' }}>
@@ -24,8 +23,7 @@ const DoctorLayout = () => {
 
       <div className="d-flex flex-grow-1 overflow-hidden" style={{ position: 'relative' }}>
         <main
-          className={`flex-grow-1 d-flex flex-column ${location.pathname.includes('/chat') ? 'overflow-hidden' : 'overflow-auto'} p-3 p-md-4 pb-5 pb-lg-4`}
-          style={isFeedbackRoute ? { background: 'var(--nn-bg)' } : undefined}
+          className={`flex-grow-1 d-flex flex-column overflow-hidden p-3 p-md-4 pb-5 pb-lg-4`}
         >
           <Outlet />
         </main>

@@ -164,7 +164,7 @@ const WritePrescription = ({ isEmbedded = false }) => {
                         <div className="d-flex align-items-center gap-3">
                             <button
                                 onClick={() => selectedPatient 
-                                    ? navigate(`/doctor/patient-records?patientId=${selectedPatient.id}`) 
+                                    ? navigate(`/doctor/patient-hub?patientId=${selectedPatient.id}`) 
                                     : navigate(-1)
                                 }
                                 title="Back to Clinical Dossier"

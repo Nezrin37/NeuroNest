@@ -631,3 +631,49 @@
     background: #3B82F6;
     color: white;
 }
+
+/* ----------------------------------
+   MOBILE RESPONSIVENESS
+------------------------------------*/
+@media (max-width: 1024px) {
+    .reports-kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .reports-bento-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .header-top {
+        flex-direction: column;
+        gap: 16px;
+    }
+    .reports-kpi-grid {
+        grid-template-columns: 1fr;
+    }
+    .kpi-card-glow {
+        padding: 16px;
+    }
+    .bento-box {
+        padding: 16px;
+    }
+    .reports-dropdown-menu {
+        right: auto;
+        left: 0;
+    }
+    .header-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .toggle-chips-container {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: 8px; /* space for scroll bar */
+        -webkit-overflow-scrolling: touch;
+        width: 100%;
+    }
+    .toggle-chip {
+        white-space: nowrap;
+    }
+}

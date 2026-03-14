@@ -40,14 +40,15 @@ const MessageBubble = ({ message, isMe, otherUserAvatar, isActiveCallRequest = f
             )}
             <div className={`d-flex flex-column ${isMe ? 'align-items-end' : 'align-items-start'}`} style={{ maxWidth: '75%' }}>
                 <div 
-                    className={`p-3 px-4 shadow-sm mb-1 position-relative ${isMe ? 'text-white' : 'text-dark border-0'}`}
+                    className={`p-3 px-4 mb-1 position-relative ${isMe ? 'text-white' : 'border-0'}`}
                     style={{ 
-                        background: isMe ? 'linear-gradient(135deg, #ff5b5b 0%, #ff3b3b 100%)' : '#eef2f6',
+                        background: isMe ? 'var(--nn-chat-doctor-bg)' : 'var(--nn-chat-patient-bg)',
+                        color: isMe ? 'var(--nn-chat-doctor-text)' : 'var(--nn-chat-patient-text)',
                         borderBottomRightRadius: isMe ? '4px' : '20px',
                         borderBottomLeftRadius: !isMe ? '4px' : '20px',
                         borderTopLeftRadius: '20px',
                         borderTopRightRadius: '20px',
-                        boxShadow: isMe ? '0 4px 15px rgba(255, 59, 59, 0.3)' : 'none'
+                        boxShadow: isMe ? 'var(--nn-shadow-sm)' : 'none'
                     }}
                 >
                 {message?.type === 'call_request' ? (

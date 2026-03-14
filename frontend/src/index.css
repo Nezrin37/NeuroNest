@@ -1,10 +1,10 @@
 @import "./styles/theme-tokens.css";
 
 /* =========================================================
-   NEURONEST — GLOBAL BASE STYLES
+   NEURONEST — GLOBAL ENTERPRISE SAAS BASE
    ========================================================= */
 
-/* ---- RESETS -------------------------------------------- */
+/* ---- RESETS & BASE -------------------------------------- */
 *, *::before, *::after { box-sizing: border-box; }
 
 html { scroll-behavior: smooth; overflow-x: hidden; }
@@ -17,6 +17,65 @@ body {
   background-color: var(--nn-bg);
   transition: background-color 0.4s ease, color 0.4s ease;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- 8PX SPACING SYSTEM UTILITIES ----------------------- */
+/* Margin */
+.mt-4 { margin-top: var(--nn-space-4); }
+.mt-6 { margin-top: var(--nn-space-6); }
+.mt-8 { margin-top: var(--nn-space-8); }
+.mb-4 { margin-bottom: var(--nn-space-4); }
+.mb-6 { margin-bottom: var(--nn-space-6); }
+.mb-8 { margin-bottom: var(--nn-space-8); }
+.ml-next { margin-left: var(--nn-space-3); }
+
+/* Padding */
+.p-2 { padding: var(--nn-space-2); }
+.p-4 { padding: var(--nn-space-4); }
+.p-6 { padding: var(--nn-space-6); }
+.p-8 { padding: var(--nn-space-8); }
+
+/* Gaps */
+.gap-2 { gap: var(--nn-space-2); }
+.gap-3 { gap: var(--nn-space-3); }
+.gap-4 { gap: var(--nn-space-4); }
+.gap-6 { gap: var(--nn-space-6); }
+.gap-8 { gap: var(--nn-space-8); }
+
+/* ---- TYPOGRAPHY HIERARCHY ------------------------------- */
+.text-page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--nn-text-main);
+  line-height: 1.2;
+}
+
+.text-section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--nn-text-main);
+  line-height: 1.3;
+}
+
+.text-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--nn-text-main);
+  line-height: 1.4;
+}
+
+.text-body {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--nn-text-secondary);
+  line-height: 1.5;
+}
+
+.text-small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--nn-text-muted);
 }
 
 /* Common Text Utilities */
@@ -25,23 +84,203 @@ body {
 .text-muted { color: var(--nn-text-muted); }
 .text-primary { color: var(--nn-primary); }
 
-/* ---- ANIMATION ----------------------------------------- */
-@keyframes fadeInUp {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-/* ---- CARDS --------------------------------------------- */
-.card {
+/* ---- PREMIUM CARDS ------------------------------------- */
+.nn-card {
   background: var(--nn-surface);
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: var(--nn-card-shadow);
+  border-radius: var(--nn-radius-lg);
+  padding: var(--nn-space-6);
+  box-shadow: var(--nn-shadow-sm);
   border: 1px solid var(--nn-border);
-  transition: all 0.4s ease;
+  transition: box-shadow 150ms ease, transform 150ms ease;
+  overflow: hidden;
 }
 
-/* ---- BUTTONS ------------------------------------------- */
+.nn-card.hoverable:hover {
+  box-shadow: var(--nn-shadow-md);
+}
+
+/* Card Sections */
+.nn-card-header {
+  margin-bottom: var(--nn-space-4);
+  padding-bottom: var(--nn-space-4);
+  border-bottom: 1px solid var(--nn-border);
+}
+/* If a card header is flex or grid, you can use utilities for that */
+
+.nn-card-footer {
+  margin-top: var(--nn-space-4);
+  padding-top: var(--nn-space-4);
+  border-top: 1px solid var(--nn-border);
+}
+
+/* Metric Cards */
+.nn-metric-card {
+  background: var(--nn-surface);
+  border-radius: var(--nn-radius-lg);
+  padding: var(--nn-space-6);
+  border: 1px solid var(--nn-border);
+  box-shadow: var(--nn-shadow-sm);
+  transition: transform 150ms ease, box-shadow 150ms ease;
+}
+.nn-metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--nn-shadow-md);
+}
+
+/* ---- BUTTONS (3 Types + Micro-interactions) ------------- */
+.nn-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--nn-space-3) var(--nn-space-4);
+  border-radius: var(--nn-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  transition: all 150ms ease;
+}
+
+.nn-btn:active {
+  transform: scale(0.98);
+}
+
+.nn-btn:hover {
+  transform: scale(1.02);
+}
+
+.nn-btn-primary {
+  background: var(--nn-primary);
+  color: #FFFFFF;
+  box-shadow: var(--nn-shadow-sm);
+}
+.nn-btn-primary:hover {
+  background: var(--nn-primary-hover);
+  box-shadow: var(--nn-shadow-md);
+}
+
+.nn-btn-secondary {
+  background: var(--nn-surface);
+  color: var(--nn-text-main);
+  border: 1px solid var(--nn-border-strong);
+}
+.nn-btn-secondary:hover {
+  background: var(--nn-surface-secondary);
+  border-color: var(--nn-text-muted);
+}
+
+.nn-btn-danger {
+  background: var(--nn-danger);
+  color: #FFFFFF;
+}
+.nn-btn-danger:hover {
+  background: #DC2626; /* Slightly darker */
+  box-shadow: var(--nn-shadow-md);
+}
+
+/* Special Gradients ONLY for big calls to action or hero */
+.nn-gradient-bg {
+  background: linear-gradient(135deg, var(--nn-primary), var(--nn-secondary));
+  color: white;
+}
+
+/* ---- TAGS & BADGES -------------------------------------- */
+.nn-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--nn-space-1) var(--nn-space-2);
+  border-radius: var(--nn-radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.nn-badge-success {
+  background: var(--nn-success-bg);
+  color: var(--nn-success-text);
+}
+
+.nn-badge-warning {
+  background: var(--nn-warning-bg);
+  color: var(--nn-warning-text);
+}
+
+.nn-badge-info {
+  background: var(--nn-info-bg);
+  color: var(--nn-info-text);
+}
+
+.nn-badge-danger {
+  background: var(--nn-danger-bg);
+  color: var(--nn-danger-text);
+}
+
+/* ---- MODERN TABLES -------------------------------------- */
+.nn-table-wrapper {
+  background: var(--nn-surface);
+  border: 1px solid var(--nn-border);
+  border-radius: var(--nn-radius-lg);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.nn-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 650px;
+}
+
+.nn-table th {
+  background: var(--nn-surface-secondary);
+  color: var(--nn-text-muted);
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: var(--nn-space-3) var(--nn-space-4);
+  text-align: left;
+  border-bottom: 1px solid var(--nn-border);
+}
+
+.nn-table td {
+  padding: var(--nn-space-3) var(--nn-space-4);
+  font-size: 14px;
+  color: var(--nn-text-main);
+  border-bottom: 1px solid var(--nn-border);
+  height: 56px; /* standard row height */
+}
+
+.nn-table tbody tr {
+  transition: background-color 150ms ease;
+}
+
+.nn-table tbody tr:hover {
+  background-color: var(--nn-surface-secondary);
+}
+
+.nn-table tbody tr:last-child td {
+  border-bottom: none; /* For the wrapper's rounded corners */
+}
+
+/* ---- LOADING SKELETON ----------------------------------- */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--nn-surface-secondary) 25%,
+    var(--nn-border) 50%,
+    var(--nn-surface-secondary) 75%
+  );
+  background-size: 200% 100%;
+  animation: pulse 1.5s infinite;
+  border-radius: var(--nn-radius-md);
+}
+
+@keyframes pulse {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Legacy Support (Try to replace these eventually) */
 .btn {
   padding: 8px 14px;
   border-radius: 10px;
@@ -49,15 +288,34 @@ body {
   cursor: pointer;
   font-weight: 500;
 }
+.btn-toggle { background: var(--nn-primary); color: white; }
+body.dark .btn-toggle { background: var(--nn-primary); }
 
-.btn-toggle { background: #6366f1; color: white; }
-body.dark .btn-toggle { background: #818cf8; }
-
-/* ---- AUTH LINK (reusable) ------------------------------ */
 .auth-link {
-  color: #6366f1;
+  color: var(--nn-primary);
   font-weight: 600;
   cursor: pointer;
   text-decoration: none;
 }
 .auth-link:hover { text-decoration: underline; }
+
+/* ---- MOBILE RESPONSIVENESS ------------------------------ */
+@media (max-width: 768px) {
+  .text-page-title {
+    font-size: 22px;
+  }
+  .text-section-title {
+    font-size: 18px;
+  }
+  .nn-card {
+    padding: var(--nn-space-4);
+    border-radius: var(--nn-radius-md);
+  }
+  .nn-metric-card {
+    padding: var(--nn-space-4);
+    border-radius: var(--nn-radius-md);
+  }
+  .nn-table th, .nn-table td {
+    padding: var(--nn-space-3);
+  }
+}

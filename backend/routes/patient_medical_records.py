@@ -31,6 +31,13 @@ def _actor_info():
     actor_role = claims.get("role") or "patient"
     return actor_id, actor_role
 
+
+def _doctor_only_clinical_write():
+    actor_id, actor_role = _actor_info()
+    if actor_role != "doctor":
+        return None, (jsonify({"message": "Only doctors can modify allergies, conditions, and medications"}), 403)
+    return actor_id, None
+
 def _verify_patient_access(patient_id):
     actor_id, actor_role = _actor_info()
     if actor_role == "patient" and actor_id != patient_id:
@@ -417,7 +424,10 @@ def create_allergy(patient_id=None):
     if not is_allowed:
         return jsonify({"message": msg}), 403
 
-    actor_id, actor_role = _actor_info()
+    actor_id, doctor_only_error = _doctor_only_clinical_write()
+    if doctor_only_error:
+        return doctor_only_error
+    actor_role = "doctor"
     data = request.get_json(silent=True) or {}
 
     allergy_name = str(data.get("allergy_name") or "").strip()
@@ -496,6 +506,9 @@ def delete_allergy(allergy_id, patient_id=None):
     is_allowed, msg = _verify_patient_access(patient_id)
     if not is_allowed:
         return jsonify({"message": msg}), 403
+    _, doctor_only_error = _doctor_only_clinical_write()
+    if doctor_only_error:
+        return doctor_only_error
 
     row = PatientAllergy.query.filter_by(id=allergy_id, patient_id=patient_id).first()
     if not row:
@@ -560,7 +573,10 @@ def create_condition(patient_id=None):
     if not is_allowed:
         return jsonify({"message": msg}), 403
 
-    actor_id, actor_role = _actor_info()
+    actor_id, doctor_only_error = _doctor_only_clinical_write()
+    if doctor_only_error:
+        return doctor_only_error
+    actor_role = "doctor"
     data = request.get_json(silent=True) or {}
     condition_name = str(data.get("condition_name") or "").strip()
     if not condition_name:
@@ -638,6 +654,9 @@ def delete_condition(condition_id, patient_id=None):
     is_allowed, msg = _verify_patient_access(patient_id)
     if not is_allowed:
         return jsonify({"message": msg}), 403
+    _, doctor_only_error = _doctor_only_clinical_write()
+    if doctor_only_error:
+        return doctor_only_error
 
     row = PatientCondition.query.filter_by(id=condition_id, patient_id=patient_id).first()
     if not row:
@@ -682,7 +701,10 @@ def create_medication(patient_id=None):
     if not is_allowed:
         return jsonify({"message": msg}), 403
 
-    actor_id, actor_role = _actor_info()
+    actor_id, doctor_only_error = _doctor_only_clinical_write()
+    if doctor_only_error:
+        return doctor_only_error
+    actor_role = "doctor"
     data = request.get_json(silent=True) or {}
     drug_name = str(data.get("drug_name") or "").strip()
     if not drug_name:
@@ -693,9 +715,6 @@ def create_medication(patient_id=None):
     medication_origin = str(data.get("medication_origin") or "past_external").strip().lower()
     if medication_origin not in ALLOWED_MEDICATION_ORIGINS:
         return jsonify({"message": "Invalid medication_origin"}), 400
-    if actor_role == "patient" and medication_origin == "current_doctor":
-        return jsonify({"message": "Patients cannot mark medication as current doctor prescribed"}), 400
-
     existing = (
         PatientMedication.query.filter(PatientMedication.patient_id == patient_id)
         .filter(func.lower(PatientMedication.drug_name) == drug_name.lower())
@@ -777,6 +796,9 @@ def delete_medication(medication_id, patient_id=None):
     is_allowed, msg = _verify_patient_access(patient_id)
     if not is_allowed:
         return jsonify({"message": msg}), 403
+    _, doctor_only_error = _doctor_only_clinical_write()
+    if doctor_only_error:
+        return doctor_only_error
 
     row = PatientMedication.query.filter_by(id=medication_id, patient_id=patient_id).first()
     if not row:

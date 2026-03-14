@@ -83,7 +83,7 @@ const AdminDashboard = () => {
                     <div className="text-secondary small fw-bold text-uppercase mb-1" style={{ letterSpacing: '1px' }}>Admin Console / Dashboard</div>
                     <h1 className="h3 fw-black text-dark mb-0">System Overview</h1>
                 </div>
-                <button className="btn btn-primary rounded-pill px-4 py-2 fw-bold shadow-sm d-flex align-items-center gap-2 border-0" style={{ background: 'linear-gradient(135deg, #0d6efd, #6610f2)' }}>
+                <button className="nn-btn d-flex align-items-center gap-2 border-0" style={{ background: 'linear-gradient(135deg, #0d6efd, #6610f2)', color: 'white' }}>
                     <Radio size={18} /> Internal Broadcast
                 </button>
             </div>
@@ -98,7 +98,7 @@ const AdminDashboard = () => {
                                     <div className="bg-primary bg-opacity-10 text-primary p-3 rounded-4">
                                         {getStatIcon(stat.id)}
                                     </div>
-                                    <span className={`badge rounded-pill px-2 py-1 small fw-bold ${stat.trend?.startsWith('+') ? 'bg-success bg-opacity-10 text-success' : stat.trend === 'Stable' ? 'bg-light text-secondary' : 'bg-danger bg-opacity-10 text-danger'}`}>
+                                    <span className={`nn-badge ${stat.trend?.startsWith('+') ? 'nn-badge-success' : stat.trend === 'Stable' ? 'bg-light text-secondary' : 'nn-badge-danger'}`}>
                                         {stat.trend?.startsWith('+') ? <ArrowUpRight size={12} className="me-1" /> : stat.trend?.startsWith('-') ? <ArrowDownRight size={12} className="me-1" /> : null}
                                         {stat.trend || 'N/A'}
                                     </span>
@@ -156,7 +156,7 @@ const AdminDashboard = () => {
                                     <div key={i} className="bg-light p-3 rounded-4 border-start border-4 border-primary shadow-xs transition-all hover-translate-x">
                                         <div className="d-flex justify-content-between align-items-start mb-1">
                                             <h4 className="h6 fw-bolder text-dark mb-0" style={{ fontSize: '0.9rem' }}>{task.title}</h4>
-                                            <span className={`badge rounded-pill px-2 py-1 small fw-bold ${task.priority === 'High' ? 'bg-danger bg-opacity-10 text-danger' : task.priority === 'Medium' ? 'bg-warning bg-opacity-10 text-warning' : 'bg-info bg-opacity-10 text-info'}`}>
+                                            <span className={`nn-badge ${task.priority === 'High' ? 'nn-badge-danger' : task.priority === 'Medium' ? 'nn-badge-warning' : 'nn-badge-info'}`}>
                                                 {task.priority}
                                             </span>
                                         </div>
@@ -211,9 +211,9 @@ const AdminDashboard = () => {
                                     </div>
                                 ))}
                             </div>
-                            <button className="btn btn-outline-secondary btn-sm rounded-pill py-2 fw-bold text-uppercase mt-2" style={{ fontSize: '0.65rem', letterSpacing: '1px' }}>
-                                Access Full Audit Trail
-                            </button>
+                            <button className="nn-btn nn-btn-secondary text-uppercase mt-2" style={{ fontSize: '0.65rem', letterSpacing: '1px' }}>
+                                                Access Full Audit Trail
+                                            </button>
                         </div>
                     </div>
                 </div>

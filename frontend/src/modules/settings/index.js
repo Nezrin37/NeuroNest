@@ -16,7 +16,7 @@ const settingsModule = {
     doctor:  DoctorSettingsPage,
     admin:   SettingsPage,
   },
-  orderByRole: { doctor: 110, patient: 90, admin: 90 },
+  orderByRole: { doctor: 50, patient: 90, admin: 90 },
 };
 
 export default settingsModule;

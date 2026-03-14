@@ -560,10 +560,21 @@ body.dark .theme-toggle-btn::before {
 ========================= */
 
 .nn-dashboard-wrap {
-  min-height: calc(100vh - 80px);
+  flex: 1;
+  min-height: 0;
   background: var(--nn-bg);
   color: var(--nn-text-main);
   padding: clamp(1rem, 2.5vw, 2rem);
+  overflow-y: auto;
+}
+
+/* Custom scrollbar for dashboard */
+.nn-dashboard-wrap::-webkit-scrollbar {
+  width: 6px;
+}
+.nn-dashboard-wrap::-webkit-scrollbar-thumb {
+  background: var(--nn-border);
+  border-radius: 10px;
 }
 
 .nn-dashboard-head {

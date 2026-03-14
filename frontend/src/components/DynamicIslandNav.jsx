@@ -175,21 +175,15 @@ const DynamicIslandNav = ({ role = "patient" }) => {
                 }
 
                 .island-item.active {
-                    color: #fff;
-                    background: #2563eb; /* Primary Blue */
-                    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+                    color: #60a5fa;
+                    background: rgba(96, 165, 250, 0.15);
+                    box-shadow: none;
                 }
 
                 .light .island-item.active {
-                    color: #fff;
-                    background: #2563eb;
-                }
-                
-                /* Blue Gradient Version */
-                .island-item.active {
-                    background: linear-gradient(90deg, #00d2ff, #0055ff);
-                    color: #fff;
-                    box-shadow: 0 4px 20px rgba(0, 85, 255, 0.4);
+                    color: #2563eb;
+                    background: #EEF4FF;
+                    box-shadow: none;
                 }
 
                 .island-icon {

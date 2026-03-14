@@ -17,7 +17,7 @@ const performanceAnalyticsModule = {
   componentsByRole: {
     doctor: PerformanceAnalyticsPage,
   },
-  showInSidebarByRole: [],
+  showInSidebarByRole: ['doctor'],
   orderByRole: { doctor: 80 },
 };
 

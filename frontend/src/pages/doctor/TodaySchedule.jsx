@@ -132,10 +132,7 @@ const TodaySchedule = () => {
                 
                 {/* --- LEFT: Weekly Pinned --- */}
                 <div className="ts-left-panel">
-                    <div className="ts-section-header">
-                        <span className="ts-section-title">Weekly Pinned</span>
-                        <span className="ts-view-all">View all</span>
-                    </div>
+
 
                     <div className="ts-pinned-main-container">
                         <div className="ts-pinned-scroller">
@@ -153,7 +150,7 @@ const TodaySchedule = () => {
                                         </div>
                                     </div>
                                     {item.category && (
-                                        <span className={`badge ${isDark ? 'bg-secondary' : 'bg-warning'} bg-opacity-10 text-warning px-2 py-1 rounded-pill`} style={{ fontSize: '0.6rem', width: 'fit-content', marginLeft: '34px' }}>
+                                        <span className="badge px-2 py-1 rounded-pill" style={{ fontSize: '0.6rem', width: 'fit-content', marginLeft: '34px', color: 'var(--nn-primary)', background: 'color-mix(in srgb, var(--nn-primary) 14%, transparent)', border: '1px solid color-mix(in srgb, var(--nn-primary) 26%, transparent)' }}>
                                             {item.category}
                                         </span>
                                     )}
@@ -163,33 +160,13 @@ const TodaySchedule = () => {
                         </div>
 
                         <div className="ts-add-pin-btn" onClick={() => setIsAddingPin(true)}>
-                            <div className="ts-add-pin-icon">
-                                <Plus size={18} />
-                            </div>
-                            <span>Add new clinical pin</span>
+                            <Plus size={16} /> Add Clinical Note
                         </div>
                     </div>
 
-                    <div className="ts-widget-row">
-                        <div className="ts-widget-square">
-                            <div className="ts-widget-icon bg-danger-subtle text-danger">
-                                <Zap size={24} />
-                            </div>
-                            <div>
-                                <h4 className="fw-bolder fs-3 mb-0">{schedule.filter(a => a.status === 'approved').length}</h4>
-                                <span className="text-muted small fw-bold">Pending Slots</span>
-                            </div>
-                        </div>
-                        <div className="ts-widget-square">
-                            <div className="ts-widget-icon bg-info-subtle text-info">
-                                <UserCheck size={24} />
-                            </div>
-                            <div>
-                                <h4 className="fw-bolder fs-3 mb-0">{schedule.filter(a => a.status === 'completed').length}</h4>
-                                <span className="text-muted small fw-bold">Completed</span>
-                            </div>
-                        </div>
-                    </div>
+
+
+
                 </div>
 
                 {/* --- CENTER: Schedule --- */}
@@ -214,6 +191,8 @@ const TodaySchedule = () => {
                             <div className="ts-nav-btn" onClick={() => handleDateStep(1)}><ChevronRight size={20} /></div>
                         </div>
                     </div>
+
+
 
                     <div className="ts-schedule-list">
                         {/* ── Online / Offline Tabs ── */}
@@ -255,19 +234,22 @@ const TodaySchedule = () => {
 
                         {loading ? (
                             <div className="ts-appointment-card justify-content-center p-5 border-0">
-                                <div className="spinner-border text-warning" role="status"></div>
+                                <div className="spinner-border text-primary" role="status"></div>
                             </div>
                         ) : (() => {
                             const filtered = modeFilter === 'all'
                                 ? schedule
                                 : schedule.filter(a => (a.consultation_type || 'in_person') === modeFilter);
                             if (filtered.length === 0) return (
-                                <div className="ts-appointment-card justify-content-center p-5 text-center border-0">
-                                    <Bookmark size={48} className="text-muted opacity-20 mb-3" />
-                                    <h3 className="h5 fw-bold">
-                                        {modeFilter === 'online' ? 'No Online Appointments' : modeFilter === 'in_person' ? 'No In-Person Appointments' : 'Agenda Clear'}
-                                    </h3>
-                                    <p className="text-muted small">No consultations for this mode today.</p>
+                                <div className="nn-card d-flex flex-column align-items-center justify-content-center p-8 text-center" style={{ minHeight: '410px', borderStyle: 'dashed' }}>
+                                    <div className="mb-4 d-flex align-items-center justify-content-center" style={{ width: '64px', height: '64px', borderRadius: '20px', background: 'var(--nn-surface-secondary)', color: 'var(--nn-primary)' }}>
+                                        <Calendar size={32} strokeWidth={2} />
+                                    </div>
+                                    <h3 className="text-section-title mb-2">No appointments scheduled</h3>
+                                    <p className="text-body mb-4" style={{ color: 'var(--nn-text-secondary)' }}>You are free today.</p>
+                                    <button className="btn btn-primary rounded-pill fw-bold shadow-sm d-flex align-items-center" style={{ padding: '14px 32px', fontSize: '0.85rem' }} onClick={() => navigate('/doctor/settings', { state: { initialTab: 'schedule' } })}>
+                                        Add availability
+                                    </button>
                                 </div>
                             );
                             return filtered.map((appointment) => {
@@ -279,7 +261,7 @@ const TodaySchedule = () => {
                                         <div className="ts-time-marker">{timeObj.value} {timeObj.period}</div>
                                         <div
                                             className={`ts-appointment-card ${isFocused ? 'ongoing shadow-lg' : ''}`}
-                                            onClick={() => navigate(`/doctor/patient-records?patientId=${appointment.patient_id}`)}
+                                            onClick={() => navigate(`/doctor/patient-hub?patientId=${appointment.patient_id}`)}
                                         >
                                             <div className="ts-card-info">
                                                 <div className="ts-patient-avatar">
@@ -315,7 +297,7 @@ const TodaySchedule = () => {
                                                 {appointment.status === 'approved' && (
                                                     <div className="d-flex gap-2">
                                                         <button
-                                                            className="btn btn-warning rounded-circle p-0 d-flex align-items-center justify-content-center text-white shadow-sm"
+                                                            className="btn btn-primary rounded-circle p-0 d-flex align-items-center justify-content-center text-white shadow-sm"
                                                             style={{ width: '32px', height: '32px' }}
                                                             onClick={(e) => { e.stopPropagation(); handleAction(appointment.id, 'complete'); }}
                                                         >
@@ -342,19 +324,20 @@ const TodaySchedule = () => {
                 {/* --- RIGHT: Widgets --- */}
                 <div className="ts-right-panel">
                     <div className="ts-section-header">
-                        <span className="ts-section-title">Focus & Metrics</span>
+                        <span className="ts-section-title">Today's Overview</span>
                     </div>
 
                     <div className="ts-clinic-time-card shadow-sm">
                         <span className="ts-clinic-time-label">Clinic Time</span>
                         <div className="ts-clinic-time-value d-flex align-items-center gap-2">
+                             <span className="ts-live-dot"></span>
                              <Clock size={16} />
                              {liveTime}
                         </div>
                     </div>
 
                     {/* Minimal Calendar Mini-Widget */}
-                    <div className="ts-pinned-main-container p-3 shadow-sm">
+                    <div className="ts-pinned-main-container p-4 shadow-sm">
                         <div className="d-flex justify-content-between align-items-center mb-3">
                             <span className={`fw-bold fs-6 ${isDark ? 'text-light' : 'text-dark'}`}>March, 2026</span>
                             <div className="d-flex gap-2">
@@ -367,11 +350,12 @@ const TodaySchedule = () => {
                             {Array.from({length: 31}).map((_, i) => {
                                 const dayNum = i + 1;
                                 const isSelected = dayNum === displayDate.day;
+                                const hasAppointment = schedule.some(a => new Date(a.appointment_time).getDate() === dayNum);
                                 return (
                                     <div 
                                         key={i} 
-                                        className={`text-center py-1 rounded-circle fw-bold transition-all ${isSelected ? 'bg-warning text-white shadow-sm' : isDark ? 'text-light hover-bg-dark' : 'text-dark hover-bg-light'}`} 
-                                        style={{ fontSize: '0.75rem', cursor: 'pointer' }}
+                                        className={`text-center py-1 rounded-circle fw-bold transition-all position-relative ${isSelected ? 'bg-primary text-white shadow-sm' : isDark ? 'text-light hover-bg-dark' : 'text-dark hover-bg-light'}`} 
+                                        style={{ fontSize: '0.75rem', cursor: 'pointer', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
                                         onClick={() => {
                                             const newDate = new Date(selectedDate);
                                             newDate.setDate(dayNum);
@@ -379,32 +363,39 @@ const TodaySchedule = () => {
                                         }}
                                     >
                                         {dayNum}
+                                        {hasAppointment && !isSelected && (
+                                            <div style={{ position: 'absolute', bottom: '2px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '50%', background: 'var(--nn-primary)' }} />
+                                        )}
+                                        {hasAppointment && isSelected && (
+                                            <div style={{ position: 'absolute', bottom: '2px', left: '50%', transform: 'translateX(-50%)', width: '4px', height: '4px', borderRadius: '50%', background: 'white' }} />
+                                        )}
                                     </div>
                                 );
                             })}
                         </div>
                     </div>
 
-                    <div className="ts-summary-card">
-                         <h3 className="h6 fw-bolder text-dark mb-1">Today's Summary</h3>
-                         <div className="ts-summary-item">
-                             <span className="ts-summary-label">Total Appointments</span>
-                             <span className="ts-summary-value">{schedule.length}</span>
-                         </div>
-                         <div className="ts-summary-item">
-                             <span className="ts-summary-label">Completed</span>
-                             <span className="ts-summary-value text-success">{schedule.filter(a => a.status === 'completed').length}</span>
-                         </div>
-                         <div className="ts-summary-item">
-                             <span className="ts-summary-label">Pending</span>
-                             <span className="ts-summary-value text-warning">{schedule.filter(a => a.status === 'approved').length}</span>
-                         </div>
-                         <div className="ts-summary-item pt-2 border-top">
-                             <span className="ts-summary-label">Overtime Risk</span>
-                             <span className={`ts-summary-value ${schedule.filter(a => a.status === 'approved').length > 5 ? 'risk-high' : 'text-success'}`}>
-                                 {schedule.filter(a => a.status === 'approved').length > 5 ? 'High Risk' : 'Low Risk'}
-                             </span>
-                         </div>
+                    <div className="ts-compact-stats d-flex flex-column gap-1">
+                        <div className="ts-stat-tag-simple">
+                            <h3 className="ts-stat-label-h3">Total Appointments</h3>
+                            <span className="ts-stat-dash"></span>
+                            <span className="ts-stat-val-large">{schedule.length}</span>
+                        </div>
+                        <div className="ts-stat-tag-simple">
+                            <h3 className="ts-stat-label-h3 text-primary">Pending Slots</h3>
+                            <span className="ts-stat-dash"></span>
+                            <span className="ts-stat-val-large text-primary">{schedule.filter(a => a.status === 'approved').length}</span>
+                        </div>
+                        <div className="ts-stat-tag-simple">
+                            <h3 className="ts-stat-label-h3 text-success">Completed</h3>
+                            <span className="ts-stat-dash"></span>
+                            <span className="ts-stat-val-large text-success">{schedule.filter(a => a.status === 'completed').length}</span>
+                        </div>
+                        <div className="ts-stat-tag-simple">
+                            <h3 className="ts-stat-label-h3 text-danger">Cancelled</h3>
+                            <span className="ts-stat-dash"></span>
+                            <span className="ts-stat-val-large text-danger">{schedule.filter(a => a.status === 'cancelled').length}</span>
+                        </div>
                     </div>
                 </div>
 

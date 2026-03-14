@@ -3,7 +3,7 @@ import MyPatients from '../../pages/doctor/MyPatients';
 
 const myPatientsModule = {
   key: 'myPatients',
-  label: 'My Patients',
+  label: 'Patients',
   icon: Users,
   route: '/patients',
   rolesAllowed: ['doctor', 'admin'],
@@ -11,7 +11,7 @@ const myPatientsModule = {
   componentsByRole: {
     doctor: MyPatients,
   },
-  orderByRole: { doctor: 50, admin: 60 },
+  orderByRole: { doctor: 30, admin: 60 },
 };
 
 export default myPatientsModule;

@@ -3,7 +3,7 @@ import TodaySchedule from '../../pages/doctor/TodaySchedule';
 
 const todayScheduleModule = {
   key: 'todaySchedule',
-  label: "Today's Schedule",
+  label: "Appointments",
   icon: CalendarDays,
   route: '/schedule',
   rolesAllowed: ['doctor', 'admin'],
@@ -11,7 +11,7 @@ const todayScheduleModule = {
   componentsByRole: {
     doctor: TodaySchedule,
   },
-  orderByRole: { doctor: 40, admin: 50 },
+  orderByRole: { doctor: 20, admin: 50 },
 };
 
 export default todayScheduleModule;

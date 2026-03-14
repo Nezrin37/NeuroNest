@@ -43,7 +43,7 @@ const GENERAL_OVERVIEW_DATA = [
 ];
 
 const StatCard = ({ label, value, hint, icon, tone = 'primary' }) => (
-  <div className={`nn-stat-card nn-tone-${tone}`}>
+  <div className={`nn-metric-card nn-tone-${tone}`}>
     <div className="d-flex justify-content-between align-items-start mb-2">
       <div className="nn-stat-label">{label}</div>
       <div className="nn-stat-icon">

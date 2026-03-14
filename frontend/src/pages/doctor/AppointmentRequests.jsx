@@ -90,23 +90,13 @@ function TriageKPI({ title, value, trend, color, percent }) {
 
 function StatusBadge({ status }) {
   const s = (status || "").toLowerCase();
-  let color = "var(--nn-text-muted)";
-  let bg = "var(--nn-surface-secondary)";
   
-  if (s === "approved") { color = "var(--nn-success)"; bg = "color-mix(in srgb, var(--nn-success) 15%, transparent)"; }
-  else if (s === "rejected") { color = "var(--nn-danger)"; bg = "color-mix(in srgb, var(--nn-danger) 15%, transparent)"; }
-  else if (s === "completed") { color = "var(--nn-primary)"; bg = "color-mix(in srgb, var(--nn-primary) 15%, transparent)"; }
-  else if (s === "cancelled") { color = "var(--nn-warning)"; bg = "color-mix(in srgb, var(--nn-warning) 15%, transparent)"; }
+  if (s === "approved") return <span className="nn-badge nn-badge-success">APPROVED</span>;
+  if (s === "rejected") return <span className="nn-badge nn-badge-danger">REJECTED</span>;
+  if (s === "completed") return <span className="nn-badge nn-badge-info">COMPLETED</span>;
+  if (s === "cancelled") return <span className="nn-badge nn-badge-warning">CANCELLED</span>;
 
-  return (
-    <span style={{ 
-      padding: '4px 10px', borderRadius: '8px', fontSize: '0.72rem', 
-      fontWeight: 800, textTransform: 'uppercase', color, backgroundColor: bg,
-      border: `1px solid ${color}40`
-    }}>
-      {status}
-    </span>
-  );
+  return <span className="nn-badge" style={{ background: 'var(--nn-surface-secondary)', color: 'var(--nn-text-secondary)' }}>{status}</span>;
 }
 
 function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory }) {
@@ -163,7 +153,6 @@ function TriageRow({ req, onAction, actionLoading, onRescheduleClick, isHistory 
               <button 
                 className="ar-triage-btn ar-btn-suggest" 
                 onClick={() => onRescheduleClick(req)}
-                style={{ color: 'var(--nn-followup)', borderColor: 'color-mix(in srgb, var(--nn-followup) 20%, transparent)' }}
                 title="Suggest Alternate Time"
               >
                  <Clock size={18} />
@@ -554,8 +543,8 @@ const AppointmentRequests = () => {
        <div className="ar-page border-0">
          <div className="ar-main-container text-center py-5">
             <RefreshCw className="ar-spin text-primary mb-3" size={56} />
-            <h3 className="text-white fw-bold">Clinical Triage Engine</h3>
-            <p className="text-muted">Synchronizing pending requests...</p>
+            <h3 className="fw-bold" style={{ color: 'var(--nn-text-main)' }}>Clinical Triage Engine</h3>
+            <p style={{ color: 'var(--nn-text-muted)' }}>Synchronizing pending requests...</p>
          </div>
        </div>
      );
@@ -573,13 +562,13 @@ const AppointmentRequests = () => {
         </div>
 
         <div className="ar-header-row">
-           <div className="ar-title-stack">
-              <h1>Request Approval Center</h1>
-              <p>Analyze and triage incoming patient cases.</p>
+            <div className="ar-title-stack">
+              <h1 className="text-page-title">Request Approval Center</h1>
+              <p className="text-body">Analyze and triage incoming patient cases.</p>
            </div>
            <div className="ar-header-actions">
-              <button className="ar-action-btn ar-btn-primary" onClick={fetchRequests}>
-                 <Zap size={18} /> Refresh Engine
+              <button className="nn-btn nn-btn-primary" onClick={fetchRequests}>
+                 <Zap size={16} className="me-2" /> Refresh Engine
               </button>
            </div>
         </div>
@@ -748,10 +737,10 @@ const AppointmentRequests = () => {
            )}
 
            {filteredRequests.length === 0 && (
-              <div className="ar-kpi-card text-center py-5">
-                 <ShieldAlert size={64} className="text-primary mb-4 opacity-10" />
-                 <h2 className="text-white fw-bold">Queue Clear</h2>
-                 <p className="text-muted">No pending triage requests at this moment.</p>
+              <div className="nn-card d-flex flex-column align-items-center justify-content-center p-8 text-center mt-6" style={{ minHeight: '300px', borderStyle: 'dashed' }}>
+                 <ShieldAlert size={48} className="text-muted mb-4 opacity-50" strokeWidth={1} />
+                 <h2 className="text-section-title mb-2">Queue Clear</h2>
+                 <p className="text-body">No pending triage requests at this moment.</p>
               </div>
            )}
         </div>

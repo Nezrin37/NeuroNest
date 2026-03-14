@@ -546,22 +546,16 @@ img, video {
 }
 
 /* ---- SCROLLBAR POLISH ---------------------------------- */
+/* ---- GLOBAL SCROLLBAR HIDING --------------------------- */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.15);
-  border-radius: 99px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0,0,0,0.3);
+* {
+  scrollbar-width: none !important; /* Firefox */
+  -ms-overflow-style: none !important; /* IE/Edge */
 }
 
 /* ---- SAFE AREA (NOTCH/ISLANDS) ------------------------- */

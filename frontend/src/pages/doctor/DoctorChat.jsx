@@ -207,7 +207,7 @@ const DoctorChat = ({ isEmbedded = false }) => {
     }, [startVideoParam, selectedConv, currentUser, handleVideoCall]);
 
     return (
-        <div className="d-flex w-100 h-100 overflow-hidden bg-white rounded-4 shadow-sm">
+        <div className="d-flex w-100 h-100 overflow-hidden rounded-4 shadow-sm" style={{ background: 'var(--nn-surface)', border: '1px solid var(--nn-border)' }}>
             {/* Column 1: Inbox — hidden when in focused patient mode */}
             {!isEmbedded && !isFocusedMode && (
                 <ConversationList 
@@ -223,7 +223,7 @@ const DoctorChat = ({ isEmbedded = false }) => {
             <div className={`d-flex flex-column flex-grow-1 position-relative bg-transparent ${isFocusedMode ? 'overflow-hidden' : ''}`} style={isFocusedMode ? { borderRadius: '20px' } : { minWidth: 0, minHeight: 0, overflow: 'hidden' }}>
                 {/* Focused-mode top bar with back navigation */}
                 {isFocusedMode && selectedConv && (
-                    <div className="d-flex align-items-center gap-3 px-4 py-2 border-bottom bg-white bg-opacity-75" style={{ backdropFilter: 'blur(10px)' }}>
+                    <div className="d-flex align-items-center gap-3 px-4 py-2 border-bottom" style={{ background: 'color-mix(in srgb, var(--nn-surface) 92%, transparent)', backdropFilter: 'blur(10px)' }}>
                         <button
                             onClick={() => navigate(`/doctor/patient-records?patientId=${patientIdParam}`)}
                             title="Back to Clinical Dossier"
@@ -233,8 +233,8 @@ const DoctorChat = ({ isEmbedded = false }) => {
                             <ChevronLeft size={16} />
                         </button>
                         <div>
-                            <div className="text-secondary fw-bolder text-uppercase" style={{ fontSize: '0.65rem', letterSpacing: '0.08em' }}>Clinical Dossier / Chat</div>
-                            <div className="fw-bolder text-dark" style={{ fontSize: '0.875rem', lineHeight: 1.2 }}>
+                            <div className="fw-bolder text-uppercase" style={{ color: 'var(--nn-text-muted)', fontSize: '0.65rem', letterSpacing: '0.08em' }}>Clinical Dossier / Chat</div>
+                            <div className="fw-bolder" style={{ color: 'var(--nn-text-main)', fontSize: '0.875rem', lineHeight: 1.2 }}>
                                 {selectedConv.other_user?.full_name || selectedConv.other_user?.name || 'Patient'}
                             </div>
                         </div>
@@ -273,8 +273,8 @@ const DoctorChat = ({ isEmbedded = false }) => {
                                 <div className="d-flex align-items-center justify-content-center bg-primary bg-opacity-10 text-primary border border-2 border-white rounded-4 shadow-sm mb-4" style={{ width: '80px', height: '80px', fontSize: '2rem' }}>
                                     💬
                                 </div>
-                                <h2 className="h4 fw-bolder text-dark mb-3">Clinical Communication Panel</h2>
-                                <p className="text-secondary fw-medium mx-auto" style={{ maxWidth: '320px', lineHeight: '1.6', fontSize: '0.875rem' }}>
+                                <h2 className="h4 fw-bolder mb-3" style={{ color: 'var(--nn-text-main)' }}>Clinical Communication Panel</h2>
+                                <p className="fw-medium mx-auto" style={{ color: 'var(--nn-text-secondary)', maxWidth: '320px', lineHeight: '1.6', fontSize: '0.875rem' }}>
                                     Select a patient thread from your clinical inbox to begin high-fidelity consultation or triage.
                                 </p>
                             </>

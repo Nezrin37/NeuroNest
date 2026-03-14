@@ -227,7 +227,7 @@ const AdminReports = () => {
                         <div className="bento-box chart-box">
                             <div className="bento-header">
                                 <h3>7-Day Appointment Velocity</h3>
-                                <span className="badge">Volumetric</span>
+                                <span className="nn-badge nn-badge-info">Volumetric</span>
                             </div>
                             <AppointmentCharts data={appointments} />
                         </div>
@@ -235,7 +235,7 @@ const AdminReports = () => {
                         <div className="bento-box governance-box">
                             <div className="bento-header">
                                 <h3>Risk & Oversight Summary</h3>
-                                <span className="badge badge-rose">Security</span>
+                                <span className="nn-badge nn-badge-danger">Security</span>
                             </div>
                             <GovernancePanel data={governance} />
                         </div>
@@ -246,7 +246,7 @@ const AdminReports = () => {
                         <div className="bento-box list-box w-full">
                             <div className="bento-header">
                                 <h3>Clinical Force Performance matrix</h3>
-                                <span className="badge badge-emerald">Efficiency</span>
+                                <span className="nn-badge nn-badge-success">Efficiency</span>
                             </div>
                             <DoctorPerformanceTable doctors={doctors} />
                         </div>
