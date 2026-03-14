@@ -26,7 +26,7 @@ from routes.patient_settings_routes import patient_settings_bp
 from routes.announcements import announcements_bp
 from routes.patient_medical_records import patient_medical_bp
 from routes.modules_config import modules_config_bp
-
+from routes.vitals_route import vitals_bp
 
 from extensions.socket import socketio
 
@@ -70,7 +70,8 @@ def create_app():
     app.register_blueprint(prescriptions_bp, url_prefix="/prescriptions")
     app.register_blueprint(announcements_bp, url_prefix="/api/announcements")
     app.register_blueprint(modules_config_bp, url_prefix="/api/modules")
-    
+    app.register_blueprint(vitals_bp)
+
     # New Doctor Profile Route
     app.register_blueprint(doctor_profile_bp, url_prefix="/api/doctor/profile")
     
@@ -122,6 +123,11 @@ def create_app():
     @app.route("/")
     def home():
         return {"status": "NeuroNest-V15-STABLE-LIVE"}
+    
+    @app.after_request
+    def add_ngrok_header(response):
+        response.headers['ngrok-skip-browser-warning'] = 'true'
+        return response
 
     from apscheduler.schedulers.background import BackgroundScheduler
     from services.scheduler_service import check_upcoming_consultations
